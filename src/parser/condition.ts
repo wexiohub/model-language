@@ -202,6 +202,17 @@ class Parser {
       if (this.peek()?.v === ']') this.next();
       return { kind: 'literal', value: items };
     }
+    if (this.peek()?.v === '(') {
+      // Function call: `name(arg, …)`.
+      this.next();
+      const args: Expr[] = [];
+      while (this.peek() && this.peek()?.v !== ')') {
+        args.push(this.or());
+        if (this.peek()?.v === ',') this.next();
+      }
+      if (this.peek()?.v === ')') this.next();
+      return { kind: 'call', name: t.v, args };
+    }
     return valueExpr(t.v);
   }
 }

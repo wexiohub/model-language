@@ -136,6 +136,14 @@ describe('evalExpr — arithmetic', () => {
   it('division by zero → undefined', () => {
     expect(ev('a / 0', { a: 5 })).toBeUndefined();
   });
+
+  it('calculate(expr, decimals?)', () => {
+    expect(ev('calculate(10 / 3, 2)')).toBe(3.33);
+    expect(ev('calculate(a)', { a: 7 })).toBe(7);
+    expect(ev('calculate(-10 / 3, 1)')).toBe(-3.3);
+    expect(ev('calculate(a)', { a: 'x' })).toBeUndefined();
+    expect(ev('bogus(1)')).toBeUndefined();
+  });
 });
 
 describe('evalExpr — recovery', () => {

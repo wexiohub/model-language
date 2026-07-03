@@ -37,6 +37,8 @@ export function exprToText(expr: Expr): string {
       return `${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)}`;
     case 'arith':
       return `(${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)})`;
+    case 'call':
+      return `${expr.name}(${expr.args.map(exprToText).join(', ')})`;
   }
 }
 

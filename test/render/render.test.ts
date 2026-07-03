@@ -41,6 +41,14 @@ describe('render — interpolation', () => {
     expect(out('{{ (a + b) * 2 }}', { a: 3, b: 4 }).text).toBe('14');
   });
 
+  it('renders calculate() in interpolation', () => {
+    expect(
+      out('Per seat: {{ calculate(user.mrr / user.seats, 2) }}', {
+        user: { mrr: 100, seats: 3 },
+      }).text,
+    ).toBe('Per seat: 33.33');
+  });
+
   it('uses the render `now` option for datetime filters', () => {
     const src = '{{if user.last | days_ago > 20}}dormant{{/if}}';
     const r = render(parse(src).ast, { user: { last: '2026-06-01' } }, [], {

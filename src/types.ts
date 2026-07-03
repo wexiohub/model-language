@@ -158,7 +158,21 @@ export interface Filter {
   args: Expr[];
 }
 
-export type Expr = PathExpr | LiteralExpr | BinaryExpr | LogicalExpr | NotExpr | ArithExpr;
+export type Expr =
+  | PathExpr
+  | LiteralExpr
+  | BinaryExpr
+  | LogicalExpr
+  | NotExpr
+  | ArithExpr
+  | CallExpr;
+
+/** A function call — `calculate(expr, decimals?)` in 0.3; a host function registry follows. */
+export interface CallExpr {
+  kind: 'call';
+  name: string;
+  args: Expr[];
+}
 
 export interface PathExpr {
   kind: 'path';

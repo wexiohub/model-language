@@ -55,6 +55,10 @@ describe('typecheck — ML101 unknown-field', () => {
   it('recurses into arithmetic operands', () => {
     expect(codes('{{ 14 - user.plann }}')).toEqual(['ML101']);
   });
+
+  it('recurses into function-call arguments', () => {
+    expect(codes('{{ calculate(user.plann, 2) }}')).toEqual(['ML101']);
+  });
 });
 
 describe('typecheck — ML102 unknown-filter', () => {

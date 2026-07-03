@@ -103,6 +103,9 @@ export function typecheck(
         checkExpr(expr.left);
         checkExpr(expr.right);
         break;
+      case 'call':
+        for (const arg of expr.args) checkExpr(arg);
+        break;
       default:
         break; // literal
     }

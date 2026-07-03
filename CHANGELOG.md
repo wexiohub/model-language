@@ -9,6 +9,10 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **`calculate(expr, decimals?)`** — the first built-in function (a `CallExpr` in
+  the grammar): evaluates an expression and rounds it. Parser, evaluator,
+  serializer, and typecheck (recurses into call args) support function calls.
+
 - **Benchmark harness** (`pnpm bench`, `bench/engine.bench.ts`) — measures the
   cold path (parse, validate) and the hot path (render on a pre-parsed AST) for
   small and large templates.

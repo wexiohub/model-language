@@ -131,6 +131,23 @@ describe('parseCondition — arrays', () => {
   });
 });
 
+describe('parseCondition — function calls', () => {
+  it('parses a call with arguments', () => {
+    expect(parseCondition('calculate(a, 2)')).toEqual({
+      kind: 'call',
+      name: 'calculate',
+      args: [
+        { kind: 'path', path: 'a' },
+        { kind: 'literal', value: 2 },
+      ],
+    });
+  });
+
+  it('parses a call with no arguments', () => {
+    expect(parseCondition('now()')).toMatchObject({ kind: 'call', name: 'now', args: [] });
+  });
+});
+
 describe('parseCondition — recovery (never throws)', () => {
   it('empty string → literal undefined', () => {
     expect(parseCondition('')).toEqual({ kind: 'literal', value: undefined });
@@ -150,5 +167,9 @@ describe('parseCondition — recovery (never throws)', () => {
 
   it('skips a stray operator char without looping', () => {
     expect(parseCondition('a = 1')).toEqual({ kind: 'path', path: 'a' });
+  });
+
+  it('unterminated call does not throw', () => {
+    expect(parseCondition('calculate(a')).toMatchObject({ kind: 'call', name: 'calculate' });
   });
 });

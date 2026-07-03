@@ -1,0 +1,10 @@
+{
+  "name": "calculate(expr, decimals) rounds arithmetic",
+  "template": "Per seat: {{ calculate(user.mrr / user.seats, 2) }}",
+  "schema": [
+    { "path": "user.mrr", "type": "number" },
+    { "path": "user.seats", "type": "number" }
+  ],
+  "data": { "user": { "mrr": 100, "seats": 3 } },
+  "expect": { "output": "Per seat: 33.33", "warnings": [] }
+}

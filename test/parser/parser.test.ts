@@ -51,6 +51,7 @@ describe('serialize', () => {
       '{{#mode winback}}y{{/mode}}',
       '{{#block actions: ["refund", "change_plan"]}}',
       '{{include "policies/refund"}}',
+      '{{ calculate(a, 2) }}',
     ]) {
       expect(serialize(parse(src).ast)).toBe(src);
     }

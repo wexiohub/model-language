@@ -83,7 +83,27 @@ export function evalExpr(expr: Expr, snapshot: DataSnapshot): unknown {
       return compareValues(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
     case 'arith':
       return arith(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
+    case 'call':
+      return evalCall(
+        expr.name,
+        expr.args.map((a) => evalExpr(a, snapshot)),
+      );
   }
+}
+
+function roundTo(x: number, digits: number): number {
+  const f = 10 ** digits;
+  return (Math.sign(x) * Math.round(Math.abs(x) * f)) / f;
+}
+
+/** Built-in functions. `calculate(expr, decimals?)` = rounded arithmetic. */
+function evalCall(name: string, args: unknown[]): unknown {
+  if (name === 'calculate') {
+    const value = args[0];
+    if (typeof value !== 'number') return undefined;
+    return roundTo(value, typeof args[1] === 'number' ? args[1] : 0);
+  }
+  return undefined; // unknown function
 }
 
 /** Numbers-only arithmetic — a non-number operand or a non-finite result (÷0,
