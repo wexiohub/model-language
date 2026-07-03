@@ -5,6 +5,8 @@ import type {
   Branch,
   DataSnapshot,
   Diagnostic,
+  DirectiveInfo,
+  DirectiveNode,
   FieldSchema,
   Filter,
   ForNode,
@@ -22,6 +24,7 @@ interface RenderCtx {
   snapshot: DataSnapshot;
   warnings: Diagnostic[];
   resolvedBranches: Branch[];
+  directives: DirectiveInfo[];
   now: number;
 }
 
@@ -40,6 +43,7 @@ export function render(
     snapshot,
     warnings: [],
     resolvedBranches: [],
+    directives: [],
     now: options?.now ?? Date.now(),
   };
   const text = tidyWhitespace(renderNodes(ast, ctx));
@@ -47,6 +51,7 @@ export function render(
     text,
     warnings: ctx.warnings,
     resolvedBranches: ctx.resolvedBranches,
+    directives: ctx.directives,
     tokenEstimate: estimateTokens(text),
   };
 }
@@ -62,10 +67,19 @@ function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
       text += renderIf(node, ctx);
     } else if (node.kind === 'for') {
       text += renderFor(node, ctx);
+    } else if (node.kind === 'directive') {
+      text += renderDirective(node, ctx);
     }
-    // include / directive / comment: 0.3+ (render nothing).
+    // include: 0.3c (render nothing yet).
   }
   return text;
+}
+
+function renderDirective(node: DirectiveNode, ctx: RenderCtx): string {
+  // Record the constraint for the host; #priority/#mode still render their body,
+  // #block has an empty body and renders nothing.
+  ctx.directives.push({ name: node.name, params: node.params });
+  return renderNodes(node.body, ctx);
 }
 
 function renderFor(node: ForNode, ctx: RenderCtx): string {

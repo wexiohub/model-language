@@ -47,6 +47,9 @@ describe('serialize', () => {
       '{{if a contains_any ["x", "y"]}}x{{/if}}',
       '{{if user.score >= (user.range + 1)}}x{{/if}}',
       '{{ (order.total - order.discount) | round: 2 }}',
+      '{{#priority critical}}x{{/priority}}',
+      '{{#mode winback}}y{{/mode}}',
+      '{{#block actions: ["refund", "change_plan"]}}',
     ]) {
       expect(serialize(parse(src).ast)).toBe(src);
     }

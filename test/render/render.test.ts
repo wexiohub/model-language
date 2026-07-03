@@ -135,11 +135,24 @@ describe('render — whitespace & misc', () => {
     expect(out('a {# multi\nline #} b').text).toBe('a  b');
   });
 
+  it('renders directive bodies and collects the directive info', () => {
+    const r = out('{{#priority high}}Be urgent.{{/priority}}');
+    expect(r.text).toBe('Be urgent.');
+    expect(r.directives).toEqual([{ name: 'priority', params: { level: 'high' } }]);
+  });
+
+  it('#block renders nothing but is collected', () => {
+    const r = out('X{{#block actions: ["refund"]}}Y');
+    expect(r.text).toBe('XY');
+    expect(r.directives).toEqual([{ name: 'block', params: { actions: ['refund'] } }]);
+  });
+
   it('empty AST → empty result', () => {
     expect(render([], {}, [])).toEqual({
       text: '',
       warnings: [],
       resolvedBranches: [],
+      directives: [],
       tokenEstimate: 0,
     });
   });

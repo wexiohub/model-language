@@ -73,7 +73,14 @@ function nodeToText(node: Node): string {
       const elsePart = node.elseBody ? `{{else}}${serialize(node.elseBody)}` : '';
       return `${head}${serialize(node.body)}${elsePart}{{/for}}`;
     }
+    case 'directive': {
+      if (node.name === 'block') {
+        return `{{#block actions: ${literalToText(node.params.actions as unknown[])}}}`;
+      }
+      const arg = node.name === 'priority' ? node.params.level : node.params.name;
+      return `{{#${node.name} ${String(arg)}}}${serialize(node.body)}{{/${node.name}}}`;
+    }
     default:
-      return ''; // include / directive / comment (0.3+)
+      return ''; // include / comment (0.3c)
   }
 }

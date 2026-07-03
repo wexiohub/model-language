@@ -1,12 +1,28 @@
 import { makeDiagnostic, rangeAt } from '../diagnostics';
-import type { Diagnostic, Expr, Filter, ForNode, IfNode, Node, TemplateNode } from '../types';
+import type {
+  Diagnostic,
+  DirectiveNode,
+  Expr,
+  Filter,
+  ForNode,
+  IfNode,
+  Node,
+  TemplateNode,
+} from '../types';
 import { parseCondition } from './condition';
 import { parseInterpolation } from './expression';
 import { type Segment, classifyTag, tagInner } from './lexer';
 
 type OpenBlock =
   | { kind: 'if'; node: IfNode; body: Node[]; start: number; end: number }
-  | { kind: 'for'; node: ForNode; body: Node[]; start: number; end: number };
+  | { kind: 'for'; node: ForNode; body: Node[]; start: number; end: number }
+  | { kind: 'directive'; node: DirectiveNode; body: Node[]; start: number; end: number };
+
+/** Parse `actions: ["a", "b"]` (the `#block` argument) into a list. */
+function parseActions(rest: string): unknown[] {
+  const parsed = parseCondition(rest.replace(/^actions\s*:\s*/, ''));
+  return parsed.kind === 'literal' && Array.isArray(parsed.value) ? parsed.value : [];
+}
 
 /** 1-based line/column for a source offset. */
 function posAt(source: string, offset: number): { line: number; col: number } {
@@ -121,20 +137,42 @@ export function foldBlocks(
       } else {
         asText(seg.raw);
       }
+    } else if (head === '#priority' || head === '#mode') {
+      const body: Node[] = [];
+      const name = head.slice(1);
+      const params = name === 'priority' ? { level: rest } : { name: rest };
+      const node: DirectiveNode = { kind: 'directive', name, params, body };
+      stack.push({ kind: 'directive', node, body, start: seg.start, end: seg.end });
+    } else if (head === '#block') {
+      currentBody().push({
+        kind: 'directive',
+        name: 'block',
+        params: { actions: parseActions(rest) },
+        body: [],
+      });
+    } else if (head === '/priority' || head === '/mode') {
+      const t = top();
+      if (t?.kind === 'directive' && t.node.name === head.slice(1)) {
+        stack.pop();
+        currentBody().push(t.node);
+      } else {
+        asText(seg.raw);
+      }
     } else {
-      // Unknown block (include / directive) — deferred; keep as text.
+      // Unknown block (include) — deferred; keep as text.
       asText(seg.raw);
     }
   }
 
   while (stack.length > 0) {
     const open = stack.pop() as OpenBlock;
+    const label = open.kind === 'directive' ? open.node.name : open.kind;
     const start = posAt(source, open.start);
     const end = posAt(source, open.end);
     diagnostics.push(
       makeDiagnostic(
         'ML001',
-        `'{{${open.kind}}}' is never closed. Add '{{/${open.kind}}}'.`,
+        `'{{${label}}}' is never closed. Add '{{/${label}}}'.`,
         rangeAt(start.line, start.col, end.line, end.col),
       ),
     );

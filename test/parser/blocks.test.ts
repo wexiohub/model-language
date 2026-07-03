@@ -132,6 +132,51 @@ describe('foldBlocks — for loops', () => {
       pipeline: [{ name: 'limit', args: [{ kind: 'literal', value: 3 }] }],
     });
   });
+});
+
+describe('foldBlocks — directives', () => {
+  it('folds #priority with a body', () => {
+    expect(fold('{{#priority high}}urgent{{/priority}}').nodes).toEqual([
+      {
+        kind: 'directive',
+        name: 'priority',
+        params: { level: 'high' },
+        body: [{ kind: 'text', value: 'urgent' }],
+      },
+    ]);
+  });
+
+  it('folds #mode', () => {
+    expect(fold('{{#mode winback}}x{{/mode}}').nodes[0]).toMatchObject({
+      kind: 'directive',
+      name: 'mode',
+      params: { name: 'winback' },
+    });
+  });
+
+  it('folds a self-closing #block (with + without actions)', () => {
+    expect(fold('{{#block actions: ["refund", "cancel"]}}').nodes).toEqual([
+      { kind: 'directive', name: 'block', params: { actions: ['refund', 'cancel'] }, body: [] },
+    ]);
+    expect(fold('{{#block}}').nodes[0]).toMatchObject({ name: 'block', params: { actions: [] } });
+  });
+
+  it('reports ML001 for an unclosed directive', () => {
+    expect(fold('{{#priority high}}x').diagnostics.map((d) => d.code)).toEqual(['ML001']);
+  });
+
+  it('keeps stray / mismatched close directives as text', () => {
+    expect(fold('{{/priority}}').nodes).toEqual([{ kind: 'text', value: '{{/priority}}' }]);
+    expect(fold('{{for x in y}}{{/mode}}{{/for}}').nodes[0]).toMatchObject({
+      kind: 'for',
+      body: [{ kind: 'text', value: '{{/mode}}' }],
+    });
+    expect(fold('{{#priority high}}{{/mode}}{{/priority}}').nodes[0]).toMatchObject({
+      kind: 'directive',
+      name: 'priority',
+      body: [{ kind: 'text', value: '{{/mode}}' }],
+    });
+  });
 
   it('reports ML001 for an unclosed for', () => {
     const { nodes, diagnostics } = fold('{{for x in y}}Z');

@@ -213,10 +213,18 @@ export interface ValidateResult {
   maxTokenEstimate: number | null;
 }
 
+/** A directive that fired during render (`#priority`/`#mode`/`#block`) — the
+ *  host consumes these as runtime constraints (routing, tool blocks). */
+export interface DirectiveInfo {
+  name: string;
+  params: Record<string, unknown>;
+}
+
 export interface RenderResult {
   text: string;
   warnings: Diagnostic[];
   resolvedBranches: Branch[];
+  directives: DirectiveInfo[];
   tokenEstimate: number;
 }
 
