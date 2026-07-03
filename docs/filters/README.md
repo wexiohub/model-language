@@ -46,21 +46,20 @@ Datetime comparisons always go through a filter that returns a number/boolean �
 authors never learn raw date-comparison semantics, and raw `>` on a date is a
 lint error (`ML214`).
 
-## Array — **shipped (0.2b): `count` `join` `first` `last` `limit` `pluck`**
+## Array — **shipped (0.2b/e)**
 
 `count` → number · `join: sep` (default `", "`) → string · `first` / `last` →
-item · `limit: n` → array · `pluck: "field"` → array.
+item · `limit: n` → array · `pluck: "field"` → array ·
+`where: "field", op, value` → filtered array · `sort: "field", "asc"|"desc"` →
+sorted array · `sum` / `max` / `min: "field"?` → number.
 
-Filters also apply to a **loop source**:
+Filters chain, and apply to a **loop source**:
 
 ```
-{{for item in order.items | limit: 3}}
-- {{item.title}}
+{{for item in order.items | where: "status", "==", "unshipped" | sort: "price", "desc" | limit: 3}}
+- {{item.title}} — {{item.price}}
 {{/for}}
 ```
-
-**Next (0.2):** `where: "field", op, value` · `sort: "field", "asc"|"desc"` ·
-`sum` / `max` / `min: "field"`.
 
 ## See also
 

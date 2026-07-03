@@ -27,7 +27,7 @@ function safeMatch(text: string, pattern: string): boolean {
   }
 }
 
-function compare(op: string, left: unknown, right: unknown): boolean {
+export function compareValues(op: string, left: unknown, right: unknown): boolean {
   switch (op) {
     case '==':
       return left === right;
@@ -80,7 +80,7 @@ export function evalExpr(expr: Expr, snapshot: DataSnapshot): unknown {
       return left || truthy(evalExpr(expr.right, snapshot));
     }
     case 'binary':
-      return compare(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
+      return compareValues(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
     case 'arith':
       return arith(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
   }

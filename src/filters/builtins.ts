@@ -1,8 +1,13 @@
+import { compareValues } from '../render/eval';
 import type { FilterDef } from '../types';
 
 const asString = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
 const asNumber = (v: unknown): number | undefined => (typeof v === 'number' ? v : undefined);
 const asArray = (v: unknown): unknown[] | undefined => (Array.isArray(v) ? v : undefined);
+
+/** A field of an object item, or the item itself when it isn't an object. */
+const pick = (item: unknown, field: string): unknown =>
+  item && typeof item === 'object' ? (item as Record<string, unknown>)[field] : item;
 
 /** Round half away from zero ("school" rounding): 2.5 → 3, -2.5 → -3. */
 function roundHalfAway(x: number, digits: number): number {
@@ -166,6 +171,59 @@ const pluck: FilterDef = {
   },
 };
 
+const where: FilterDef = {
+  name: 'where',
+  apply: (input, args) => {
+    const a = asArray(input);
+    const field = asString(args[0]);
+    const op = asString(args[1]);
+    if (a === undefined || field === undefined || op === undefined) return input;
+    return a.filter((item) => compareValues(op, pick(item, field), args[2]));
+  },
+};
+
+const sort: FilterDef = {
+  name: 'sort',
+  apply: (input, args) => {
+    const a = asArray(input);
+    const field = asString(args[0]);
+    if (a === undefined || field === undefined) return input;
+    const dir = asString(args[1]) === 'desc' ? -1 : 1;
+    return [...a].sort((x, y) => {
+      const xv = pick(x, field);
+      const yv = pick(y, field);
+      if (xv === yv) return 0;
+      return ((xv as number) < (yv as number) ? -1 : 1) * dir;
+    });
+  },
+};
+
+const sum: FilterDef = {
+  name: 'sum',
+  apply: (input, args) => {
+    const a = asArray(input);
+    if (a === undefined) return input;
+    const field = asString(args[0]);
+    return a.reduce((acc: number, item) => {
+      const v = field === undefined ? item : pick(item, field);
+      return acc + (typeof v === 'number' ? v : 0);
+    }, 0);
+  },
+};
+
+function aggregate(input: unknown, args: unknown[], fn: (...n: number[]) => number): unknown {
+  const a = asArray(input);
+  if (a === undefined) return input;
+  const field = asString(args[0]);
+  const nums = a
+    .map((item) => (field === undefined ? item : pick(item, field)))
+    .filter((v): v is number => typeof v === 'number');
+  return nums.length === 0 ? undefined : fn(...nums);
+}
+
+const max: FilterDef = { name: 'max', apply: (input, args) => aggregate(input, args, Math.max) };
+const min: FilterDef = { name: 'min', apply: (input, args) => aggregate(input, args, Math.min) };
+
 /** Built-in filters seeded into the registry. Datetime + currency: next slice. */
 export const BUILTIN_FILTERS: FilterDef[] = [
   defaultFilter,
@@ -186,4 +244,9 @@ export const BUILTIN_FILTERS: FilterDef[] = [
   last,
   limit,
   pluck,
+  where,
+  sort,
+  sum,
+  max,
+  min,
 ];

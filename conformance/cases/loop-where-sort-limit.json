@@ -1,0 +1,13 @@
+{
+  "name": "loop source: where → sort → limit chain",
+  "template": "{{for i in items | where: \"status\", \"==\", \"unshipped\" | sort: \"price\", \"desc\" | limit: 2}}{{i.name}}({{i.price}});{{/for}}",
+  "schema": [{ "path": "items", "type": "array", "items": "object" }],
+  "data": {
+    "items": [
+      { "name": "Hub", "price": 89, "status": "unshipped" },
+      { "name": "Cable", "price": 12, "status": "shipped" },
+      { "name": "Dock", "price": 45, "status": "unshipped" }
+    ]
+  },
+  "expect": { "output": "Hub(89);Dock(45);", "warnings": [] }
+}

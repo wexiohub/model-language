@@ -9,6 +9,11 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2e — array aggregation filters.** `where: "field", op, value`,
+  `sort: "field", "asc"|"desc"`, `sum`, `max`, `min` (each with an optional
+  field, operating on object items or primitives). Chainable and usable as a loop
+  source: `{{for i in items | where: … | sort: … | limit: 3}}`.
+
 - **0.2d — arithmetic.** `+ - * /`, parentheses, unary minus, with `* /`
   binding tighter than `+ -`, in conditions and interpolation
   (`{{if user.score >= user.range + 1}}`, `{{ 14 - x }}`). Strictly numbers-only:
