@@ -1,0 +1,11 @@
+{
+  "name": "currency filter formats money",
+  "template": "Total: {{ (order.total - order.discount) | currency: order.currency }}",
+  "schema": [
+    { "path": "order.total", "type": "number" },
+    { "path": "order.discount", "type": "number" },
+    { "path": "order.currency", "type": "string" }
+  ],
+  "data": { "order": { "total": 125, "discount": 20, "currency": "USD" } },
+  "expect": { "output": "Total: $105.00", "warnings": [] }
+}

@@ -119,6 +119,22 @@ const percent: FilterDef = {
   },
 };
 
+const CURRENCY_SYMBOLS: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', JPY: '¥' };
+
+const currency: FilterDef = {
+  name: 'currency',
+  apply: (input, args) => {
+    const n = asNumber(input);
+    const code = asString(args[0]);
+    if (n === undefined || code === undefined) return input;
+    const symbol = CURRENCY_SYMBOLS[code] ?? `${code} `;
+    const fixed = roundHalfAway(Math.abs(n), 2).toFixed(2);
+    const dot = fixed.indexOf('.');
+    const grouped = fixed.slice(0, dot).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return `${n < 0 ? '-' : ''}${symbol}${grouped}.${fixed.slice(dot + 1)}`;
+  },
+};
+
 // ── Array ────────────────────────────────────────────────────────────────────
 const count: FilterDef = {
   name: 'count',
@@ -316,6 +332,7 @@ export const BUILTIN_FILTERS: FilterDef[] = [
   ceil,
   abs,
   percent,
+  currency,
   count,
   join,
   first,

@@ -9,6 +9,10 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2g — currency filter.** `currency: code` formats a number with a symbol
+  (USD/EUR/GBP/JPY, else the code prefixed), thousands grouping, 2 decimals, and
+  correct negative sign. **0.2 complete.**
+
 - **0.2f — datetime filters.** `days_ago`, `days_until`, `is_past`, `is_future`
   (relative to a reference `now`), and `date: fmt` (UTC, tokens `YYYY`/`MMM`/`MM`/
   `DD`/`D`/`M`). `render` gained an optional `{ now }` option (defaults to the wall

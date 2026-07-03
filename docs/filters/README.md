@@ -25,13 +25,12 @@ Each filter declares a typed signature. Wrong input type → edit-time lint
 {{user.bio | trim | truncate: 80}}
 ```
 
-## Number — **shipped (0.2b)** · `currency` 0.2
+## Number — **shipped (0.2b/g)**
 
 `round: n=0` (half away from zero) · `floor` · `ceil` · `abs` ·
-`percent` (`0.34` → `34%`)
-
-`currency: code` (locale-aware) lands with the datetime filters; the host can
-`registerFilter` its own now.
+`percent` (`0.34` → `34%`) · `currency: code`
+(`1234.5` + `"USD"` → `$1,234.50`; symbols for USD/EUR/GBP/JPY, otherwise the code
+is prefixed; a host can `registerFilter` a locale-aware override).
 
 ## Datetime — **shipped (0.2f)**
 

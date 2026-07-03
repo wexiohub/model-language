@@ -59,4 +59,13 @@ describe('number filters', () => {
     expect(apply('percent', 0.34)).toBe('34%');
     expect(apply('percent', 'x')).toBe('x');
   });
+
+  it('currency (symbol, grouping, negatives, unknown code, passthrough)', () => {
+    expect(apply('currency', 1234.5, ['USD'])).toBe('$1,234.50');
+    expect(apply('currency', 9.99, ['EUR'])).toBe('€9.99');
+    expect(apply('currency', -50, ['GBP'])).toBe('-£50.00');
+    expect(apply('currency', 1000000, ['BTC'])).toBe('BTC 1,000,000.00');
+    expect(apply('currency', 'x', ['USD'])).toBe('x');
+    expect(apply('currency', 5, [])).toBe(5);
+  });
 });
