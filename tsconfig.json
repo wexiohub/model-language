@@ -16,5 +16,5 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "test", "examples", "bench", "tsup.config.ts", "vitest.config.ts"]
+  "include": ["src", "test", "examples", "bench", "wasm", "tsup.config.ts", "vitest.config.ts"]
 }

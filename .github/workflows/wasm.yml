@@ -1,0 +1,46 @@
+name: WASM bridge
+
+# Builds the WebAssembly component from the TS engine and proves the Python
+# bindings behave identically to the canonical engine by running the shared
+# conformance fixtures through them.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  wasm-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install
+
+      - name: Build WASM component (esbuild bundle -> componentize-js)
+        run: pnpm wasm:build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python deps
+        run: pip install wasmtime pytest
+
+      - name: Generate Python bindings from the component
+        run: python -m wasmtime.bindgen wasm/dist/model_language.wasm --out-dir python/wexio_model_language/_bindings
+
+      - name: Run Python conformance tests (parity with TypeScript)
+        working-directory: python
+        run: python -m pytest -q

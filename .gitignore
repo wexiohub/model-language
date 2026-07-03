@@ -6,3 +6,12 @@ coverage/
 .idea/
 .vscode/
 *.tsbuildinfo
+
+# WASM build artifacts (rebuilt by `pnpm wasm:build` / CI)
+wasm/dist/
+
+# Python bridge
+__pycache__/
+*.egg-info/
+.pytest_cache/
+python/**/_bindings/

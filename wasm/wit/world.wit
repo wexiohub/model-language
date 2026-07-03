@@ -1,0 +1,25 @@
+package wexio:model-language@1.0.0;
+
+/// The engine's editor + render surface, exposed to any WebAssembly-component
+/// host (Python, Go, Ruby, Rust, Java …) over one stable JSON string contract.
+///
+/// Each function takes a JSON *request* string and returns a JSON *response*
+/// string; the shapes are identical to the `conformance/cases/*.json` fixtures,
+/// so every host is validated against the same golden suite as the TypeScript
+/// engine. Functions never trap — a malformed request yields `{"error": "..."}`.
+world engine {
+  /// Render a template against data.
+  /// Request:  { "template": string, "data"?: object, "schema"?: array, "options"?: { "now"?: number, "snippets"?: object } }
+  /// Response: { "text": string, "warnings": array, "resolvedBranches": array, "directives": array, "tokenEstimate": number }
+  export render: func(request: string) -> string;
+
+  /// Validate a template against a schema (editor diagnostics + token budget).
+  /// Request:  { "template": string, "schema"?: array, "options"?: { "maxTokenEstimate"?: number } }
+  /// Response: { "diagnostics": array, "maxTokenEstimate": number }
+  export validate: func(request: string) -> string;
+
+  /// Parse a template to its AST (with recovery diagnostics).
+  /// Request:  { "template": string }
+  /// Response: { "ast": array, "diagnostics": array }
+  export parse: func(request: string) -> string;
+}
