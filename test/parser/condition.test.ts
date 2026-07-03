@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { parseCondition } from '../../src/parser/condition';
 import type { Expr } from '../../src/types';
 
-const rightOf = (src: string): Expr => (parseCondition(src) as Extract<Expr, { right: Expr }>).right;
+const rightOf = (src: string): Expr =>
+  (parseCondition(src) as Extract<Expr, { right: Expr }>).right;
 
 describe('parseCondition — comparisons', () => {
   it('parses each comparison operator', () => {
