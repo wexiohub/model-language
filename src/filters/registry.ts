@@ -1,15 +1,13 @@
 import type { FilterDef } from '../types';
+import { BUILTIN_FILTERS } from './builtins';
 
 /**
  * Filter registry — built-in filters plus host-registered ones. A host filter
- * overrides a built-in of the same name.
- *
- * SCAFFOLD: no built-ins yet. Milestone 0.1 adds `default`; 0.2 adds the
- * string / number / datetime / array filters. Every filter must be total —
- * on the wrong input type it passes the value through (the typechecker flags
- * ML203); it never throws.
+ * overrides a built-in of the same name. Every filter must be total — on the
+ * wrong input type it passes the value through (the typechecker flags ML203); it
+ * never throws.
  */
-const builtinFilters = new Map<string, FilterDef>();
+const builtinFilters = new Map<string, FilterDef>(BUILTIN_FILTERS.map((f) => [f.name, f]));
 const customFilters = new Map<string, FilterDef>();
 
 /** Register a host-supplied filter (e.g. a locale-aware `currency`). */
