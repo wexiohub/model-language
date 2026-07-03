@@ -1,0 +1,57 @@
+{
+  "name": "@wexio/model-language",
+  "version": "0.0.0",
+  "description": "A typed, safe, compile-time-resolved template language for AI-agent prompts. Non-technical users write templates with variables, conditions, and loops; the engine renders them into clean prompts against live data. Never crashes, never leaks syntax.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "engines": { "node": ">=18" },
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "keywords": [
+    "template",
+    "dsl",
+    "template-language",
+    "prompt",
+    "ai",
+    "llm",
+    "agent",
+    "parser",
+    "typed"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wexiohub/model-language.git"
+  },
+  "bugs": { "url": "https://github.com/wexiohub/model-language/issues" },
+  "homepage": "https://github.com/wexiohub/model-language#readme",
+  "publishConfig": { "access": "public" },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@vitest/coverage-v8": "^2.1.8",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
