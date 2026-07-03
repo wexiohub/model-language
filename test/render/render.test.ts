@@ -46,7 +46,12 @@ describe('render', () => {
     const ast: TemplateNode = [
       {
         kind: 'interpolation',
-        value: { kind: 'binary', op: '==', left: { kind: 'path', path: 'a' }, right: { kind: 'literal', value: 1 } },
+        value: {
+          kind: 'binary',
+          op: '==',
+          left: { kind: 'path', path: 'a' },
+          right: { kind: 'literal', value: 1 },
+        },
         pipeline: [],
       },
     ];

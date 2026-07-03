@@ -48,7 +48,11 @@ describe('serialize', () => {
 
   it('serializes a no-arg filter', () => {
     const ast: TemplateNode = [
-      { kind: 'interpolation', value: { kind: 'path', path: 'x' }, pipeline: [{ name: 'upper', args: [] }] },
+      {
+        kind: 'interpolation',
+        value: { kind: 'path', path: 'x' },
+        pipeline: [{ name: 'upper', args: [] }],
+      },
     ];
     expect(serialize(ast)).toBe('{{ x | upper }}');
   });
@@ -69,7 +73,12 @@ describe('serialize', () => {
     const ast: TemplateNode = [
       {
         kind: 'interpolation',
-        value: { kind: 'binary', op: '==', left: { kind: 'path', path: 'a' }, right: { kind: 'literal', value: 1 } },
+        value: {
+          kind: 'binary',
+          op: '==',
+          left: { kind: 'path', path: 'a' },
+          right: { kind: 'literal', value: 1 },
+        },
         pipeline: [],
       },
     ];
