@@ -12,8 +12,7 @@ function roundHalfAway(x: number, digits: number): number {
 // ── Universal ────────────────────────────────────────────────────────────────
 const defaultFilter: FilterDef = {
   name: 'default',
-  apply: (input, args) =>
-    input === null || input === undefined || input === '' ? args[0] : input,
+  apply: (input, args) => (input === null || input === undefined || input === '' ? args[0] : input),
 };
 
 // ── String ───────────────────────────────────────────────────────────────────

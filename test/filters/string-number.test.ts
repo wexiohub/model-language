@@ -42,7 +42,7 @@ describe('number filters', () => {
     expect(apply('round', 2.5)).toBe(3);
     expect(apply('round', -2.5)).toBe(-3);
     expect(apply('round', 0)).toBe(0);
-    expect(apply('round', 3.14159, [2])).toBe(3.14);
+    expect(apply('round', 1.239, [2])).toBe(1.24);
     expect(apply('round', 'x')).toBe('x');
   });
 
