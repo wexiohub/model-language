@@ -38,6 +38,32 @@ Standard tier for {{ user.name | default: "there" }}.
 {{/priority}}
 {{include "footer"}}`;
 
+// A source-size stress test: ~500 independent rule blocks (if/elseif/else with
+// logical operators, arithmetic, filters, interpolation) → ~3,500 lines. This
+// exercises the parser/typechecker on a production-scale prompt, whereas `huge`
+// exercises the renderer on runtime-heavy nested loops. Both axes matter.
+const XL_BLOCKS = 500;
+const xl = Array.from({ length: XL_BLOCKS }, (_, i) => {
+  const k = 50 + (i % 40) * 10;
+  const k2 = 20 + (i % 30) * 5;
+  return `{{if user.plan == "pro" and user.mrr > ${k} and not user.churn_risk == "high"}}
+Rule ${i}: {{ user.name | capitalize }} qualifies — segment ${i}, seat spend {{ (user.mrr / user.seats) | round: 2 }}.
+{{elseif user.mrr > ${k2} or user.tags contains "seg${i % 20}"}}
+Rule ${i} partial for {{ user.name | default: "there" }} ({{ user.mrr | currency: "USD" }}).
+{{else}}
+Rule ${i} baseline tier.
+{{/if}}`;
+}).join('\n');
+
+const xlSchema: FieldSchema = [
+  { path: 'user.name', type: 'string' },
+  { path: 'user.plan', type: 'enum', values: ['free', 'pro', 'team'] },
+  { path: 'user.mrr', type: 'number' },
+  { path: 'user.seats', type: 'number' },
+  { path: 'user.churn_risk', type: 'enum', values: ['low', 'high'] },
+  { path: 'user.tags', type: 'array', items: 'string' },
+];
+
 const snippets = { header: '=== {{org.name}} ===', footer: 'Generated for {{user.name}}.' };
 
 const schema: FieldSchema = [
@@ -49,7 +75,14 @@ const schema: FieldSchema = [
 
 const data = {
   org: { name: 'Acme' },
-  user: { name: 'vasyl', plan: 'pro', mrr: 450, seats: 7, churn_risk: 'low' },
+  user: {
+    name: 'vasyl',
+    plan: 'pro',
+    mrr: 450,
+    seats: 7,
+    churn_risk: 'low',
+    tags: ['seg1', 'seg3', 'seg5'],
+  },
   order: {
     items: Array.from({ length: 20 }, (_, i) => ({
       title: `Item ${i}`,
@@ -70,20 +103,24 @@ const data = {
 const smallAst = parse(small).ast;
 const largeAst = parse(large).ast;
 const hugeAst = parse(huge).ast;
+const xlAst = parse(xl).ast;
 
 describe('parse (cold path)', () => {
   bench('small', () => void parse(small));
   bench('large', () => void parse(large));
   bench('huge', () => void parse(huge));
+  bench('xl (~3.5k lines)', () => void parse(xl));
 });
 
 describe('render (hot path — pre-parsed AST)', () => {
   bench('small', () => void render(smallAst, data, schema));
   bench('large', () => void render(largeAst, data, schema));
   bench('huge', () => void render(hugeAst, data, schema, { snippets }));
+  bench('xl (~3.5k lines)', () => void render(xlAst, data, xlSchema));
 });
 
 describe('validate (editor path)', () => {
   bench('large', () => void validate(large, schema));
   bench('huge', () => void validate(huge, schema));
+  bench('xl (~3.5k lines)', () => void validate(xl, xlSchema));
 });
