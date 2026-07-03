@@ -33,6 +33,15 @@ missing sentence.
 - **The public API in `src/types.ts` + `src/index.ts` is a contract.** Changing a
   signature is a breaking (major) change. Add, don't mutate.
 
+## Performance (hot-path module)
+
+A prompt is rendered on every inbound message — treat `render()` as hot. **Parse
+once, render many:** `parse`/`validate` are cold and cacheable; `render` must stay
+pure, synchronous, allocation-light, and must never re-parse the source (it walks
+the AST). Async data is resolved in a bounded pre-pass, never inside render.
+Optimize with a benchmark (lands 0.2), not by guessing. Full notes:
+[`docs/performance.md`](./docs/performance.md).
+
 ## Architecture / where things go
 
 ```

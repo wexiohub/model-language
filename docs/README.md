@@ -35,6 +35,9 @@ compile-time-resolved template language for AI-agent prompts.
 
 - [Diagnostics catalog](./diagnostics.md) — every `ML###` code: cause, message,
   fix.
+- [Performance](./performance.md) — parse-once/render-many, the hot path, footprint.
+- [Portability](./portability.md) — using ML from Python/Go/etc. via the
+  conformance suite, a service, or a native port.
 
 ## Examples
 
