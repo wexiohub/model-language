@@ -1,5 +1,5 @@
-import { makeDiagnostic, rangeAt } from '../diagnostics';
 import type { DiagnosticCode } from '../diagnostics';
+import { makeDiagnostic, rangeAt } from '../diagnostics';
 import { getFilter } from '../filters';
 import type {
   Diagnostic,
@@ -49,12 +49,13 @@ export function typecheck(
     const label = f.name ?? f.path;
 
     if (f.type === 'datetime' && RAW_DATE_OPS.has(op)) {
-      push('ML214', `'${label}' is a date — compare it with a filter (e.g. \`| days_ago\`), not '${op}'.`, f.path);
+      push('ML214', `'${label}' is a date — compare it with a filter, not '${op}'.`, f.path);
       return;
     }
     if (f.type === 'multiEnum' && EQUALITY_OPS.has(op)) {
-      push('ML220', `'${label}' is a multi-select field — use 'contains' instead of '${op}'.`, f.path, [
-        { title: `Replace '${op}' with 'contains'`, edits: [] },
+      const quickfix: Quickfix = { title: `Replace '${op}' with 'contains'`, edits: [] };
+      push('ML220', `'${label}' is a multi-select field — use 'contains' not '${op}'.`, f.path, [
+        quickfix,
       ]);
       return;
     }
@@ -72,7 +73,7 @@ export function typecheck(
       return;
     }
     if (f.type === 'number' && right.kind === 'literal' && typeof right.value === 'string') {
-      push('ML201', `'${label}' is a number, but it is compared to the text "${right.value}".`, f.path);
+      push('ML201', `'${label}' is a number, not the text "${right.value}".`, f.path);
     }
   };
 
@@ -81,7 +82,8 @@ export function typecheck(
       case 'path': {
         if (resolveField(expr.path, schema).kind === 'unknown') {
           const near = nearestPath(expr.path, knownPaths);
-          push('ML101', `Unknown field '${expr.path}'.${near ? ` Did you mean '${near}'?` : ''}`, expr.path);
+          const hint = near ? ` Did you mean '${near}'?` : '';
+          push('ML101', `Unknown field '${expr.path}'.${hint}`, expr.path);
         }
         break;
       }

@@ -5,9 +5,10 @@ function levenshtein(a: string, b: string): number {
     const curr = [i];
     for (let j = 1; j <= b.length; j += 1) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      curr.push(
-        Math.min((curr[j - 1] as number) + 1, (prev[j] as number) + 1, (prev[j - 1] as number) + cost),
-      );
+      const del = (prev[j] as number) + 1;
+      const ins = (curr[j - 1] as number) + 1;
+      const sub = (prev[j - 1] as number) + cost;
+      curr.push(Math.min(del, ins, sub));
     }
     for (let j = 0; j <= b.length; j += 1) prev[j] = curr[j] as number;
   }
