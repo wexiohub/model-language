@@ -89,7 +89,11 @@ function renderInclude(node: IncludeNode, ctx: RenderCtx): string {
   if (src === undefined) return ''; // unknown snippet → nothing
   if (ctx.includeStack.includes(node.name) || ctx.includeStack.length >= MAX_INCLUDE_DEPTH) {
     ctx.warnings.push(
-      makeDiagnostic('ML002', `include '${node.name}' is circular or too deeply nested.`, rangeAt(1, 1, 1, 1)),
+      makeDiagnostic(
+        'ML002',
+        `include '${node.name}' is circular or too deeply nested.`,
+        rangeAt(1, 1, 1, 1),
+      ),
     );
     return '';
   }
