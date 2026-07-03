@@ -24,6 +24,12 @@ function parseActions(rest: string): unknown[] {
   return parsed.kind === 'literal' && Array.isArray(parsed.value) ? parsed.value : [];
 }
 
+/** Parse the quoted snippet name from an `include` tag. */
+function parseIncludeName(rest: string): string {
+  const parsed = parseCondition(rest);
+  return parsed.kind === 'literal' && typeof parsed.value === 'string' ? parsed.value : '';
+}
+
 /** 1-based line/column for a source offset. */
 function posAt(source: string, offset: number): { line: number; col: number } {
   let line = 1;
@@ -158,8 +164,10 @@ export function foldBlocks(
       } else {
         asText(seg.raw);
       }
+    } else if (head === 'include') {
+      currentBody().push({ kind: 'include', name: parseIncludeName(rest), params: {} });
     } else {
-      // Unknown block (include) — deferred; keep as text.
+      // An unrecognized `#directive` / `/closer` — keep verbatim as text.
       asText(seg.raw);
     }
   }

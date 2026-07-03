@@ -1,5 +1,6 @@
 import { makeDiagnostic, rangeAt } from '../diagnostics';
 import { getFilter } from '../filters';
+import { parse } from '../parser';
 import { exprToText } from '../parser/serializer';
 import type {
   Branch,
@@ -11,11 +12,14 @@ import type {
   Filter,
   ForNode,
   IfNode,
+  IncludeNode,
   InterpolationNode,
   RenderOptions,
   RenderResult,
   TemplateNode,
 } from '../types';
+
+const MAX_INCLUDE_DEPTH = 5;
 import { evalCondition, evalExpr } from './eval';
 import { stringifyValue } from './stringify';
 import { tidyWhitespace } from './whitespace';
@@ -25,6 +29,8 @@ interface RenderCtx {
   warnings: Diagnostic[];
   resolvedBranches: Branch[];
   directives: DirectiveInfo[];
+  snippets: Record<string, string>;
+  includeStack: string[];
   now: number;
 }
 
@@ -44,6 +50,8 @@ export function render(
     warnings: [],
     resolvedBranches: [],
     directives: [],
+    snippets: options?.snippets ?? {},
+    includeStack: [],
     now: options?.now ?? Date.now(),
   };
   const text = tidyWhitespace(renderNodes(ast, ctx));
@@ -69,9 +77,25 @@ function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
       text += renderFor(node, ctx);
     } else if (node.kind === 'directive') {
       text += renderDirective(node, ctx);
+    } else if (node.kind === 'include') {
+      text += renderInclude(node, ctx);
     }
-    // include: 0.3c (render nothing yet).
   }
+  return text;
+}
+
+function renderInclude(node: IncludeNode, ctx: RenderCtx): string {
+  const src = ctx.snippets[node.name];
+  if (src === undefined) return ''; // unknown snippet → nothing
+  if (ctx.includeStack.includes(node.name) || ctx.includeStack.length >= MAX_INCLUDE_DEPTH) {
+    ctx.warnings.push(
+      makeDiagnostic('ML002', `include '${node.name}' is circular or too deeply nested.`, rangeAt(1, 1, 1, 1)),
+    );
+    return '';
+  }
+  ctx.includeStack.push(node.name);
+  const text = renderNodes(parse(src).ast, ctx);
+  ctx.includeStack.pop();
   return text;
 }
 

@@ -1,0 +1,7 @@
+{
+  "name": "#priority renders its body",
+  "template": "{{#priority high}}Payment is overdue — surface this politely.{{/priority}}",
+  "schema": [],
+  "data": {},
+  "expect": { "output": "Payment is overdue — surface this politely.", "warnings": [] }
+}

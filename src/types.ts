@@ -231,6 +231,8 @@ export interface RenderResult {
 export interface RenderOptions {
   /** Reference "now" (epoch ms) for datetime filters. Defaults to the wall clock. */
   now?: number;
+  /** Named reusable snippets (name → template source) resolved by `{{include}}`. */
+  snippets?: Record<string, string>;
 }
 
 /** Runtime context passed to a filter's `apply` (e.g. the reference `now`). */

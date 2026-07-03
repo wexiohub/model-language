@@ -119,6 +119,35 @@ describe('render — loops', () => {
   });
 });
 
+describe('render — includes', () => {
+  it('renders a snippet by name (shared snapshot)', () => {
+    const r = render(parse('Hi {{include "greeting"}}').ast, { user: { name: 'vasyl' } }, [], {
+      snippets: { greeting: '{{user.name}}!' },
+    });
+    expect(r.text).toBe('Hi vasyl!');
+  });
+
+  it('renders nothing for an unknown snippet', () => {
+    expect(render(parse('a{{include "missing"}}b').ast, {}, [], { snippets: {} }).text).toBe('ab');
+  });
+
+  it('breaks a self-referential cycle (ML002)', () => {
+    const r = render(parse('{{include "loop"}}').ast, {}, [], {
+      snippets: { loop: 'A{{include "loop"}}' },
+    });
+    expect(r.text).toBe('A');
+    expect(r.warnings.map((w) => w.code)).toEqual(['ML002']);
+  });
+
+  it('stops at the max include depth (ML002)', () => {
+    const snippets: Record<string, string> = {};
+    for (let i = 1; i <= 6; i += 1) snippets[`s${i}`] = `[s${i}]{{include "s${i + 1}"}}`;
+    const r = render(parse('{{include "s1"}}').ast, {}, [], { snippets });
+    expect(r.text).toBe('[s1][s2][s3][s4][s5]');
+    expect(r.warnings.map((w) => w.code)).toEqual(['ML002']);
+  });
+});
+
 describe('render — whitespace & misc', () => {
   it('collapses 3+ newlines and strips trailing whitespace', () => {
     expect(out('A\n\n\n\nB').text).toBe('A\n\nB');

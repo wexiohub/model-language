@@ -147,7 +147,8 @@ The language ships in milestones, each a publishable minor release:
 - **0.2e** ✅ — array `where`/`sort`/`sum`/`max`/`min`.
 - **0.2f** ✅ — datetime filters (`days_ago`/`days_until`/`is_past`/`is_future`/`date`) + render `now` option.
 - **0.2g** ✅ — `currency` filter. **0.2 complete.**
-- **0.3** — `include` (snippets), directives (`#priority`/`#mode`/`#block`), comments.
+- **0.3** ✅ — comments `{# … #}`, directives (`#priority`/`#mode`/`#block`),
+  `include` (snippets + cycle/depth guards). **The language is feature-complete.**
 - **0.3** — `include` (with cycle detection), directives (`#priority`, `#mode`,
   `#block`), comments.
 

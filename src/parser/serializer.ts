@@ -80,7 +80,9 @@ function nodeToText(node: Node): string {
       const arg = node.name === 'priority' ? node.params.level : node.params.name;
       return `{{#${node.name} ${String(arg)}}}${serialize(node.body)}{{/${node.name}}}`;
     }
+    case 'include':
+      return `{{include "${node.name}"}}`;
     default:
-      return ''; // include / comment (0.3c)
+      return ''; // comment
   }
 }

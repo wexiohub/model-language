@@ -89,11 +89,18 @@ describe('foldBlocks', () => {
     expect(fold('{{elseif a}}').nodes).toEqual([{ kind: 'text', value: '{{elseif a}}' }]);
   });
 
-  it('keeps an unknown block (include) as text', () => {
-    expect(fold('{{include "p"}}Z').nodes).toEqual([
-      { kind: 'text', value: '{{include "p"}}' },
+  it('keeps an unrecognized #directive as text', () => {
+    expect(fold('{{#nope}}Z').nodes).toEqual([
+      { kind: 'text', value: '{{#nope}}' },
       { kind: 'text', value: 'Z' },
     ]);
+  });
+
+  it('folds include into an IncludeNode', () => {
+    expect(fold('{{include "policies/refund"}}').nodes).toEqual([
+      { kind: 'include', name: 'policies/refund', params: {} },
+    ]);
+    expect(fold('{{include}}').nodes[0]).toMatchObject({ kind: 'include', name: '' });
   });
 });
 

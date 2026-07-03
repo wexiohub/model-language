@@ -1,0 +1,8 @@
+{
+  "name": "include renders a named snippet",
+  "template": "{{include \"policy\"}}",
+  "schema": [],
+  "data": {},
+  "snippets": { "policy": "Returns accepted within 30 days." },
+  "expect": { "output": "Returns accepted within 30 days.", "warnings": [] }
+}

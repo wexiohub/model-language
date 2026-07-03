@@ -9,6 +9,15 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.3c — includes.** `{{include "name"}}` renders a host-supplied snippet
+  (`render(ast, data, schema, { snippets })`) against the same data, with cycle
+  detection and a depth limit of 5 (`ML002` on either). **0.3 complete.**
+
+- **0.3b — directives.** `{{#priority level}}` / `{{#mode name}}` (wrap a body)
+  and self-closing `{{#block actions: [...]}}`. Bodies render normally; every
+  directive that fires is collected into the new `RenderResult.directives` for
+  the host to consume as a runtime constraint (routing, tool blocks).
+
 - **0.3a — comments.** `{# … #}` (single- or multi-line) are stripped at parse
   time and never rendered.
 
