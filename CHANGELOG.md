@@ -9,6 +9,10 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2c — multi-select operators.** `contains_any [..]`, `contains_all [..]`, and
+  the unary `is_empty` for `multiEnum` fields, in the parser, evaluator, and
+  serializer. Conformance fixtures W2/W3 added.
+
 - **0.2b — array filters + loop-source pipelines.** `count`, `join: sep`,
   `first`, `last`, `limit: n`, `pluck: "field"`. Filter pipelines now apply to a
   `for` source too — `{{for item in order.items | limit: 3}}`. `ForNode` gained an

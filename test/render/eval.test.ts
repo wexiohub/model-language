@@ -73,6 +73,26 @@ describe('evalExpr — membership & strings', () => {
     expect(ev('a exists', { a: null })).toBe(false);
     expect(ev('a exists', {})).toBe(false);
   });
+
+  it('contains_any', () => {
+    expect(ev('a contains_any ["x", "z"]', { a: ['x', 'y'] })).toBe(true);
+    expect(ev('a contains_any ["z"]', { a: ['x'] })).toBe(false);
+    expect(ev('a contains_any ["x"]', { a: 'notarray' })).toBe(false);
+    expect(ev('a contains_any b', { a: ['x'], b: 5 })).toBe(false);
+  });
+
+  it('contains_all', () => {
+    expect(ev('a contains_all ["x", "y"]', { a: ['x', 'y', 'z'] })).toBe(true);
+    expect(ev('a contains_all ["x", "q"]', { a: ['x'] })).toBe(false);
+    expect(ev('a contains_all ["x"]', { a: 'notarray' })).toBe(false);
+    expect(ev('a contains_all b', { a: ['x'], b: 5 })).toBe(false);
+  });
+
+  it('is_empty (empty array, non-empty, or non-array)', () => {
+    expect(ev('a is_empty', { a: [] })).toBe(true);
+    expect(ev('a is_empty', { a: ['x'] })).toBe(false);
+    expect(ev('a is_empty', {})).toBe(true);
+  });
 });
 
 describe('evalExpr — logic', () => {

@@ -1,0 +1,7 @@
+{
+  "name": "W3: is_empty on a multi-select",
+  "template": "{{if user.interest_level is_empty}}discover{{/if}}",
+  "schema": [{ "path": "user.interest_level", "type": "multiEnum", "values": ["low", "high"] }],
+  "data": { "user": { "interest_level": [] } },
+  "expect": { "output": "discover", "warnings": [] }
+}

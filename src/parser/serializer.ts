@@ -30,8 +30,8 @@ export function exprToText(expr: Expr): string {
     case 'not':
       return `not ${exprToText(expr.expr)}`;
     case 'binary':
-      return expr.op === 'exists'
-        ? `${exprToText(expr.left)} exists`
+      return expr.op === 'exists' || expr.op === 'is_empty'
+        ? `${exprToText(expr.left)} ${expr.op}`
         : `${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)}`;
     case 'logical':
     case 'arith':

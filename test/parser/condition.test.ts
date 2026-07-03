@@ -26,9 +26,20 @@ describe('parseCondition — comparisons', () => {
 
   it('parses word operators', () => {
     expect(parseCondition('a contains "x"')).toMatchObject({ op: 'contains' });
+    expect(parseCondition('a contains_any ["x"]')).toMatchObject({ op: 'contains_any' });
+    expect(parseCondition('a contains_all ["x"]')).toMatchObject({ op: 'contains_all' });
     expect(parseCondition('a startsWith "x"')).toMatchObject({ op: 'startsWith' });
     expect(parseCondition('a endsWith "x"')).toMatchObject({ op: 'endsWith' });
     expect(parseCondition('a matches "x"')).toMatchObject({ op: 'matches' });
+  });
+
+  it('parses is_empty as a unary operator', () => {
+    expect(parseCondition('user.tags is_empty')).toEqual({
+      kind: 'binary',
+      op: 'is_empty',
+      left: { kind: 'path', path: 'user.tags' },
+      right: { kind: 'literal', value: null },
+    });
   });
 
   it('parses a full comparison shape', () => {

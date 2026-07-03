@@ -8,7 +8,18 @@ import type { Expr } from '../types';
  */
 
 const COMPARE_OPS = ['==', '!=', '<=', '>='];
-const WORD_OPS = ['in', 'contains', 'startsWith', 'endsWith', 'matches', 'exists'];
+const WORD_OPS = [
+  'in',
+  'contains',
+  'contains_any',
+  'contains_all',
+  'is_empty',
+  'startsWith',
+  'endsWith',
+  'matches',
+  'exists',
+];
+const UNARY_OPS = new Set(['exists', 'is_empty']);
 const PUNCT = '()[],';
 
 interface Tok {
@@ -127,8 +138,8 @@ class Parser {
     const op = this.peek();
     if (op && (op.t === 'op' || (op.t === 'word' && WORD_OPS.includes(op.v)))) {
       this.next();
-      if (op.v === 'exists') {
-        return { kind: 'binary', op: 'exists', left, right: { kind: 'literal', value: null } };
+      if (UNARY_OPS.has(op.v)) {
+        return { kind: 'binary', op: op.v, left, right: { kind: 'literal', value: null } };
       }
       return { kind: 'binary', op: op.v, left, right: this.primary() };
     }

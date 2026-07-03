@@ -43,6 +43,8 @@ describe('serialize', () => {
       '{{for item in order.items}}[{{ item.title }}]{{/for}}',
       '{{for t in xs}}A{{else}}B{{/for}}',
       '{{for x in items | limit: 3}}[{{ x }}]{{/for}}',
+      '{{if a is_empty}}x{{/if}}',
+      '{{if a contains_any ["x", "y"]}}x{{/if}}',
     ]) {
       expect(serialize(parse(src).ast)).toBe(src);
     }

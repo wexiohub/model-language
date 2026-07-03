@@ -46,6 +46,12 @@ function compare(op: string, left: unknown, right: unknown): boolean {
     case 'contains':
       if (Array.isArray(left)) return left.includes(right);
       return typeof left === 'string' && typeof right === 'string' && left.includes(right);
+    case 'contains_any':
+      return Array.isArray(left) && Array.isArray(right) && right.some((r) => left.includes(r));
+    case 'contains_all':
+      return Array.isArray(left) && Array.isArray(right) && right.every((r) => left.includes(r));
+    case 'is_empty':
+      return !Array.isArray(left) || left.length === 0;
     case 'startsWith':
       return typeof left === 'string' && typeof right === 'string' && left.startsWith(right);
     case 'endsWith':

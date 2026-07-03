@@ -1,9 +1,9 @@
 # Conditionals
 
-**Shipped in 0.1b** — `if/elseif/else`, all comparison + logical operators,
-`exists`, `in`, `contains`, `startsWith`/`endsWith`/`matches`, truthiness, and
-whitespace hygiene render today. (`multiEnum` `contains_any`/`contains_all`/
-`is_empty` and arithmetic land in 0.2.)
+**Shipped** — `if/elseif/else`, all comparison + logical operators, `exists`,
+`in`, `contains`, `startsWith`/`endsWith`/`matches`, truthiness, and whitespace
+hygiene (0.1b); the `multiEnum` operators `contains_any` / `contains_all` /
+`is_empty` (0.2c). Arithmetic lands in 0.2.
 
 Include text only when a condition holds.
 

@@ -1,0 +1,7 @@
+{
+  "name": "W2: contains_any on a multi-select",
+  "template": "{{if user.priority contains_any [\"urgent\", \"high\"]}}fast{{/if}}",
+  "schema": [{ "path": "user.priority", "type": "multiEnum", "values": ["low", "high", "urgent"] }],
+  "data": { "user": { "priority": ["high"] } },
+  "expect": { "output": "fast", "warnings": [] }
+}
