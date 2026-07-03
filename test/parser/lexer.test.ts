@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { tokenize } from '../src/parser/lexer';
+import { tokenize } from '../../src/parser/lexer';
 
 const raws = (source: string) => tokenize(source).map((seg) => [seg.type, seg.raw]);
 

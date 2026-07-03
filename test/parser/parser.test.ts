@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { parse } from '../src/parser/parser';
-import { serialize } from '../src/parser/serializer';
-import type { TemplateNode } from '../src/types';
+import { parse } from '../../src/parser/parser';
+import { serialize } from '../../src/parser/serializer';
+import type { TemplateNode } from '../../src/types';
 
 describe('parse', () => {
   it('empty source → empty AST, no diagnostics', () => {

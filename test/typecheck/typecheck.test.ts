@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parse } from '../src/parser';
-import { typecheck } from '../src/typecheck';
+import { parse } from '../../src/parser';
+import { typecheck } from '../../src/typecheck';
 
 describe('typecheck', () => {
   it('returns no diagnostics yet (scaffold), with and without options', () => {

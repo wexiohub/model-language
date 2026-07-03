@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getFilter, listFilters, registerFilter } from '../src/filters';
-import { allRules, registerRule } from '../src/rules';
+import { getFilter, listFilters, registerFilter } from '../../src/filters';
+import { allRules, registerRule } from '../../src/rules';
 
 describe('filter registry', () => {
   it('registers, resolves, and lists a filter', () => {

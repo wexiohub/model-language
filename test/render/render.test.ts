@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { parse } from '../src/parser/parser';
-import { estimateTokens, render } from '../src/render/render';
-import type { TemplateNode } from '../src/types';
+import { parse } from '../../src/parser/parser';
+import { estimateTokens, render } from '../../src/render/render';
+import type { TemplateNode } from '../../src/types';
 
 describe('render', () => {
   it('renders text and honors the prime directive (no throw, no leaked syntax)', () => {

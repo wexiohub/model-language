@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DIAGNOSTIC_CODES, makeDiagnostic, rangeAt } from '../src/diagnostics';
+import { DIAGNOSTIC_CODES, makeDiagnostic, rangeAt } from '../../src/diagnostics';
 
 describe('rangeAt', () => {
   it('builds a 1-based, end-exclusive range', () => {
