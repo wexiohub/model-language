@@ -9,6 +9,15 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **`ML210` missing-default + `ML213` prompt-too-long** — the two static budget
+  lint rules. `ML210` warns when a `nullable` field is interpolated without a
+  `| default` filter. `validate` now computes a worst-case `maxTokenEstimate`
+  (text exact; interpolation/include nominal, loops maxed, `if` = largest branch)
+  and raises `ML213` when it exceeds `opts.maxTokenEstimate`. `ML211`/`ML212`
+  (unreachable/contradiction) remain reserved — they need branch-domain flow
+  analysis. Conformance fixture `lint-missing-default` added. **Editor lint set
+  complete.**
+
 - **`calculate(expr, decimals?)`** — the first built-in function (a `CallExpr` in
   the grammar): evaluates an expression and rounds it. Parser, evaluator,
   serializer, and typecheck (recurses into call args) support function calls.

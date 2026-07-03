@@ -1,12 +1,15 @@
+import { makeDiagnostic, rangeAt } from './diagnostics';
 import { parse } from './parser';
 import { typecheck } from './typecheck';
-import type { FieldSchema, ValidateOptions, ValidateResult } from './types';
+import { estimateMaxTokens } from './typecheck/budget';
+import type { Diagnostic, FieldSchema, ValidateOptions, ValidateResult } from './types';
 
 /**
- * Composition root for the editor path: parse → typecheck → budget.
+ * Composition root for the editor path: parse → typecheck → token budget.
  *
- * SCAFFOLD: `maxTokenEstimate` is null until milestone 0.2 computes the
- * worst-case (all-branches) render size for the ML213 prompt budget.
+ * `maxTokenEstimate` is the worst-case (largest-branch, loops maxed) render
+ * size; when the host passes `opts.maxTokenEstimate`, exceeding it raises
+ * `ML213`. Never throws.
  */
 export function validate(
   source: string,
@@ -15,9 +18,23 @@ export function validate(
 ): ValidateResult {
   const { ast, diagnostics } = parse(source);
   const typeDiagnostics = typecheck(ast, schema, opts);
+  const maxTokenEstimate = estimateMaxTokens(ast);
+
+  const budgetDiagnostics: Diagnostic[] = [];
+  const budget = opts?.maxTokenEstimate;
+  if (budget !== undefined && maxTokenEstimate > budget) {
+    budgetDiagnostics.push(
+      makeDiagnostic(
+        'ML213',
+        `Prompt may reach ~${maxTokenEstimate} tokens, over the ${budget}-token budget.`,
+        rangeAt(1, 1, 1, 1),
+      ),
+    );
+  }
+
   return {
     ast,
-    diagnostics: [...diagnostics, ...typeDiagnostics],
-    maxTokenEstimate: null,
+    diagnostics: [...diagnostics, ...typeDiagnostics, ...budgetDiagnostics],
+    maxTokenEstimate,
   };
 }

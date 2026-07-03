@@ -268,6 +268,8 @@ export interface LintRule {
 export interface ValidateOptions {
   /** Validate `#block` actions against a specific agent's action registry. */
   agentId?: string;
+  /** Token budget for the prompt; a worst-case estimate above it raises `ML213`. */
+  maxTokenEstimate?: number;
   /** Host-registered extra rules (e.g. private-field, verified-note policy). */
   rules?: LintRule[];
   /** Host-registered extra filters (e.g. locale-aware currency). */

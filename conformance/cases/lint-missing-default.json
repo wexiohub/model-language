@@ -1,0 +1,6 @@
+{
+  "name": "ML210: nullable field interpolated without a default",
+  "template": "Hi {{ user.nickname }}!",
+  "schema": [{ "path": "user.nickname", "type": "string", "nullable": true }],
+  "expect": { "diagnostics": ["ML210"] }
+}

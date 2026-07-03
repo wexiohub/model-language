@@ -41,6 +41,12 @@ from the catalog in [`src/diagnostics/codes.ts`](../src/diagnostics/codes.ts).
 | `ML220` | enum-is-array | error | `==` on a `multiEnum` → quickfix to `contains` |
 | `ML221` | loop-var-shadowing | warning | inner loop reuses an outer loop's item name |
 
+`ML210` (add `| default` to a nullable interpolation) and `ML213` (pass
+`maxTokenEstimate` to `validate` — `validate` also returns the worst-case
+`maxTokenEstimate`) are emitted today. `ML211`/`ML212` require branch-domain
+flow analysis and are **not yet emitted**; the codes are reserved so tooling can
+adopt them without a breaking change.
+
 ## Render — `ML3xx` (warnings only; never throws)
 
 | Code | Name | Cause / degrade |

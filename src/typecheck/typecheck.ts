@@ -5,6 +5,7 @@ import type {
   Diagnostic,
   Expr,
   FieldSchema,
+  Filter,
   Quickfix,
   TemplateNode,
   ValidateOptions,
@@ -77,6 +78,19 @@ export function typecheck(
     }
   };
 
+  const checkMissingDefault = (value: Expr, pipeline: Filter[]): void => {
+    if (value.kind !== 'path') return;
+    const res = resolveField(value.path, schema);
+    if (res.kind !== 'field' || res.def.nullable !== true) return;
+    if (pipeline.some((filter) => filter.name === 'default')) return;
+    const label = res.def.name ?? res.def.path;
+    push(
+      'ML210',
+      `'${label}' can be empty — add '| default: "…"' so the prompt never renders a blank.`,
+      res.def.path,
+    );
+  };
+
   const checkExpr = (expr: Expr): void => {
     switch (expr.kind) {
       case 'path': {
@@ -115,6 +129,7 @@ export function typecheck(
     for (const node of nodes) {
       if (node.kind === 'interpolation') {
         checkExpr(node.value);
+        checkMissingDefault(node.value, node.pipeline);
         for (const filter of node.pipeline) {
           if (!getFilter(filter.name)) {
             push('ML102', `Unknown filter '${filter.name}'.`, filter.name);

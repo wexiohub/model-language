@@ -16,6 +16,7 @@ const schema: FieldSchema = [
   { path: 'user.created_at', type: 'datetime' },
   { path: 'user.status', type: 'enum' },
   { path: 'user.csm.name', type: 'string' },
+  { path: 'user.nickname', type: 'string', nullable: true, name: 'Nickname' },
   { path: 'user.custom.*', type: 'dynamic' },
 ];
 
@@ -58,6 +59,27 @@ describe('typecheck — ML101 unknown-field', () => {
 
   it('recurses into function-call arguments', () => {
     expect(codes('{{ calculate(user.plann, 2) }}')).toEqual(['ML101']);
+  });
+});
+
+describe('typecheck — ML210 missing-default', () => {
+  it('warns when a nullable field is interpolated without a default', () => {
+    const d = check('Hi {{ user.nickname }}!')[0];
+    expect(d?.code).toBe('ML210');
+    expect(d?.severity).toBe('warning');
+    expect(d?.message).toContain('Nickname');
+  });
+
+  it('stays silent when a default filter is present', () => {
+    expect(codes('Hi {{ user.nickname | default: "friend" }}!')).toEqual([]);
+  });
+
+  it('does not warn for a non-nullable field', () => {
+    expect(codes('Hi {{ user.name }}!')).toEqual([]);
+  });
+
+  it('only fires on interpolation, not conditions', () => {
+    expect(codes('{{if user.nickname exists}}x{{/if}}')).toEqual([]);
   });
 });
 

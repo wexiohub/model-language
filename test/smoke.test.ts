@@ -9,10 +9,10 @@ describe('public API (barrel)', () => {
     expect(render(ast, {}, []).text).toBe(src);
   });
 
-  it('validate returns no diagnostics for clean text (scaffold)', () => {
+  it('validate returns no diagnostics for clean text', () => {
     const result = validate('Hello', []);
     expect(result.diagnostics).toEqual([]);
-    expect(result.maxTokenEstimate).toBeNull();
+    expect(result.maxTokenEstimate).toBe(2);
   });
 
   it('exposes registerFilter / registerRule (callable, never throw)', () => {
