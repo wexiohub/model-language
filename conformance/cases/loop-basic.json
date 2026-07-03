@@ -1,0 +1,7 @@
+{
+  "name": "T10: for loop over an array",
+  "template": "{{for i in items}}{{i}};{{/for}}",
+  "schema": [{ "path": "items", "type": "array", "items": "string" }],
+  "data": { "items": ["a", "b"] },
+  "expect": { "output": "a;b;", "warnings": [] }
+}

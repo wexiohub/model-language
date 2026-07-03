@@ -1,6 +1,8 @@
 # Loops
 
-**Milestone 0.2.**
+**Shipped in 0.2a** — `for`, loop locals (`loop.index/first/last/count`), and the
+empty-state `else` render today. Array-filter sources (`| where`, `| sort`,
+`| limit`) land in 0.2b.
 
 Repeat text once per array item.
 

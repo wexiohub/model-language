@@ -9,6 +9,12 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2a — for loops.** `{{for item in <array>}} … {{else}} … {{/for}}` render:
+  block folding generalized to `if` + `for`, per-iteration scope with `item` and
+  loop locals (`loop.index/first/last/count`), empty-state `else`, and non-array
+  sources treated as empty. Whitespace hygiene now preserves inline spaces inside
+  loop bodies. Conformance fixtures T10/T18 added.
+
 - **0.1c — editor lint rules.** `validate()` now typechecks against the schema
   and returns diagnostics: `ML101` unknown-field (with nearest-path suggestion),
   `ML102` unknown-filter, `ML201` type-mismatch, `ML202` unknown-enum-value,

@@ -140,8 +140,9 @@ The language ships in milestones, each a publishable minor release:
 - **0.1c** ✅ — typecheck lint rules (ML101 unknown-field + suggestions, ML102
   unknown-filter, ML201 type-mismatch, ML202 unknown-enum-value, ML214 raw-date,
   ML220 `==`→`contains`).
-- **0.2** — `for` loops + loop locals, array/string/number/datetime filters,
-  arithmetic + `calculate()`.
+- **0.2a** ✅ — `for` loops + loop locals + empty-state `else`.
+- **0.2** — array/string/number/datetime filters, arithmetic + `calculate()`,
+  benchmarks.
 - **0.3** — `include` (with cycle detection), directives (`#priority`, `#mode`,
   `#block`), comments.
 

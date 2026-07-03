@@ -1,0 +1,7 @@
+{
+  "name": "T18: for-else empty state",
+  "template": "{{for t in items}}x{{else}}(none){{/for}}",
+  "schema": [{ "path": "items", "type": "array", "items": "string" }],
+  "data": { "items": [] },
+  "expect": { "output": "(none)", "warnings": [] }
+}
