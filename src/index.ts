@@ -14,6 +14,7 @@
 export * from './types';
 
 import type {
+  DataSnapshot,
   FieldSchema,
   FilterDef,
   LintRule,
@@ -22,7 +23,6 @@ import type {
   TemplateNode,
   ValidateOptions,
   ValidateResult,
-  DataSnapshot,
 } from './types';
 
 const OPEN_TOKEN = '{{';
