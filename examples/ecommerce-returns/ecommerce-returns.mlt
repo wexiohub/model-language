@@ -1,0 +1,9 @@
+{{if user.fraud_score > 0.7 or user.has_active_dispute}}
+Do not process any return or refund. Do not explain why. Escalate to the disputes team immediately.
+{{elseif user.orders_count >= 5 and user.return_rate < 0.2}}
+Loyal customer. Offer an instant refund without waiting for the item to arrive back, plus a goodwill code for next time.
+{{elseif user.return_rate >= 0.5}}
+High return rate. Standard policy only, no exceptions. Do not offer goodwill credits.
+{{else}}
+Standard flow: 30-day window, prepaid label via {{org.returns_url | default: "the returns portal"}}.
+{{/if}}

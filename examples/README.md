@@ -30,6 +30,11 @@ Hi there! You have beta, vip tags.
 | [plan-badge](./plan-badge/) | `if/elseif/else` + `==` | 0.1b ✅ |
 | [verified-note](./verified-note/) | `contains` on an array | 0.1b ✅ |
 | [support-router](./support-router/) | nested `if`, `and`/`or`, `contains`, whitespace hygiene | 0.1b ✅ |
+| [saas-churn](./saas-churn/) | SaaS retention — `and`/`in`/`>`, nested `if`, `default` | 0.1b ✅ |
+| [ecommerce-returns](./ecommerce-returns/) | four-way segmentation — `>`/`or`/`>=`/`<`, `elseif` chain | 0.1b ✅ |
+| [role-scoping](./role-scoping/) | data-platform RBAC — role `==`, `exists`, array | 0.1b ✅ |
+| [support-triage](./support-triage/) | prompt assembled from 3 independent `if` blocks | 0.1b ✅ |
+| [appointment-reminder](./appointment-reminder/) | scheduling — namespace `exists`, `not`, nested `if` | 0.1b ✅ |
 | [greeting](./greeting/) | interpolation + a date condition | 0.1a / 0.2 |
 | [billing-escalation](./billing-escalation/) | conditions + `#priority` + arithmetic | 0.2 |
 | [order-status](./order-status/) | existence + `for` loop + `date` | 0.2 |

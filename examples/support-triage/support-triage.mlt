@@ -1,0 +1,13 @@
+{{if user.priority contains "urgent"}}
+Acknowledge the urgency in your first sentence. No upsell. Escalate after one failed resolution attempt.
+{{/if}}
+{{if user.category == "billing"}}
+Billing topic — verify the account email on file before discussing any charges.
+{{elseif user.category == "technical"}}
+Technical topic — ask for the exact error message and the steps to reproduce.
+{{elseif user.category == "sales"}}
+Sales topic — qualify budget and timeline before proposing a plan.
+{{/if}}
+{{if user.chat_status contains "waiting_reply"}}
+The user has been waiting for a reply. Open with a brief apology for the delay.
+{{/if}}
