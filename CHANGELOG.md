@@ -9,6 +9,14 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.1b — conditionals.** `{{if …}}{{elseif …}}{{else}}{{/if}}` render for real:
+  a recursive-descent condition parser (comparison + logical operators, `exists`,
+  `in`, `contains`, `startsWith`/`endsWith`/`matches`, precedence, parentheses),
+  block folding with `ML001` recovery, an expression evaluator (operator × type
+  matrix — mismatches → `false`, never throws), truthiness, `resolvedBranches`
+  tracking, and whitespace hygiene (block-only lines leave no residue).
+  Conformance fixtures added for T2/T5/T8/T14/T16.
+
 - **0.1a — interpolation rendering.** `{{ path | default: "…" }}` now renders for
   real: tag classification (interpolation vs deferred block), interpolation
   expression + filter-pipeline parsing, canonical serialization (round-trip),

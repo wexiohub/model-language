@@ -1,0 +1,7 @@
+{
+  "name": "T8: array contains",
+  "template": "{{if user.tags contains \"vip\"}}VIP{{/if}}",
+  "schema": [{ "path": "user.tags", "type": "array", "items": "string" }],
+  "data": { "user": { "tags": ["beta", "vip"] } },
+  "expect": { "output": "VIP", "warnings": [] }
+}

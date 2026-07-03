@@ -1,0 +1,7 @@
+{
+  "name": "T2: in operator on enum",
+  "template": "{{if user.plan in [\"pro\", \"team\"]}}Priority support.{{/if}}",
+  "schema": [{ "path": "user.plan", "type": "enum", "values": ["free", "pro", "team"] }],
+  "data": { "user": { "plan": "pro" } },
+  "expect": { "output": "Priority support.", "warnings": [] }
+}

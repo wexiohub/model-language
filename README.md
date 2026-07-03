@@ -5,11 +5,11 @@
 > engine renders them into clean prompts against live data. **Never crashes,
 > never leaks syntax.**
 
-> ⚠️ **Status: 0.1a — interpolation shipped; conditionals next (0.1b).** The
-> public API below is stable and final; the language lands milestone-by-milestone.
-> Today `{{ path | default: "…" }}` interpolation renders for real (safe
-> navigation, stringification, the `default` filter); `{{if …}}` blocks render
-> from 0.1b.
+> ⚠️ **Status: 0.1b — interpolation + conditionals shipped.** The public API
+> below is stable and final; the language lands milestone-by-milestone. Today
+> `{{ path | default: "…" }}` interpolation and `{{if …}}{{elseif …}}{{else}}{{/if}}`
+> conditionals (all operators, truthiness, whitespace hygiene) render for real.
+> Loops, filters, and arithmetic land in 0.2.
 
 ---
 
@@ -133,8 +133,9 @@ The language ships in milestones, each a publishable minor release:
 - **0.1a** ✅ — variables `{{ path | default }}`, safe navigation,
   stringification, the `default` filter, canonical `parse`/`serialize`,
   conformance suite.
-- **0.1b** — `if/elseif/else`, comparison/logical operators, `and/or/not`,
-  truthiness, whitespace hygiene.
+- **0.1b** ✅ — `if/elseif/else`, comparison/logical operators, `and/or/not`,
+  `exists`/`in`/`contains`/`startsWith`/`endsWith`/`matches`, truthiness,
+  whitespace hygiene.
 - **0.1c** — typecheck lint rules (ML001, ML101, ML201, ML202, ML220, ML214).
 - **0.2** — `for` loops + loop locals, array/string/number/datetime filters,
   arithmetic + `calculate()`.

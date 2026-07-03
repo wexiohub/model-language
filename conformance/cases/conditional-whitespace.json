@@ -1,0 +1,7 @@
+{
+  "name": "T16: block-only lines leave no whitespace residue",
+  "template": "A\n{{if x}}\nB\n{{/if}}\nC",
+  "schema": [{ "path": "x", "type": "boolean" }],
+  "data": { "x": true },
+  "expect": { "output": "A\nB\nC", "warnings": [] }
+}

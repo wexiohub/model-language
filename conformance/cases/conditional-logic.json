@@ -1,0 +1,10 @@
+{
+  "name": "T14: logical and + not, truthiness of null",
+  "template": "{{if user.is_verified and not user.csm}}A{{/if}}",
+  "schema": [
+    { "path": "user.is_verified", "type": "boolean" },
+    { "path": "user.csm", "type": "object", "nullable": true }
+  ],
+  "data": { "user": { "is_verified": true, "csm": null } },
+  "expect": { "output": "A", "warnings": [] }
+}

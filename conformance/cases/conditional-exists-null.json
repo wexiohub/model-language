@@ -1,0 +1,7 @@
+{
+  "name": "T5: exists is false for null (else branch)",
+  "template": "{{if user.csm exists}}A{{else}}B{{/if}}",
+  "schema": [{ "path": "user.csm", "type": "object", "nullable": true }],
+  "data": { "user": { "csm": null } },
+  "expect": { "output": "B", "warnings": [] }
+}
