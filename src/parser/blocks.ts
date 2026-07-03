@@ -2,7 +2,7 @@ import { makeDiagnostic, rangeAt } from '../diagnostics';
 import type { Diagnostic, IfNode, Node, TemplateNode } from '../types';
 import { parseCondition } from './condition';
 import { parseInterpolation } from './expression';
-import { classifyTag, type Segment, tagInner } from './lexer';
+import { type Segment, classifyTag, tagInner } from './lexer';
 
 interface OpenIf {
   ifNode: IfNode;
