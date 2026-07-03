@@ -14,7 +14,9 @@ export function trimBlockLines(segments: Segment[]): Segment[] {
     const prev = out[i - 1];
     const next = out[i + 1];
     if (prev && prev.type === 'text') {
-      prev.raw = prev.raw.replace(/(^|\n)[ \t]*$/, '$1');
+      // Only strip indentation that follows a newline — never an inline space
+      // run that is actually part of the rendered text (e.g. a loop body).
+      prev.raw = prev.raw.replace(/\n[ \t]*$/, '\n');
     }
     if (next && next.type === 'text') {
       next.raw = next.raw.replace(/^[ \t]*\n/, '');
