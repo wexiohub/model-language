@@ -57,9 +57,9 @@ describe('serialize', () => {
   });
 
   it('serializes literal values (number, string, boolean, null, undefined, mixed array)', () => {
-    const lit = (
-      value: string | number | boolean | null | undefined | unknown[],
-    ): TemplateNode => [{ kind: 'interpolation', value: { kind: 'literal', value }, pipeline: [] }];
+    const lit = (value: string | number | boolean | null | undefined | unknown[]): TemplateNode => [
+      { kind: 'interpolation', value: { kind: 'literal', value }, pipeline: [] },
+    ];
     expect(serialize(lit(42))).toBe('{{ 42 }}');
     expect(serialize(lit('hi'))).toBe('{{ "hi" }}');
     expect(serialize(lit(true))).toBe('{{ true }}');
