@@ -40,6 +40,8 @@ describe('serialize', () => {
       'Hi {{ user.name | default: "there" }}!',
       '{{if a == 1}}x{{elseif b exists}}y{{else}}z{{/if}}',
       'a {{if not user.blocked and user.plan in ["pro", "team"]}}b{{/if}} c',
+      '{{for item in order.items}}[{{ item.title }}]{{/for}}',
+      '{{for t in xs}}A{{else}}B{{/for}}',
     ]) {
       expect(serialize(parse(src).ast)).toBe(src);
     }

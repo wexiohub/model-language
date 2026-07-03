@@ -7,6 +7,7 @@ import type {
   Diagnostic,
   FieldSchema,
   Filter,
+  ForNode,
   IfNode,
   InterpolationNode,
   RenderResult,
@@ -51,9 +52,29 @@ function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
       text += renderInterpolation(node, ctx);
     } else if (node.kind === 'if') {
       text += renderIf(node, ctx);
+    } else if (node.kind === 'for') {
+      text += renderFor(node, ctx);
     }
-    // include / directive / comment: 0.2+ (render nothing).
+    // include / directive / comment: 0.3+ (render nothing).
   }
+  return text;
+}
+
+function renderFor(node: ForNode, ctx: RenderCtx): string {
+  const source = evalExpr(node.source, ctx.snapshot);
+  const items = Array.isArray(source) ? source : [];
+  if (items.length === 0) {
+    return node.elseBody ? renderNodes(node.elseBody, ctx) : '';
+  }
+  let text = '';
+  items.forEach((item, i) => {
+    const childSnapshot: DataSnapshot = {
+      ...ctx.snapshot,
+      [node.item]: item,
+      loop: { index: i + 1, first: i === 0, last: i === items.length - 1, count: items.length },
+    };
+    text += renderNodes(node.body, { ...ctx, snapshot: childSnapshot });
+  });
   return text;
 }
 

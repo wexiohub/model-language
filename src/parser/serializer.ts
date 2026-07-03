@@ -65,7 +65,12 @@ function nodeToText(node: Node): string {
       });
       return `${parts.join('')}{{/if}}`;
     }
+    case 'for': {
+      const head = `{{for ${node.item} in ${exprToText(node.source)}}}`;
+      const elsePart = node.elseBody ? `{{else}}${serialize(node.elseBody)}` : '';
+      return `${head}${serialize(node.body)}${elsePart}{{/for}}`;
+    }
     default:
-      return ''; // for / include / directive / comment (0.2+)
+      return ''; // include / directive / comment (0.3+)
   }
 }

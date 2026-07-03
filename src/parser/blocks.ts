@@ -1,16 +1,12 @@
 import { makeDiagnostic, rangeAt } from '../diagnostics';
-import type { Diagnostic, IfNode, Node, TemplateNode } from '../types';
+import type { Diagnostic, ForNode, IfNode, Node, TemplateNode } from '../types';
 import { parseCondition } from './condition';
 import { parseInterpolation } from './expression';
 import { type Segment, classifyTag, tagInner } from './lexer';
 
-interface OpenIf {
-  ifNode: IfNode;
-  /** The current branch's body — where children append (updated on elseif/else). */
-  body: Node[];
-  startOffset: number;
-  endOffset: number;
-}
+type OpenBlock =
+  | { kind: 'if'; node: IfNode; body: Node[]; start: number; end: number }
+  | { kind: 'for'; node: ForNode; body: Node[]; start: number; end: number };
 
 /** 1-based line/column for a source offset. */
 function posAt(source: string, offset: number): { line: number; col: number } {
@@ -28,28 +24,42 @@ function posAt(source: string, offset: number): { line: number; col: number } {
   return { line, col };
 }
 
+/** Parse a `for` header `item in <source>` → item name + source expression. */
+function parseForHeader(inner: string): { item: string; source: ForNode['source'] } {
+  const header = inner.slice(inner.indexOf('for') + 3).trim();
+  const inIdx = header.indexOf(' in ');
+  const item = inIdx === -1 ? header : header.slice(0, inIdx).trim();
+  const srcStr = inIdx === -1 ? '' : header.slice(inIdx + 4).trim();
+  return { item, source: parseCondition(srcStr) };
+}
+
 /**
  * Fold the flat lexer segment stream into a nested AST: interpolation tags →
- * InterpolationNode, `if`/`elseif`/`else`/`/if` → nested IfNode, everything
- * else → text. Unclosed `if` → `ML001` (closed at EOF, recovery). A stray
- * `elseif`/`else`/`/if` with no open `if` is kept as text. Never throws.
+ * InterpolationNode; `if/elseif/else/​/if` → nested IfNode; `for/else/​/for` →
+ * ForNode (with an optional empty-state `else`); everything else → text. An
+ * unclosed block → `ML001` (closed at EOF). Stray `else`/`/if`/`/for` with no
+ * matching open block stay as text. Never throws.
  */
 export function foldBlocks(
   segments: Segment[],
   source: string,
 ): { nodes: TemplateNode; diagnostics: Diagnostic[] } {
   const root: TemplateNode = [];
-  const stack: OpenIf[] = [];
+  const stack: OpenBlock[] = [];
   const diagnostics: Diagnostic[] = [];
 
+  const top = (): OpenBlock | undefined => stack[stack.length - 1];
   const currentBody = (): Node[] => {
-    const top = stack[stack.length - 1];
-    return top ? top.body : root;
+    const t = top();
+    return t ? t.body : root;
+  };
+  const asText = (raw: string): void => {
+    currentBody().push({ kind: 'text', value: raw });
   };
 
   for (const seg of segments) {
     if (seg.type === 'text') {
-      currentBody().push({ kind: 'text', value: seg.raw });
+      asText(seg.raw);
       continue;
     }
     if (classifyTag(seg.raw) === 'interpolation') {
@@ -65,51 +75,68 @@ export function foldBlocks(
 
     if (head === 'if') {
       const body: Node[] = [];
-      const ifNode: IfNode = { kind: 'if', branches: [{ condition: parseCondition(rest), body }] };
-      stack.push({ ifNode, body, startOffset: seg.start, endOffset: seg.end });
+      const node: IfNode = { kind: 'if', branches: [{ condition: parseCondition(rest), body }] };
+      stack.push({ kind: 'if', node, body, start: seg.start, end: seg.end });
+    } else if (head === 'for') {
+      const { item, source: src } = parseForHeader(inner);
+      const body: Node[] = [];
+      const node: ForNode = { kind: 'for', item, source: src, body };
+      stack.push({ kind: 'for', node, body, start: seg.start, end: seg.end });
     } else if (head === 'elseif') {
-      const top = stack[stack.length - 1];
-      if (top) {
+      const t = top();
+      if (t?.kind === 'if') {
         const body: Node[] = [];
-        top.ifNode.branches.push({ condition: parseCondition(rest), body });
-        top.body = body;
+        t.node.branches.push({ condition: parseCondition(rest), body });
+        t.body = body;
       } else {
-        currentBody().push({ kind: 'text', value: seg.raw });
+        asText(seg.raw);
       }
     } else if (head === 'else') {
-      const top = stack[stack.length - 1];
-      if (top) {
+      const t = top();
+      if (t?.kind === 'if') {
         const body: Node[] = [];
-        top.ifNode.branches.push({ condition: null, body });
-        top.body = body;
+        t.node.branches.push({ condition: null, body });
+        t.body = body;
+      } else if (t?.kind === 'for') {
+        t.node.elseBody = [];
+        t.body = t.node.elseBody;
       } else {
-        currentBody().push({ kind: 'text', value: seg.raw });
+        asText(seg.raw);
       }
     } else if (head === '/if') {
-      const closed = stack.pop();
-      if (closed) {
-        currentBody().push(closed.ifNode);
+      const t = top();
+      if (t?.kind === 'if') {
+        stack.pop();
+        currentBody().push(t.node);
       } else {
-        currentBody().push({ kind: 'text', value: seg.raw });
+        asText(seg.raw);
+      }
+    } else if (head === '/for') {
+      const t = top();
+      if (t?.kind === 'for') {
+        stack.pop();
+        currentBody().push(t.node);
+      } else {
+        asText(seg.raw);
       }
     } else {
-      // Unknown block (for / include / directive) — deferred; keep as text.
-      currentBody().push({ kind: 'text', value: seg.raw });
+      // Unknown block (include / directive) — deferred; keep as text.
+      asText(seg.raw);
     }
   }
 
   while (stack.length > 0) {
-    const open = stack.pop() as OpenIf;
-    const start = posAt(source, open.startOffset);
-    const end = posAt(source, open.endOffset);
+    const open = stack.pop() as OpenBlock;
+    const start = posAt(source, open.start);
+    const end = posAt(source, open.end);
     diagnostics.push(
       makeDiagnostic(
         'ML001',
-        "'{{if}}' is never closed. Add '{{/if}}'.",
+        `'{{${open.kind}}}' is never closed. Add '{{/${open.kind}}}'.`,
         rangeAt(start.line, start.col, end.line, end.col),
       ),
     );
-    currentBody().push(open.ifNode);
+    currentBody().push(open.node);
   }
 
   return { nodes: root, diagnostics };

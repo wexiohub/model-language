@@ -89,11 +89,61 @@ describe('foldBlocks', () => {
     expect(fold('{{elseif a}}').nodes).toEqual([{ kind: 'text', value: '{{elseif a}}' }]);
   });
 
-  it('keeps an unknown block (for) as text', () => {
-    expect(fold('{{for x in y}}Z{{/for}}').nodes).toEqual([
-      { kind: 'text', value: '{{for x in y}}' },
+  it('keeps an unknown block (include) as text', () => {
+    expect(fold('{{include "p"}}Z').nodes).toEqual([
+      { kind: 'text', value: '{{include "p"}}' },
       { kind: 'text', value: 'Z' },
-      { kind: 'text', value: '{{/for}}' },
     ]);
+  });
+});
+
+describe('foldBlocks — for loops', () => {
+  it('folds a simple for', () => {
+    expect(fold('{{for item in order.items}}-{{/for}}').nodes).toEqual([
+      {
+        kind: 'for',
+        item: 'item',
+        source: parseCondition('order.items'),
+        body: [{ kind: 'text', value: '-' }],
+      },
+    ]);
+  });
+
+  it('folds a for with an empty-state else', () => {
+    expect(fold('{{for t in xs}}A{{else}}none{{/for}}').nodes).toEqual([
+      {
+        kind: 'for',
+        item: 't',
+        source: parseCondition('xs'),
+        body: [{ kind: 'text', value: 'A' }],
+        elseBody: [{ kind: 'text', value: 'none' }],
+      },
+    ]);
+  });
+
+  it('handles a for header without `in` (recovery)', () => {
+    expect(fold('{{for x}}A{{/for}}').nodes[0]).toMatchObject({ kind: 'for', item: 'x' });
+  });
+
+  it('reports ML001 for an unclosed for', () => {
+    const { nodes, diagnostics } = fold('{{for x in y}}Z');
+    expect(diagnostics.map((d) => d.code)).toEqual(['ML001']);
+    expect(nodes[0]).toMatchObject({ kind: 'for', item: 'x' });
+  });
+
+  it('keeps stray / mismatched block tags as text', () => {
+    expect(fold('{{/for}}').nodes).toEqual([{ kind: 'text', value: '{{/for}}' }]);
+    expect(fold('{{for x in y}}{{/if}}{{/for}}').nodes[0]).toMatchObject({
+      kind: 'for',
+      body: [{ kind: 'text', value: '{{/if}}' }],
+    });
+    expect(fold('{{if a}}{{/for}}{{/if}}').nodes[0]).toMatchObject({
+      kind: 'if',
+      branches: [{ body: [{ kind: 'text', value: '{{/for}}' }] }],
+    });
+    expect(fold('{{for x in y}}{{elseif a}}{{/for}}').nodes[0]).toMatchObject({
+      kind: 'for',
+      body: [{ kind: 'text', value: '{{elseif a}}' }],
+    });
   });
 });

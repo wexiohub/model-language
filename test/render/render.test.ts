@@ -73,6 +73,30 @@ describe('render — conditionals', () => {
   });
 });
 
+describe('render — loops', () => {
+  it('iterates an array with loop locals (index, last)', () => {
+    const src = '{{for item in xs}}{{loop.index}}:{{item}}{{if not loop.last}}, {{/if}}{{/for}}';
+    expect(out(src, { xs: ['a', 'b', 'c'] }).text).toBe('1:a, 2:b, 3:c');
+  });
+
+  it('exposes item fields and loop.first / loop.count', () => {
+    const src = '{{for o in orders}}{{o.id}}{{if loop.first}}(first){{/if}}/{{loop.count}} {{/for}}';
+    expect(out(src, { orders: [{ id: 'A' }, { id: 'B' }] }).text).toBe('A(first)/2 B/2 ');
+  });
+
+  it('renders the else branch for an empty array', () => {
+    expect(out('{{for t in xs}}x{{else}}none{{/for}}', { xs: [] }).text).toBe('none');
+  });
+
+  it('renders nothing for an empty array with no else', () => {
+    expect(out('{{for t in xs}}x{{/for}}', { xs: [] }).text).toBe('');
+  });
+
+  it('treats a non-array source as empty', () => {
+    expect(out('{{for t in xs}}x{{else}}none{{/for}}', { xs: 42 }).text).toBe('none');
+  });
+});
+
 describe('render — whitespace & misc', () => {
   it('collapses 3+ newlines and strips trailing whitespace', () => {
     expect(out('A\n\n\n\nB').text).toBe('A\n\nB');
