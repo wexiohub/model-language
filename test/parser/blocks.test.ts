@@ -125,6 +125,14 @@ describe('foldBlocks — for loops', () => {
     expect(fold('{{for x}}A{{/for}}').nodes[0]).toMatchObject({ kind: 'for', item: 'x' });
   });
 
+  it('captures a source filter pipeline', () => {
+    expect(fold('{{for x in items | limit: 3}}-{{/for}}').nodes[0]).toMatchObject({
+      kind: 'for',
+      item: 'x',
+      pipeline: [{ name: 'limit', args: [{ kind: 'literal', value: 3 }] }],
+    });
+  });
+
   it('reports ML001 for an unclosed for', () => {
     const { nodes, diagnostics } = fold('{{for x in y}}Z');
     expect(diagnostics.map((d) => d.code)).toEqual(['ML001']);

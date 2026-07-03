@@ -1,5 +1,5 @@
 import { makeDiagnostic, rangeAt } from '../diagnostics';
-import type { Diagnostic, ForNode, IfNode, Node, TemplateNode } from '../types';
+import type { Diagnostic, Expr, Filter, ForNode, IfNode, Node, TemplateNode } from '../types';
 import { parseCondition } from './condition';
 import { parseInterpolation } from './expression';
 import { type Segment, classifyTag, tagInner } from './lexer';
@@ -24,13 +24,14 @@ function posAt(source: string, offset: number): { line: number; col: number } {
   return { line, col };
 }
 
-/** Parse a `for` header `item in <source>` → item name + source expression. */
-function parseForHeader(inner: string): { item: string; source: ForNode['source'] } {
+/** Parse a `for` header `item in <source> | <filters>` → item + source + pipeline. */
+function parseForHeader(inner: string): { item: string; source: Expr; pipeline: Filter[] } {
   const header = inner.slice(inner.indexOf('for') + 3).trim();
   const inIdx = header.indexOf(' in ');
   const item = inIdx === -1 ? header : header.slice(0, inIdx).trim();
   const srcStr = inIdx === -1 ? '' : header.slice(inIdx + 4).trim();
-  return { item, source: parseCondition(srcStr) };
+  const { value, pipeline } = parseInterpolation(srcStr);
+  return { item, source: value, pipeline };
 }
 
 /**
@@ -78,9 +79,10 @@ export function foldBlocks(
       const node: IfNode = { kind: 'if', branches: [{ condition: parseCondition(rest), body }] };
       stack.push({ kind: 'if', node, body, start: seg.start, end: seg.end });
     } else if (head === 'for') {
-      const { item, source: src } = parseForHeader(inner);
+      const { item, source: src, pipeline } = parseForHeader(inner);
       const body: Node[] = [];
       const node: ForNode = { kind: 'for', item, source: src, body };
+      if (pipeline.length > 0) node.pipeline = pipeline;
       stack.push({ kind: 'for', node, body, start: seg.start, end: seg.end });
     } else if (head === 'elseif') {
       const t = top();

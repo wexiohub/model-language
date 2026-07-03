@@ -97,6 +97,11 @@ describe('render — loops', () => {
   it('treats a non-array source as empty', () => {
     expect(out('{{for t in xs}}x{{else}}none{{/for}}', { xs: 42 }).text).toBe('none');
   });
+
+  it('applies a filter pipeline to the loop source', () => {
+    const src = '{{for x in items | limit: 2}}{{x}};{{/for}}';
+    expect(out(src, { items: ['a', 'b', 'c', 'd'] }).text).toBe('a;b;');
+  });
 });
 
 describe('render — whitespace & misc', () => {

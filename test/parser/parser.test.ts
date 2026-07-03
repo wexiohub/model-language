@@ -42,6 +42,7 @@ describe('serialize', () => {
       'a {{if not user.blocked and user.plan in ["pro", "team"]}}b{{/if}} c',
       '{{for item in order.items}}[{{ item.title }}]{{/for}}',
       '{{for t in xs}}A{{else}}B{{/for}}',
+      '{{for x in items | limit: 3}}[{{ x }}]{{/for}}',
     ]) {
       expect(serialize(parse(src).ast)).toBe(src);
     }

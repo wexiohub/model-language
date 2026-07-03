@@ -1,0 +1,7 @@
+{
+  "name": "for over a limited source (source pipeline)",
+  "template": "{{for x in items | limit: 2}}{{x}};{{/for}}",
+  "schema": [{ "path": "items", "type": "array", "items": "string" }],
+  "data": { "items": ["a", "b", "c", "d"] },
+  "expect": { "output": "a;b;", "warnings": [] }
+}

@@ -129,6 +129,8 @@ export interface ForNode {
   kind: 'for';
   item: string;
   source: Expr;
+  /** Filter pipeline applied to the source before iterating (`items | limit: 3`). */
+  pipeline?: Filter[];
   body: Node[];
   elseBody?: Node[];
 }

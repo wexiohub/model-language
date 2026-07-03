@@ -61,7 +61,10 @@ function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
 }
 
 function renderFor(node: ForNode, ctx: RenderCtx): string {
-  const source = evalExpr(node.source, ctx.snapshot);
+  let source = evalExpr(node.source, ctx.snapshot);
+  for (const filter of node.pipeline ?? []) {
+    source = applyFilter(filter, source, ctx.snapshot);
+  }
   const items = Array.isArray(source) ? source : [];
   if (items.length === 0) {
     return node.elseBody ? renderNodes(node.elseBody, ctx) : '';

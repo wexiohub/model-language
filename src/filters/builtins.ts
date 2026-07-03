@@ -2,6 +2,7 @@ import type { FilterDef } from '../types';
 
 const asString = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
 const asNumber = (v: unknown): number | undefined => (typeof v === 'number' ? v : undefined);
+const asArray = (v: unknown): unknown[] | undefined => (Array.isArray(v) ? v : undefined);
 
 /** Round half away from zero ("school" rounding): 2.5 → 3, -2.5 → -3. */
 function roundHalfAway(x: number, digits: number): number {
@@ -110,7 +111,62 @@ const percent: FilterDef = {
   },
 };
 
-/** Built-in filters seeded into the registry. Array + datetime filters: 0.2b/c. */
+// ── Array ────────────────────────────────────────────────────────────────────
+const count: FilterDef = {
+  name: 'count',
+  apply: (input) => {
+    const a = asArray(input);
+    return a === undefined ? input : a.length;
+  },
+};
+
+const join: FilterDef = {
+  name: 'join',
+  apply: (input, args) => {
+    const a = asArray(input);
+    const sep = asString(args[0]) ?? ', ';
+    return a === undefined ? input : a.map((x) => String(x)).join(sep);
+  },
+};
+
+const first: FilterDef = {
+  name: 'first',
+  apply: (input) => {
+    const a = asArray(input);
+    return a === undefined ? input : a[0];
+  },
+};
+
+const last: FilterDef = {
+  name: 'last',
+  apply: (input) => {
+    const a = asArray(input);
+    return a === undefined ? input : a[a.length - 1];
+  },
+};
+
+const limit: FilterDef = {
+  name: 'limit',
+  apply: (input, args) => {
+    const a = asArray(input);
+    const n = asNumber(args[0]);
+    return a === undefined || n === undefined ? input : a.slice(0, n);
+  },
+};
+
+const pluck: FilterDef = {
+  name: 'pluck',
+  apply: (input, args) => {
+    const a = asArray(input);
+    const field = asString(args[0]);
+    if (a === undefined || field === undefined) return input;
+    return a.map((item) =>
+      item && typeof item === 'object' ? (item as Record<string, unknown>)[field] : undefined,
+    );
+  },
+};
+
+/** Built-in filters seeded into the registry. Datetime + currency: next slice. */
 export const BUILTIN_FILTERS: FilterDef[] = [
   defaultFilter,
   upper,
@@ -124,4 +180,10 @@ export const BUILTIN_FILTERS: FilterDef[] = [
   ceil,
   abs,
   percent,
+  count,
+  join,
+  first,
+  last,
+  limit,
+  pluck,
 ];

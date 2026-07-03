@@ -66,7 +66,9 @@ function nodeToText(node: Node): string {
       return `${parts.join('')}{{/if}}`;
     }
     case 'for': {
-      const head = `{{for ${node.item} in ${exprToText(node.source)}}}`;
+      const pipe = (node.pipeline ?? []).map(filterToText).join(' | ');
+      const src = pipe ? `${exprToText(node.source)} | ${pipe}` : exprToText(node.source);
+      const head = `{{for ${node.item} in ${src}}}`;
       const elsePart = node.elseBody ? `{{else}}${serialize(node.elseBody)}` : '';
       return `${head}${serialize(node.body)}${elsePart}{{/for}}`;
     }

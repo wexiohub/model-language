@@ -9,6 +9,11 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2b — array filters + loop-source pipelines.** `count`, `join: sep`,
+  `first`, `last`, `limit: n`, `pluck: "field"`. Filter pipelines now apply to a
+  `for` source too — `{{for item in order.items | limit: 3}}`. `ForNode` gained an
+  optional `pipeline`.
+
 - **0.2b — string & number filters.** `upper`, `lower`, `trim`, `capitalize`,
   `truncate: n`, `replace: from, to`; `round: n=0` (half away from zero),
   `floor`, `ceil`, `abs`, `percent`. Each is total — the wrong input type passes
