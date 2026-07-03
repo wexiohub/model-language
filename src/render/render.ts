@@ -1,48 +1,71 @@
 import { makeDiagnostic, rangeAt } from '../diagnostics';
 import { getFilter } from '../filters';
+import { exprToText } from '../parser/serializer';
 import type {
+  Branch,
   DataSnapshot,
   Diagnostic,
-  Expr,
   FieldSchema,
   Filter,
+  IfNode,
   InterpolationNode,
   RenderResult,
   TemplateNode,
 } from '../types';
-import { resolvePath } from './resolve-path';
+import { evalCondition, evalExpr } from './eval';
 import { stringifyValue } from './stringify';
+import { tidyWhitespace } from './whitespace';
+
+interface RenderCtx {
+  snapshot: DataSnapshot;
+  warnings: Diagnostic[];
+  resolvedBranches: Branch[];
+}
 
 /**
  * Renderer — evaluates an AST against a typed data snapshot into the final
- * string. The runtime (hot) path: pure, synchronous, allocation-light, and it
- * MUST NEVER throw or leak template syntax. Problems degrade to empty output +
- * a `warnings` entry.
+ * string. The runtime (hot) path: pure, synchronous, never throws, never leaks
+ * syntax. Problems degrade to empty output + a `warnings` entry.
  */
 export function render(
   ast: TemplateNode,
   snapshot: DataSnapshot,
   _schema: FieldSchema,
 ): RenderResult {
-  let text = '';
-  const warnings: Diagnostic[] = [];
+  const ctx: RenderCtx = { snapshot, warnings: [], resolvedBranches: [] };
+  const text = tidyWhitespace(renderNodes(ast, ctx));
+  return {
+    text,
+    warnings: ctx.warnings,
+    resolvedBranches: ctx.resolvedBranches,
+    tokenEstimate: estimateTokens(text),
+  };
+}
 
-  for (const node of ast) {
+function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
+  let text = '';
+  for (const node of nodes) {
     if (node.kind === 'text') {
       text += node.value;
     } else if (node.kind === 'interpolation') {
-      text += renderInterpolation(node, snapshot, warnings);
+      text += renderInterpolation(node, ctx);
+    } else if (node.kind === 'if') {
+      text += renderIf(node, ctx);
     }
-    // if / for / include / directive / comment: 0.1b+ (render nothing for now).
+    // include / directive / comment: 0.2+ (render nothing).
   }
-
-  return { text, warnings, resolvedBranches: [], tokenEstimate: estimateTokens(text) };
+  return text;
 }
 
-function evalExpr(expr: Expr, snapshot: DataSnapshot): unknown {
-  if (expr.kind === 'path') return resolvePath(snapshot, expr.path);
-  if (expr.kind === 'literal') return expr.value;
-  return undefined; // binary / logical / not / arith: 0.1b.
+function renderIf(node: IfNode, ctx: RenderCtx): string {
+  for (const branch of node.branches) {
+    const result = branch.condition === null ? true : evalCondition(branch.condition, ctx.snapshot);
+    if (branch.condition !== null) {
+      ctx.resolvedBranches.push({ line: 1, condition: exprToText(branch.condition), result });
+    }
+    if (result) return renderNodes(branch.body, ctx);
+  }
+  return '';
 }
 
 function applyFilter(filter: Filter, input: unknown, snapshot: DataSnapshot): unknown {
@@ -52,18 +75,14 @@ function applyFilter(filter: Filter, input: unknown, snapshot: DataSnapshot): un
   return def.apply(input, args);
 }
 
-function renderInterpolation(
-  node: InterpolationNode,
-  snapshot: DataSnapshot,
-  warnings: Diagnostic[],
-): string {
-  let value = evalExpr(node.value, snapshot);
+function renderInterpolation(node: InterpolationNode, ctx: RenderCtx): string {
+  let value = evalExpr(node.value, ctx.snapshot);
   for (const filter of node.pipeline) {
-    value = applyFilter(filter, value, snapshot);
+    value = applyFilter(filter, value, ctx.snapshot);
   }
   const { text, wasEmpty } = stringifyValue(value);
   if (wasEmpty) {
-    warnings.push(
+    ctx.warnings.push(
       makeDiagnostic('ML301', 'interpolated an empty value with no default', rangeAt(1, 1, 1, 1)),
     );
   }

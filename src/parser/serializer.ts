@@ -3,27 +3,40 @@ import type { Expr, Filter, Node, TemplateNode } from '../types';
 /**
  * Serializer — renders an AST back to canonical template text with
  * deterministic whitespace. Invariant: `parse(serialize(ast)) ≡ ast`.
- *
- * Canonical interpolation form: single spaces inside the braces, ` | ` between
- * filters, `: ` before args, `, ` between args. Block/comment nodes arrive in
- * 0.1b+.
+ * Canonical forms: `{{ path | filter: arg }}`, `{{if <cond>}}` /
+ * `{{elseif <cond>}}` / `{{else}}` / `{{/if}}`.
  */
 export function serialize(ast: TemplateNode): string {
   return ast.map(nodeToText).join('');
 }
 
-function exprToText(expr: Expr): string {
-  if (expr.kind === 'path') return expr.path;
-  if (expr.kind === 'literal') {
-    const v = expr.value;
-    if (typeof v === 'string') return `"${v}"`;
-    if (v === null) return 'null';
-    if (v === undefined) return 'undefined';
-    if (Array.isArray(v)) return `[${v.map((x) => String(x)).join(', ')}]`;
-    return String(v);
+function literalToText(v: string | number | boolean | null | undefined | unknown[]): string {
+  if (typeof v === 'string') return `"${v}"`;
+  if (v === null) return 'null';
+  if (v === undefined) return 'undefined';
+  if (Array.isArray(v)) {
+    return `[${v.map((x) => (typeof x === 'string' ? `"${x}"` : String(x))).join(', ')}]`;
   }
-  // Binary / logical / not / arith arrive in 0.1b.
-  return '';
+  return String(v);
+}
+
+/** Serialize an expression to canonical condition/interpolation text. */
+export function exprToText(expr: Expr): string {
+  switch (expr.kind) {
+    case 'path':
+      return expr.path;
+    case 'literal':
+      return literalToText(expr.value);
+    case 'not':
+      return `not ${exprToText(expr.expr)}`;
+    case 'binary':
+      return expr.op === 'exists'
+        ? `${exprToText(expr.left)} exists`
+        : `${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)}`;
+    case 'logical':
+    case 'arith':
+      return `${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)}`;
+  }
 }
 
 function filterToText(filter: Filter): string {
@@ -40,8 +53,19 @@ function nodeToText(node: Node): string {
       const body = pipe ? `${exprToText(node.value)} | ${pipe}` : exprToText(node.value);
       return `{{ ${body} }}`;
     }
-    // if / for / include / directive / comment arrive in 0.1b+.
+    case 'if': {
+      const parts: string[] = [];
+      node.branches.forEach((branch, i) => {
+        if (branch.condition === null) {
+          parts.push('{{else}}');
+        } else {
+          parts.push(`{{${i === 0 ? 'if' : 'elseif'} ${exprToText(branch.condition)}}}`);
+        }
+        parts.push(serialize(branch.body));
+      });
+      return `${parts.join('')}{{/if}}`;
+    }
     default:
-      return '';
+      return ''; // for / include / directive / comment (0.2+)
   }
 }
