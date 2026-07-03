@@ -57,3 +57,18 @@ export function tokenize(source: string): Segment[] {
 
   return segments;
 }
+
+const BLOCK_KEYWORDS = ['if', 'elseif', 'else', '/if', 'for', '/for', 'include'];
+
+/** Inner text of a `{{ … }}` tag, delimiters stripped and trimmed. */
+export function tagInner(raw: string): string {
+  return raw.slice(OPEN.length, raw.length - CLOSE.length).trim();
+}
+
+/** Classify a tag by its leading token. Block handling lands in 0.1b. */
+export function classifyTag(raw: string): 'interpolation' | 'block' {
+  const inner = tagInner(raw);
+  if (inner.startsWith('#') || inner.startsWith('{#')) return 'block';
+  const head = inner.split(/[\s(]/, 1)[0];
+  return BLOCK_KEYWORDS.includes(head) ? 'block' : 'interpolation';
+}
