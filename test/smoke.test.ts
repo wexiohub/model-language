@@ -1,33 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import { parse, render, serialize, validate } from '../src/index';
+import {
+  parse,
+  registerFilter,
+  registerRule,
+  render,
+  serialize,
+  validate,
+} from '../src/index';
 
-describe('scaffold smoke', () => {
-  it('parses plain text into a single text node', () => {
-    const { ast, diagnostics } = parse('Hello, world');
-    expect(diagnostics).toHaveLength(0);
-    expect(ast).toEqual([{ kind: 'text', value: 'Hello, world' }]);
+describe('public API (barrel)', () => {
+  it('round-trips plain text through parse → serialize → render', () => {
+    const src = 'Hello, world';
+    const { ast } = parse(src);
+    expect(serialize(ast)).toBe(src);
+    expect(render(ast, {}, []).text).toBe(src);
   });
 
-  it('parses an empty string into an empty AST', () => {
-    expect(parse('').ast).toEqual([]);
-  });
-
-  it('render never throws and returns the text (prime directive)', () => {
-    const { ast } = parse('Just text.');
-    const out = render(ast, {}, []);
-    expect(out.text).toBe('Just text.');
-    expect(out.warnings).toEqual([]);
-    expect(out.tokenEstimate).toBeGreaterThan(0);
-  });
-
-  it('serialize round-trips plain text', () => {
-    const src = 'plain content';
-    expect(serialize(parse(src).ast)).toBe(src);
-  });
-
-  it('validate returns the parse result with no diagnostics yet', () => {
+  it('validate returns no diagnostics for clean text (scaffold)', () => {
     const result = validate('Hello', []);
     expect(result.diagnostics).toEqual([]);
     expect(result.maxTokenEstimate).toBeNull();
+  });
+
+  it('exposes registerFilter / registerRule (callable, never throw)', () => {
+    expect(() => registerFilter({ name: 'noop', apply: (v) => v })).not.toThrow();
+    expect(() => registerRule({ code: 'ML999', check: () => [] })).not.toThrow();
   });
 });

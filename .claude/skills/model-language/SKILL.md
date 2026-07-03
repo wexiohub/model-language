@@ -20,6 +20,9 @@ this skill adds the step-by-step recipes.
    mutate signatures. A signature change is a major version.
 4. **Golden suite is the contract.** Breaking a golden case is a breaking semver
    change — intended or not, treat it as a red flag until proven intentional.
+5. **100% coverage is a hard CI gate** (`pnpm test:cov`, thresholds in
+   `vitest.config.ts`). Coverage is the floor; also cover *cases* — see the case
+   matrix in `CLAUDE.md`. Every new line AND every small/complex path is tested.
 
 ## Workflow for any change (TDD)
 
@@ -78,9 +81,9 @@ this skill adds the step-by-step recipes.
 
 Pulling a later-milestone feature forward needs a plan update first.
 
-## Reference
+## Reference (this package only)
 
-- Language spec (types, operators, filters, lint codes, golden tests): the
-  consuming app's `docs/AI_MODEL_LANGUAGE.md`.
-- Build/phasing design: the app's `docs/superpowers/specs/2026-07-03-model-language-design.md`.
-- This repo's always-on rules: `CLAUDE.md`.
+- Language reference — types, operators, filters, blocks, diagnostics: [`docs/`](../../../docs/).
+- Public API: [`docs/api.md`](../../../docs/api.md) and the type contract in `src/types.ts`.
+- Runnable examples: [`examples/`](../../../examples/).
+- Always-on repo rules: `CLAUDE.md`.

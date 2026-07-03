@@ -1,0 +1,8 @@
+{{if order exists}}
+Order #{{order.id}} — {{order.status}}, ETA {{order.eta | date: "MMM D"}}.
+{{for item in order.items}}
+- {{item.title}} × {{item.qty}}
+{{/for}}
+{{else}}
+No recent order. Ask for the order number or the checkout email.
+{{/if}}

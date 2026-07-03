@@ -89,6 +89,41 @@ object · dynamic` (+ `null` vs `undefined`). Dates are compared through filters
 
 Full type contract: [`src/types.ts`](./src/types.ts).
 
+## Documentation
+
+Complete reference in [`docs/`](./docs/):
+
+- [Getting started](./docs/getting-started.md) · [Public API](./docs/api.md)
+- [Variables](./docs/variables.md) · [Types](./docs/types/README.md)
+  ([`null` vs `undefined`](./docs/types/null-vs-undefined.md)) ·
+  [Conditionals](./docs/conditionals.md) · [Loops](./docs/loops.md)
+- [Math & functions](./docs/functions.md) · [Filters](./docs/filters/README.md) ·
+  [Directives & includes](./docs/directives.md)
+- [Diagnostics catalog](./docs/diagnostics.md)
+
+Runnable templates with data + expected output: [`examples/`](./examples/).
+
+## Project structure
+
+```
+src/
+  index.ts       public barrel (API + types)
+  engine.ts      composition root — validate()
+  types.ts       public type contract
+  diagnostics/   ML### code catalog + Diagnostic factory
+  parser/        lexer → parser → serializer  (source ↔ AST)
+  typecheck/     AST × schema → diagnostics
+  render/        AST × data → final string (never throws)
+  filters/       filter registry (+ registerFilter)
+  rules/         lint-rule registry (+ registerRule)
+test/            golden + per-module unit + fuzz + round-trip
+docs/            language reference
+examples/        runnable templates
+```
+
+Contributor guide: [`CLAUDE.md`](./CLAUDE.md). Editing playbook:
+[`.claude/skills/model-language`](./.claude/skills/model-language/SKILL.md).
+
 ## Roadmap
 
 The language ships in milestones, each a publishable minor release:

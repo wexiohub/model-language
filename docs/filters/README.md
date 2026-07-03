@@ -1,0 +1,63 @@
+# Filters
+
+Typed pipeline functions applied with `|`:
+
+```
+{{value | filter: arg1, arg2 | nextFilter}}
+```
+
+Each filter declares a typed signature. Wrong input type → edit-time lint
+(`ML203`); at runtime the value passes through unchanged with a warning — a filter
+**never throws**. Hosts add their own with [`registerFilter`](../api.md#registerfilterdef).
+
+## Universal — **0.1**
+
+| Filter | Signature | Example |
+|---|---|---|
+| `default` | `T? → fallback:T → T` | `{{user.name \| default: "there"}}` — the null-safety workhorse; the fallback may be a field: `default: org.default_language` |
+
+## String — **0.2**
+
+`capitalize` · `upper` · `lower` · `trim` · `truncate: n` (adds `…`) ·
+`replace: from, to`
+
+```
+{{user.bio | trim | truncate: 80}}
+```
+
+## Number — **0.2**
+
+`round: n=0` · `percent` (`0.34` → `34%`) · `currency: code`
+(`1234.5` + `"USD"` → `$1,234.50`) · `abs`
+
+`currency` needs a locale; the package ships a minimal formatter and a host can
+`registerFilter` a locale-aware one.
+
+## Datetime — **0.2**
+
+| Filter | Returns | Example |
+|---|---|---|
+| `date: fmt` | string | `{{user.created_at \| date: "MMM D, YYYY"}}` |
+| `days_ago` | number | `{{if user.last_active \| days_ago > 30}}` |
+| `days_until` | number | `{{if subscription.renews_at \| days_until <= 7}}` |
+| `is_past` / `is_future` | boolean | `{{if trial.ends_at \| is_past}}` |
+
+Datetime comparisons always go through a filter that returns a number/boolean —
+authors never learn raw date-comparison semantics, and raw `>` on a date is a
+lint error (`ML214`).
+
+## Array — **0.2**
+
+`count` → number · `join: sep` → string · `first` / `last` → item ·
+`limit: n` → array · `pluck: "field"` → array · `where: "field", op, value` →
+array · `sum: "field"` / `max: "field"` / `min: "field"` → number ·
+`sort: "field", "asc"|"desc"` → array
+
+```
+{{order.items | where: "status", "==", "unshipped" | sum: "price" | currency: "USD"}}
+```
+
+## See also
+
+- [Variables](../variables.md) · [Loops](../loops.md) ·
+  [`registerFilter`](../api.md#registerfilterdef)

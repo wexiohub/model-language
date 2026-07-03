@@ -9,11 +9,10 @@ a standalone npm package. Non-technical users write templates with variables,
 conditions, and loops; the engine parses → typechecks → renders them into clean
 prompts against live data.
 
-The canonical **language specification** (types, operators, filters, blocks, lint
-codes, golden tests) lives in the consuming app's repo at
-`docs/AI_MODEL_LANGUAGE.md` (Wexio `backend-app`), and the build/phasing design at
-`docs/superpowers/specs/2026-07-03-model-language-design.md`. This package
-implements that language.
+The canonical **language reference** (types, operators, filters, blocks,
+diagnostics) lives in this package under [`docs/`](./docs/); the public API is in
+[`docs/api.md`](./docs/api.md); runnable examples in [`examples/`](./examples/).
+The package is self-contained — do not reference any consuming app's repo here.
 
 ## Prime directive (never violate)
 
@@ -38,12 +37,23 @@ missing sentence.
 
 ```
 src/
-  types.ts     Public type contract — schema, AST, diagnostics, results. Stable API.
-  index.ts     Public functions: parse · serialize · validate · render · registerFilter · registerRule
-  (0.1+)       lexer.ts · parser.ts · typecheck.ts · render.ts · filters/ · rules/  ← added per milestone
+  index.ts       Public barrel (API + types). Thin.
+  engine.ts      Composition root — wires parse → typecheck into validate().
+  types.ts       Public type contract — schema, AST, diagnostics, results. Stable API.
+  diagnostics/   ML### code catalog (codes.ts) + Diagnostic factory (factory.ts).
+  parser/        lexer.ts → parser.ts → serializer.ts  (source ↔ AST). "Parse variables" lives here.
+  typecheck/     typecheck.ts — AST × schema → diagnostics (editor path).
+  render/        render.ts — AST × data → final string (runtime path, never throws). "Smart output" here.
+  filters/       registry.ts — filter registry (+ registerFilter).
+  rules/         registry.ts — lint-rule registry (+ registerRule).
+  (0.2+)         resolve/  ← async function/provider pre-resolve phase, sits beside render/
 test/
-  *.test.ts    Golden suite (the contract) + unit + fuzz + round-trip
+  *.test.ts      Golden suite (the contract) + per-module unit + fuzz + round-trip
 ```
+
+Each pipeline phase is its own folder with an `index.ts` barrel. Add new
+filters under `filters/`, new lint rules under `rules/`, new AST/operator
+support across `parser/` + `typecheck/` + `render/` together.
 
 ## Tooling & commands
 
@@ -74,17 +84,30 @@ CI runs lint → typecheck → test → build on every push/PR; keep it green. U
 
 ## Testing discipline (this is the product)
 
+**100% coverage is a hard gate, not a goal.** `pnpm test:cov` enforces 100%
+lines / branches / functions / statements (see `vitest.config.ts`); CI runs it
+and **fails on any gap**. Coverage is the floor — you also owe *case* coverage:
+exercise every small and every complex path, not just every line.
+
 1. **TDD.** Write the failing test first, then implement.
 2. **Golden suite is the contract.** The acceptance cases (T1–T18 etc. from the
    language spec) are executable. **Breaking one is a breaking semver change** —
    bump accordingly and note it in `CHANGELOG.md`.
-3. **Examples-as-tests.** Every code example added to `README.md` must also be a
+3. **Exhaustive case matrix** — every change is tested across:
+   - every **operator × type** cell it touches (valid → result; invalid → edit-time
+     lint error AND runtime `false`, never a throw);
+   - every **filter** including the **wrong-input-type** case (pass-through + ML203);
+   - every **lint code** — assert `code` + `severity` + `range` + each `quickfix`;
+   - the **empty/edge inputs**: `null` vs `undefined` vs empty-string vs empty-array,
+     deep null access (safe navigation), whitespace-only lines, deeply nested and
+     adjacent blocks, unclosed/malformed input (parser recovery);
+   - at least one **complex end-to-end** template (nested `if`/`for`/filters) with a
+     realistic snapshot, asserting exact rendered output + `resolvedBranches`.
+4. **Examples-as-tests.** Every code example added to `README.md` must also be a
    passing test — docs never drift from behavior.
-4. **Fuzz the prime directive.** Any change to `parse`/`render` keeps the fuzz
-   guarantee: random + malformed input never throws, parse always recovers.
-5. **Round-trip invariant:** `parse(serialize(ast)) ≡ ast`.
-6. Every filter and every lint rule gets its own unit test (assert diagnostic
-   `code` + `range` + `quickfix`).
+5. **Fuzz the prime directive.** Any change to `parse`/`render` keeps the fuzz
+   guarantee: thousands of random + malformed inputs — never throws, always recovers.
+6. **Round-trip invariant:** `parse(serialize(ast)) ≡ ast`.
 
 ## Milestone scope (don't build ahead)
 

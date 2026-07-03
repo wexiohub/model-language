@@ -1,0 +1,9 @@
+{{if subscription exists and subscription.status == "past_due"}}
+{{#priority high}}
+Payment issue: {{subscription.days_past_due}} days overdue.
+Guide them to update the card: {{org.billing_portal_url}}.
+{{if subscription.days_past_due > 7}}
+Warn access is suspended in {{14 - subscription.days_past_due}} days.
+{{/if}}
+{{/priority}}
+{{/if}}

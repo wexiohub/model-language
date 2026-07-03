@@ -1,0 +1,6 @@
+{{if user.lead_status contains "new" and user.interest_level is_empty}}
+Discovery mode: learn budget and timeline. Don't pitch plans yet.
+{{if not user.budget_range exists}}Naturally ask about budget.{{/if}}
+{{elseif user.lead_status contains "qualified" and user.interest_level contains "high"}}
+Hot lead. Budget: {{user.budget_range | default: "not stated"}}. Move toward a demo.
+{{/if}}
