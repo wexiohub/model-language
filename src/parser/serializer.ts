@@ -34,8 +34,9 @@ export function exprToText(expr: Expr): string {
         ? `${exprToText(expr.left)} ${expr.op}`
         : `${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)}`;
     case 'logical':
-    case 'arith':
       return `${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)}`;
+    case 'arith':
+      return `(${exprToText(expr.left)} ${expr.op} ${exprToText(expr.right)})`;
   }
 }
 

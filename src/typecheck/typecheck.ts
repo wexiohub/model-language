@@ -99,8 +99,12 @@ export function typecheck(
         checkExpr(expr.right);
         checkComparison(expr.left, expr.op, expr.right);
         break;
+      case 'arith':
+        checkExpr(expr.left);
+        checkExpr(expr.right);
+        break;
       default:
-        break; // literal / arith
+        break; // literal
     }
   };
 

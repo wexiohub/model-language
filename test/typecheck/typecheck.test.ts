@@ -51,6 +51,10 @@ describe('typecheck — ML101 unknown-field', () => {
     expect(codes('{{if user.plann and user.zzzzzzz}}x{{/if}}')).toEqual(['ML101', 'ML101']);
     expect(codes('{{if user.plan == "pro"}}{{user.plann}}{{/if}}')).toEqual(['ML101']);
   });
+
+  it('recurses into arithmetic operands', () => {
+    expect(codes('{{ 14 - user.plann }}')).toEqual(['ML101']);
+  });
 });
 
 describe('typecheck — ML102 unknown-filter', () => {

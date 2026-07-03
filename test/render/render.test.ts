@@ -33,6 +33,13 @@ describe('render — interpolation', () => {
     expect(r.text).toBe('Hi !');
     expect(r.warnings.map((w) => w.code)).toEqual(['ML301']);
   });
+
+  it('renders arithmetic in interpolation', () => {
+    expect(out('Suspended in {{ 14 - user.days }} days.', { user: { days: 9 } }).text).toBe(
+      'Suspended in 5 days.',
+    );
+    expect(out('{{ (a + b) * 2 }}', { a: 3, b: 4 }).text).toBe('14');
+  });
 });
 
 describe('render — conditionals', () => {

@@ -81,9 +81,21 @@ export function evalExpr(expr: Expr, snapshot: DataSnapshot): unknown {
     }
     case 'binary':
       return compare(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
-    default:
-      return undefined; // arithmetic: 0.2
+    case 'arith':
+      return arith(expr.op, evalExpr(expr.left, snapshot), evalExpr(expr.right, snapshot));
   }
+}
+
+/** Numbers-only arithmetic — a non-number operand or a non-finite result (÷0,
+ *  overflow) yields `undefined`, never NaN. */
+function arith(op: string, left: unknown, right: unknown): number | undefined {
+  if (typeof left !== 'number' || typeof right !== 'number') return undefined;
+  let r: number;
+  if (op === '+') r = left + right;
+  else if (op === '-') r = left - right;
+  else if (op === '*') r = left * right;
+  else r = left / right;
+  return Number.isFinite(r) ? r : undefined;
 }
 
 /** Evaluate an expression as a boolean condition. */

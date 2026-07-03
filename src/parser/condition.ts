@@ -34,7 +34,7 @@ function isSpace(c: string): boolean {
 /** A word (path / bare identifier / keyword) char — anything that isn't a
  *  delimiter, operator char, or quote. */
 function isWordChar(c: string): boolean {
-  return !/[\s()[\],=<>!"']/.test(c);
+  return !/[\s()[\],=<>!"'+*/-]/.test(c);
 }
 
 function tokenize(src: string): Tok[] {
@@ -56,6 +56,9 @@ function tokenize(src: string): Tok[] {
       toks.push({ t: 'op', v: src.slice(i, i + 2) });
       i += 2;
     } else if (c === '<' || c === '>') {
+      toks.push({ t: 'op', v: c });
+      i += 1;
+    } else if (c === '+' || c === '-' || c === '*' || c === '/') {
       toks.push({ t: 'op', v: c });
       i += 1;
     } else {
@@ -134,19 +137,52 @@ class Parser {
   }
 
   private comparison(): Expr {
-    const left = this.primary();
+    const left = this.additive();
     const op = this.peek();
     if (op && (op.t === 'op' || (op.t === 'word' && WORD_OPS.includes(op.v)))) {
       this.next();
       if (UNARY_OPS.has(op.v)) {
         return { kind: 'binary', op: op.v, left, right: { kind: 'literal', value: null } };
       }
-      return { kind: 'binary', op: op.v, left, right: this.primary() };
+      return { kind: 'binary', op: op.v, left, right: this.additive() };
+    }
+    return left;
+  }
+
+  private additive(): Expr {
+    let left = this.multiplicative();
+    let t = this.peek();
+    while (t && (t.v === '+' || t.v === '-')) {
+      this.next();
+      left = { kind: 'arith', op: t.v === '+' ? '+' : '-', left, right: this.multiplicative() };
+      t = this.peek();
+    }
+    return left;
+  }
+
+  private multiplicative(): Expr {
+    let left = this.primary();
+    let t = this.peek();
+    while (t && (t.v === '*' || t.v === '/')) {
+      this.next();
+      left = { kind: 'arith', op: t.v === '*' ? '*' : '/', left, right: this.primary() };
+      t = this.peek();
     }
     return left;
   }
 
   private primary(): Expr {
+    const lead = this.peek();
+    if (lead?.v === '-') {
+      const after = this.toks[this.pos + 1];
+      if (after && /^\d+(\.\d+)?$/.test(after.v)) {
+        this.next();
+        this.next();
+        return { kind: 'literal', value: -Number(after.v) };
+      }
+      this.next();
+      return { kind: 'arith', op: '-', left: { kind: 'literal', value: 0 }, right: this.primary() };
+    }
     const t = this.next();
     if (!t) return { kind: 'literal', value: undefined };
     if (t.v === '(') {

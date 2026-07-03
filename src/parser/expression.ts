@@ -1,9 +1,9 @@
 import type { Expr, Filter } from '../types';
+import { parseCondition } from './condition';
 
 /**
  * Split `s` on `sep`, ignoring `sep` inside single/double quotes. Always returns
- * at least one element (the tuple type reflects that, so callers need no
- * undefined guards).
+ * at least one element.
  */
 function splitTopLevel(s: string, sep: string): [string, ...string[]] {
   const out: string[] = [];
@@ -27,27 +27,19 @@ function splitTopLevel(s: string, sep: string): [string, ...string[]] {
   return out as [string, ...string[]];
 }
 
-/** Parse a single operand: a quoted string, number, boolean, null/undefined, or a path. */
-function parseValue(raw: string): Expr {
-  const t = raw.trim();
-  if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
-    return { kind: 'literal', value: t.slice(1, -1) };
-  }
-  if (t === 'true' || t === 'false') return { kind: 'literal', value: t === 'true' };
-  if (t === 'null') return { kind: 'literal', value: null };
-  if (t === 'undefined') return { kind: 'literal', value: undefined };
-  if (/^-?\d+(\.\d+)?$/.test(t)) return { kind: 'literal', value: Number(t) };
-  return { kind: 'path', path: t };
-}
-
-/** Parse `value | filter: a, b | filter2` into a value + filter pipeline. */
+/**
+ * Parse `value | filter: a, b | filter2` into a value + filter pipeline. The
+ * value (and each filter argument) is a full expression, so arithmetic works:
+ * `{{ (order.total - order.discount) | round: 2 }}`.
+ */
 export function parseInterpolation(inner: string): { value: Expr; pipeline: Filter[] } {
   const [valuePart, ...filterParts] = splitTopLevel(inner, '|');
-  const value = parseValue(valuePart);
+  const value = parseCondition(valuePart);
   const pipeline: Filter[] = filterParts.map((part) => {
     const [namePart, argPart] = splitTopLevel(part, ':');
     const name = namePart.trim();
-    const args = argPart === undefined ? [] : splitTopLevel(argPart, ',').map((a) => parseValue(a));
+    const args =
+      argPart === undefined ? [] : splitTopLevel(argPart, ',').map((a) => parseCondition(a));
     return { name, args };
   });
   return { value, pipeline };

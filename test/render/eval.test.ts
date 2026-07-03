@@ -109,6 +109,35 @@ describe('evalExpr — logic', () => {
   });
 });
 
+describe('evalExpr — arithmetic', () => {
+  it('computes + - * /', () => {
+    expect(ev('a + 1', { a: 2 })).toBe(3);
+    expect(ev('a - 1', { a: 2 })).toBe(1);
+    expect(ev('a * 3', { a: 2 })).toBe(6);
+    expect(ev('a / 2', { a: 6 })).toBe(3);
+  });
+
+  it('respects precedence and parentheses', () => {
+    expect(ev('2 + 3 * 4')).toBe(14);
+    expect(ev('(2 + 3) * 4')).toBe(20);
+  });
+
+  it('handles negative literals and unary minus', () => {
+    expect(ev('-5 + 2')).toBe(-3);
+    expect(ev('-a', { a: 3 })).toBe(-3);
+    expect(ev('-')).toBeUndefined();
+  });
+
+  it('non-number operands → undefined (never NaN)', () => {
+    expect(ev('a * 2', { a: 'x' })).toBeUndefined();
+    expect(ev('2 * a', { a: 'x' })).toBeUndefined();
+  });
+
+  it('division by zero → undefined', () => {
+    expect(ev('a / 0', { a: 5 })).toBeUndefined();
+  });
+});
+
 describe('evalExpr — recovery', () => {
   it('unknown operator → false', () => {
     const expr: Expr = {
@@ -119,14 +148,14 @@ describe('evalExpr — recovery', () => {
     };
     expect(evalExpr(expr, {})).toBe(false);
   });
-  it('arithmetic is deferred (undefined for now)', () => {
+  it('evaluates a hand-built arithmetic node', () => {
     const expr: Expr = {
       kind: 'arith',
       op: '+',
       left: { kind: 'literal', value: 1 },
       right: { kind: 'literal', value: 2 },
     };
-    expect(evalExpr(expr, {})).toBeUndefined();
+    expect(evalExpr(expr, {})).toBe(3);
   });
 });
 

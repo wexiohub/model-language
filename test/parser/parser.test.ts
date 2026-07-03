@@ -45,6 +45,8 @@ describe('serialize', () => {
       '{{for x in items | limit: 3}}[{{ x }}]{{/for}}',
       '{{if a is_empty}}x{{/if}}',
       '{{if a contains_any ["x", "y"]}}x{{/if}}',
+      '{{if user.score >= (user.range + 1)}}x{{/if}}',
+      '{{ (order.total - order.discount) | round: 2 }}',
     ]) {
       expect(serialize(parse(src).ast)).toBe(src);
     }
@@ -81,7 +83,7 @@ describe('serialize', () => {
         left: { kind: 'path', path: 'a' },
         right: { kind: 'literal', value: 1 },
       }),
-    ).toBe('a + 1');
+    ).toBe('(a + 1)');
     expect(serialize([{ kind: 'comment' }])).toBe('');
   });
 });
