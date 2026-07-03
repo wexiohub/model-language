@@ -1,0 +1,7 @@
+{
+  "name": "T11: arithmetic in interpolation",
+  "template": "Suspended in {{ 14 - subscription.days_past_due }} days.",
+  "schema": [{ "path": "subscription.days_past_due", "type": "number" }],
+  "data": { "subscription": { "days_past_due": 9 } },
+  "expect": { "output": "Suspended in 5 days.", "warnings": [] }
+}

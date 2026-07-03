@@ -9,6 +9,13 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2d — arithmetic.** `+ - * /`, parentheses, unary minus, with `* /`
+  binding tighter than `+ -`, in conditions and interpolation
+  (`{{if user.score >= user.range + 1}}`, `{{ 14 - x }}`). Strictly numbers-only:
+  a non-number operand or a non-finite result (÷0, overflow) yields `undefined`
+  (empty output), never `NaN`. Interpolation values + filter args now parse as
+  full expressions. Conformance fixture T11 added.
+
 - **0.2c — multi-select operators.** `contains_any [..]`, `contains_all [..]`, and
   the unary `is_empty` for `multiEnum` fields, in the parser, evaluator, and
   serializer. Conformance fixtures W2/W3 added.

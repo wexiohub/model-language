@@ -42,10 +42,11 @@ typing):
 | `null` / `undefined` | `` (empty) + `ML301` unless `\| default` |
 | object | `` (empty) + `ML302` warning |
 
-## Arithmetic & math (0.2)
+## Arithmetic & math (shipped 0.2d)
 
-Arithmetic (`+ - * /`, parentheses) works inside interpolation and comparisons,
-and is strictly numbers-only — no JavaScript coercion:
+Arithmetic (`+ - * /`, parentheses, unary minus) works inside interpolation and
+comparisons, and is strictly numbers-only — a non-number operand yields empty
+output (never `NaN`), and division by zero yields empty:
 
 ```
 Access will be suspended in {{14 - subscription.days_past_due}} days.

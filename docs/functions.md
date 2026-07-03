@@ -1,6 +1,8 @@
 # Math & functions
 
-**Arithmetic + `calculate()` → milestone 0.2. Async functions → Phase 4.**
+**Arithmetic (`+ - * /`, parentheses, unary minus) shipped in 0.2d.** `calculate()`
+sugar and async functions come later (the `round`/`floor`/`ceil` filters already
+cover precision — `{{ x | round: 2 }}`). Async functions → Phase 4.
 
 Math, `calculate()`, and future helpers (`fetch`, domain functions) are **one
 extensible model**, alongside [filters](./filters/README.md) and

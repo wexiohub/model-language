@@ -141,8 +141,10 @@ The language ships in milestones, each a publishable minor release:
   unknown-filter, ML201 type-mismatch, ML202 unknown-enum-value, ML214 raw-date,
   ML220 `==`→`contains`).
 - **0.2a** ✅ — `for` loops + loop locals + empty-state `else`.
-- **0.2** — array/string/number/datetime filters, arithmetic + `calculate()`,
-  benchmarks.
+- **0.2b** ✅ — string/number/array filters + loop-source pipelines.
+- **0.2c** ✅ — `multiEnum` operators (`contains_any`/`contains_all`/`is_empty`).
+- **0.2d** ✅ — arithmetic (`+ - * /`, parens, unary minus).
+- **0.2** — datetime filters + `currency`, array `where`/`sort`/`sum`, benchmarks.
 - **0.3** — `include` (with cycle detection), directives (`#priority`, `#mode`,
   `#block`), comments.
 
