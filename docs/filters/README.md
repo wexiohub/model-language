@@ -16,7 +16,7 @@ Each filter declares a typed signature. Wrong input type → edit-time lint
 |---|---|---|
 | `default` | `T? → fallback:T → T` | `{{user.name \| default: "there"}}` — the null-safety workhorse; returns the fallback for `null` / `undefined` / empty string. The fallback may itself be a field: `default: org.default_language` |
 
-## String — **0.2**
+## String — **shipped (0.2b)**
 
 `capitalize` · `upper` · `lower` · `trim` · `truncate: n` (adds `…`) ·
 `replace: from, to`
@@ -25,13 +25,13 @@ Each filter declares a typed signature. Wrong input type → edit-time lint
 {{user.bio | trim | truncate: 80}}
 ```
 
-## Number — **0.2**
+## Number — **shipped (0.2b)** · `currency` 0.2
 
-`round: n=0` · `percent` (`0.34` → `34%`) · `currency: code`
-(`1234.5` + `"USD"` → `$1,234.50`) · `abs`
+`round: n=0` (half away from zero) · `floor` · `ceil` · `abs` ·
+`percent` (`0.34` → `34%`)
 
-`currency` needs a locale; the package ships a minimal formatter and a host can
-`registerFilter` a locale-aware one.
+`currency: code` (locale-aware) lands with the datetime filters; the host can
+`registerFilter` its own now.
 
 ## Datetime — **0.2**
 

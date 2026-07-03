@@ -1,0 +1,7 @@
+{
+  "name": "T1: filter pipeline (capitalize)",
+  "template": "Hi {{ user.name | capitalize }}!",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "data": { "user": { "name": "vasyl" } },
+  "expect": { "output": "Hi Vasyl!", "warnings": [] }
+}

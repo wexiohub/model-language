@@ -9,6 +9,11 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2b — string & number filters.** `upper`, `lower`, `trim`, `capitalize`,
+  `truncate: n`, `replace: from, to`; `round: n=0` (half away from zero),
+  `floor`, `ceil`, `abs`, `percent`. Each is total — the wrong input type passes
+  through unchanged, never throws. (Array + datetime filters next.)
+
 - **0.2a — for loops.** `{{for item in <array>}} … {{else}} … {{/for}}` render:
   block folding generalized to `if` + `for`, per-iteration scope with `item` and
   loop locals (`loop.index/first/last/count`), empty-state `else`, and non-array
