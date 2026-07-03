@@ -1,0 +1,10 @@
+{
+  "name": "T4: safe navigation through null + default filter",
+  "template": "CSM: {{user.csm.name | default: \"our team\"}}",
+  "schema": [{ "path": "user.csm", "type": "object", "nullable": true }],
+  "data": { "user": { "csm": null } },
+  "expect": {
+    "output": "CSM: our team",
+    "warnings": []
+  }
+}

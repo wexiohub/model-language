@@ -17,8 +17,7 @@ What *defines* Model Language is:
   "template": "CSM: {{user.csm.name | default: \"our team\"}}",
   "schema": [{ "path": "user.csm", "type": "object", "nullable": true }],
   "data": { "user": { "csm": null } },
-  "expectOutput": "CSM: our team",
-  "expectDiagnostics": []
+  "expect": { "output": "CSM: our team", "warnings": [] }
 }
 ```
 

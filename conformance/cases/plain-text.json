@@ -1,0 +1,10 @@
+{
+  "name": "plain text passes through unchanged",
+  "template": "Hello, world",
+  "schema": [],
+  "data": {},
+  "expect": {
+    "output": "Hello, world",
+    "warnings": []
+  }
+}

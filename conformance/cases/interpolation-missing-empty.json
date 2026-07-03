@@ -1,0 +1,10 @@
+{
+  "name": "missing field interpolates empty + ML301 warning",
+  "template": "Hi {{user.name}}!",
+  "schema": [{ "path": "user.name", "type": "string", "nullable": true }],
+  "data": { "user": {} },
+  "expect": {
+    "output": "Hi !",
+    "warnings": ["ML301"]
+  }
+}

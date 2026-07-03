@@ -1,0 +1,10 @@
+{
+  "name": "literal number interpolation",
+  "template": "The answer is {{ 42 }}.",
+  "schema": [],
+  "data": {},
+  "expect": {
+    "output": "The answer is 42.",
+    "warnings": []
+  }
+}

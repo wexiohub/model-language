@@ -1,0 +1,10 @@
+{
+  "name": "T17: array stringification (comma + space)",
+  "template": "{{user.tags}}",
+  "schema": [{ "path": "user.tags", "type": "array", "items": "string" }],
+  "data": { "user": { "tags": ["beta", "vip"] } },
+  "expect": {
+    "output": "beta, vip",
+    "warnings": []
+  }
+}
