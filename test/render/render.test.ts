@@ -82,7 +82,8 @@ describe('render — loops', () => {
   it('exposes item fields and loop.first / loop.count', () => {
     const src =
       '{{for o in orders}}{{o.id}}{{if loop.first}}(first){{/if}}/{{loop.count}} {{/for}}';
-    expect(out(src, { orders: [{ id: 'A' }, { id: 'B' }] }).text).toBe('A(first)/2 B/2 ');
+    // inter-item spaces preserved; the final trailing space is stripped by hygiene
+    expect(out(src, { orders: [{ id: 'A' }, { id: 'B' }] }).text).toBe('A(first)/2 B/2');
   });
 
   it('renders the else branch for an empty array', () => {
