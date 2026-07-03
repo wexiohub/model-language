@@ -68,7 +68,8 @@ export function tagInner(raw: string): string {
 /** Classify a tag by its leading token. Block handling lands in 0.1b. */
 export function classifyTag(raw: string): 'interpolation' | 'block' {
   const inner = tagInner(raw);
-  if (inner.startsWith('#') || inner.startsWith('{#')) return 'block';
-  const head = inner.split(/[\s(]/, 1)[0];
+  if (inner.startsWith('#')) return 'block'; // directive
+  const boundary = inner.search(/[\s(]/);
+  const head = boundary === -1 ? inner : inner.slice(0, boundary);
   return BLOCK_KEYWORDS.includes(head) ? 'block' : 'interpolation';
 }
