@@ -22,8 +22,8 @@ What *defines* Model Language is:
 }
 ```
 
-Any implementation — JavaScript, Python, Go, Rust — that passes the same JSON
-fixtures renders identically **by construction**. This package's golden tests load
+Any implementation — JavaScript, Python, Go, Java, Ruby, Elixir, Rust, PHP, C#,
+… — that passes the same JSON fixtures renders identically **by construction**. This package's golden tests load
 these fixtures; a port loads the very same files. (This is how CommonMark, JSONPath
 and similar language specs stay consistent across implementations.)
 
