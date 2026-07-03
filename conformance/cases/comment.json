@@ -1,0 +1,7 @@
+{
+  "name": "comments are stripped, never rendered",
+  "template": "Reply politely.{# internal note: do not translate #} Keep it short.",
+  "schema": [],
+  "data": {},
+  "expect": { "output": "Reply politely. Keep it short.", "warnings": [] }
+}

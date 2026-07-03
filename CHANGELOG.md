@@ -9,6 +9,9 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.3a — comments.** `{# … #}` (single- or multi-line) are stripped at parse
+  time and never rendered.
+
 - **0.2g — currency filter.** `currency: code` formats a number with a symbol
   (USD/EUR/GBP/JPY, else the code prefixed), thousands grouping, 2 decimals, and
   correct negative sign. **0.2 complete.**

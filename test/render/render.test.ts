@@ -130,6 +130,11 @@ describe('render — whitespace & misc', () => {
     expect(render(ast, {}, []).text).toBe('a');
   });
 
+  it('strips {# comments #} at parse time (never rendered)', () => {
+    expect(out('Hi{# secret #} there').text).toBe('Hi there');
+    expect(out('a {# multi\nline #} b').text).toBe('a  b');
+  });
+
   it('empty AST → empty result', () => {
     expect(render([], {}, [])).toEqual({
       text: '',
