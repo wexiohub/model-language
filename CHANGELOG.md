@@ -9,6 +9,10 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **Benchmark harness** (`pnpm bench`, `bench/engine.bench.ts`) — measures the
+  cold path (parse, validate) and the hot path (render on a pre-parsed AST) for
+  small and large templates.
+
 - **0.3c — includes.** `{{include "name"}}` renders a host-supplied snippet
   (`render(ast, data, schema, { snippets })`) against the same data, with cycle
   detection and a depth limit of 5 (`ML002` on either). **0.3 complete.**

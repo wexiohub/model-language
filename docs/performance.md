@@ -45,7 +45,9 @@ against untrusted input: template ≤ 64KB, AST nodes ≤ 5k, include depth ≤ 
 
 ## Measuring
 
-Optimize with numbers, not vibes. A benchmark harness (parse throughput, render
-throughput for small/large templates, deep-nesting) lands with milestone 0.2 so
-every optimization is justified by a measured delta and guarded against
-regression. Until then, the parse-once/render-many split is the load-bearing win.
+Optimize with numbers, not vibes. A benchmark harness ships in
+[`bench/engine.bench.ts`](../bench/engine.bench.ts) — run `pnpm bench`. It
+measures the **cold** path (parse, validate) and the **hot** path (render against
+a pre-parsed AST), for small and large templates, so every optimization is
+justified by a measured delta. The parse-once/render-many split is the
+load-bearing win it demonstrates.
