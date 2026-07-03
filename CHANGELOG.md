@@ -9,6 +9,21 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.1a — interpolation rendering.** `{{ path | default: "…" }}` now renders for
+  real: tag classification (interpolation vs deferred block), interpolation
+  expression + filter-pipeline parsing, canonical serialization (round-trip),
+  safe-navigation path resolution, typed→string conversion, the `default` filter,
+  and the `ML301` empty-interpolation warning.
+- **Conformance suite** (`conformance/cases/*.json`) — language-neutral golden
+  fixtures + a data-driven runner, so other-language ports validate against the
+  same contract.
+- **Example runner** — `pnpm example` / `pnpm example:run <file>` print
+  `input → engine → output`; `welcome.mlt` is golden-tested.
+- **Performance** + **Portability** docs (parse-once/render-many; ports via the
+  conformance suite / a render service / WASM).
+
+### Earlier (scaffold)
+
 - Project scaffold: TypeScript, Biome (lint/format), vitest, tsup build
   (ESM + CJS + `.d.ts`), CI, MIT license.
 - Stable public type contract (`parse` / `serialize` / `validate` / `render` /

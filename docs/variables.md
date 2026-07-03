@@ -1,6 +1,7 @@
 # Variables & interpolation
 
-**Milestone 0.1.**
+**Shipped in 0.1a** — interpolation, safe navigation, stringification, and the
+`default` filter render today. (Arithmetic and other filters land in 0.2.)
 
 An interpolation inserts a value into the output:
 

@@ -10,11 +10,11 @@ Each filter declares a typed signature. Wrong input type → edit-time lint
 (`ML203`); at runtime the value passes through unchanged with a warning — a filter
 **never throws**. Hosts add their own with [`registerFilter`](../api.md#registerfilterdef).
 
-## Universal — **0.1**
+## Universal — **shipped (0.1a)**
 
 | Filter | Signature | Example |
 |---|---|---|
-| `default` | `T? → fallback:T → T` | `{{user.name \| default: "there"}}` — the null-safety workhorse; the fallback may be a field: `default: org.default_language` |
+| `default` | `T? → fallback:T → T` | `{{user.name \| default: "there"}}` — the null-safety workhorse; returns the fallback for `null` / `undefined` / empty string. The fallback may itself be a field: `default: org.default_language` |
 
 ## String — **0.2**
 

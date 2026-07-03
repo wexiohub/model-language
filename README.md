@@ -5,9 +5,11 @@
 > engine renders them into clean prompts against live data. **Never crashes,
 > never leaks syntax.**
 
-> ⚠️ **Status: early scaffold (milestone 0.1 in progress).** The public API
-> below is stable and final; the language implementation is landing
-> milestone-by-milestone. Today the package passes plain prose through unchanged.
+> ⚠️ **Status: 0.1a — interpolation shipped; conditionals next (0.1b).** The
+> public API below is stable and final; the language lands milestone-by-milestone.
+> Today `{{ path | default: "…" }}` interpolation renders for real (safe
+> navigation, stringification, the `default` filter); `{{if …}}` blocks render
+> from 0.1b.
 
 ---
 
@@ -128,11 +130,14 @@ Contributor guide: [`CLAUDE.md`](./CLAUDE.md). Editing playbook:
 
 The language ships in milestones, each a publishable minor release:
 
-- **0.1** — variables, `if/elseif/else`, operators, `and/or/not`, safe
-  navigation, the `default` filter, whitespace hygiene, `parse`/`serialize`,
-  core lint rules.
+- **0.1a** ✅ — variables `{{ path | default }}`, safe navigation,
+  stringification, the `default` filter, canonical `parse`/`serialize`,
+  conformance suite.
+- **0.1b** — `if/elseif/else`, comparison/logical operators, `and/or/not`,
+  truthiness, whitespace hygiene.
+- **0.1c** — typecheck lint rules (ML001, ML101, ML201, ML202, ML220, ML214).
 - **0.2** — `for` loops + loop locals, array/string/number/datetime filters,
-  arithmetic.
+  arithmetic + `calculate()`.
 - **0.3** — `include` (with cycle detection), directives (`#priority`, `#mode`,
   `#block`), comments.
 
