@@ -29,4 +29,4 @@ You are Aria, support for Acme.
 The user's name is there. Reply in English.
 ```
 
-Try it: `pnpm example:run examples/welcome.mlt`.
+Try it: `pnpm example:run examples/welcome/welcome.mlt`.

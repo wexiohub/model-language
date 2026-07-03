@@ -16,4 +16,4 @@
 | `"team"` | `👥 Team plan.` |
 | `"free"` (or anything else) | `Free plan — mention the upgrade only if they ask.` |
 
-Try it: `pnpm example:run examples/small/plan-badge.mlt` (defaults `user.plan` unset → the `else` branch).
+Try it: `pnpm example:run examples/plan-badge/plan-badge.mlt` (defaults `user.plan` unset → the `else` branch).

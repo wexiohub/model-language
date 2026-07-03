@@ -9,7 +9,7 @@ const read = (rel: string) =>
 describe('golden — examples render as documented', () => {
   it('welcome.mlt: null name → "there", null language → "English"', () => {
     const text = render(
-      parse(read('small/welcome.mlt')).ast,
+      parse(read('welcome/welcome.mlt')).ast,
       { agent: { name: 'Aria' }, org: { name: 'Acme' }, user: { name: null, language: null } },
       [],
     ).text;
@@ -20,7 +20,7 @@ describe('golden — examples render as documented', () => {
 
   it('support-router.mlt renders the active branches with no leaked syntax', () => {
     const text = render(
-      parse(read('large/support-router.mlt')).ast,
+      parse(read('support-router/support-router.mlt')).ast,
       {
         agent: { name: 'Aria' },
         org: { name: 'Acme' },
