@@ -4,6 +4,11 @@ Real-world templates, simplest → most complex. Each `.mlt` file is a Model
 Language template; below, each has the **schema** and **data snapshot** it renders
 against, plus the **expected output**.
 
+Every template also has a companion `.md` showing **input → data → output**
+concretely: [welcome.md](./welcome.md) · [greeting.md](./greeting.md) ·
+[order-status.md](./order-status.md) · [billing-escalation.md](./billing-escalation.md) ·
+[lead-qualification.md](./lead-qualification.md).
+
 > These double as golden fixtures: as the engine lands (milestones 0.1 → 0.3),
 > each example becomes an executable test asserting the output below — so the
 > examples can never drift from behavior.
