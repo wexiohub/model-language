@@ -1,12 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  parse,
-  registerFilter,
-  registerRule,
-  render,
-  serialize,
-  validate,
-} from '../src/index';
+import { parse, registerFilter, registerRule, render, serialize, validate } from '../src/index';
 
 describe('public API (barrel)', () => {
   it('round-trips plain text through parse → serialize → render', () => {
