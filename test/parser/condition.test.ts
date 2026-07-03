@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { parseCondition } from '../../src/parser/condition';
+import type { Expr } from '../../src/types';
+
+const rightOf = (src: string): Expr => (parseCondition(src) as Extract<Expr, { right: Expr }>).right;
 
 describe('parseCondition — comparisons', () => {
   it('parses each comparison operator', () => {
@@ -48,13 +51,13 @@ describe('parseCondition — comparisons', () => {
 
 describe('parseCondition — literals', () => {
   it('parses every literal kind', () => {
-    expect(parseCondition("a == 'x'").right).toEqual({ kind: 'literal', value: 'x' });
-    expect(parseCondition('a == true').right).toEqual({ kind: 'literal', value: true });
-    expect(parseCondition('a == false').right).toEqual({ kind: 'literal', value: false });
-    expect(parseCondition('a == null').right).toEqual({ kind: 'literal', value: null });
-    expect(parseCondition('a == undefined').right).toEqual({ kind: 'literal', value: undefined });
-    expect(parseCondition('a == 3.14').right).toEqual({ kind: 'literal', value: 3.14 });
-    expect(parseCondition('a == -5').right).toEqual({ kind: 'literal', value: -5 });
+    expect(rightOf("a == 'x'")).toEqual({ kind: 'literal', value: 'x' });
+    expect(rightOf('a == true')).toEqual({ kind: 'literal', value: true });
+    expect(rightOf('a == false')).toEqual({ kind: 'literal', value: false });
+    expect(rightOf('a == null')).toEqual({ kind: 'literal', value: null });
+    expect(rightOf('a == undefined')).toEqual({ kind: 'literal', value: undefined });
+    expect(rightOf('a == 3.14')).toEqual({ kind: 'literal', value: 3.14 });
+    expect(rightOf('a == -5')).toEqual({ kind: 'literal', value: -5 });
   });
 });
 
@@ -108,11 +111,11 @@ describe('parseCondition — arrays', () => {
   });
 
   it('parses an array of bare paths (kept as strings)', () => {
-    expect(parseCondition('x in [a, b]').right).toEqual({ kind: 'literal', value: ['a', 'b'] });
+    expect(rightOf('x in [a, b]')).toEqual({ kind: 'literal', value: ['a', 'b'] });
   });
 
   it('parses an array without surrounding spaces', () => {
-    expect(parseCondition('x in[1]').right).toEqual({ kind: 'literal', value: [1] });
+    expect(rightOf('x in[1]')).toEqual({ kind: 'literal', value: [1] });
   });
 });
 
