@@ -33,7 +33,14 @@ Each filter declares a typed signature. Wrong input type → edit-time lint
 `currency: code` (locale-aware) lands with the datetime filters; the host can
 `registerFilter` its own now.
 
-## Datetime — **0.2**
+## Datetime — **shipped (0.2f)**
+
+Relative filters (`days_ago`, `days_until`, `is_past`, `is_future`) resolve
+against a reference **`now`** — pass it via `render(ast, data, schema, { now })`
+(defaults to the wall clock; golden tests pin it). `date: fmt` formats in **UTC**
+(tokens `YYYY`, `MMM`, `MM`, `DD`, `D`, `M`). Inputs may be an ISO string, epoch
+ms, or a `Date`.
+
 
 | Filter | Returns | Example |
 |---|---|---|

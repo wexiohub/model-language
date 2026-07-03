@@ -1,6 +1,9 @@
 import { compareValues } from '../render/eval';
 import type { FilterDef } from '../types';
 
+const MS_PER_DAY = 86_400_000;
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 const asString = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
 const asNumber = (v: unknown): number | undefined => (typeof v === 'number' ? v : undefined);
 const asArray = (v: unknown): unknown[] | undefined => (Array.isArray(v) ? v : undefined);
@@ -224,6 +227,81 @@ function aggregate(input: unknown, args: unknown[], fn: (...n: number[]) => numb
 const max: FilterDef = { name: 'max', apply: (input, args) => aggregate(input, args, Math.max) };
 const min: FilterDef = { name: 'min', apply: (input, args) => aggregate(input, args, Math.min) };
 
+// ── Datetime ─────────────────────────────────────────────────────────────────
+function toDate(v: unknown): Date | undefined {
+  if (v instanceof Date) return Number.isNaN(v.getTime()) ? undefined : v;
+  if (typeof v === 'string' || typeof v === 'number') {
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+  }
+  return undefined;
+}
+
+function formatDate(d: Date, fmt: string): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return fmt.replace(/YYYY|MMM|MM|DD|D|M/g, (tok) => {
+    switch (tok) {
+      case 'YYYY':
+        return String(d.getUTCFullYear());
+      case 'MMM':
+        return MONTHS[d.getUTCMonth()] as string;
+      case 'MM':
+        return pad(d.getUTCMonth() + 1);
+      case 'DD':
+        return pad(d.getUTCDate());
+      case 'D':
+        return String(d.getUTCDate());
+      default:
+        return String(d.getUTCMonth() + 1); // 'M'
+    }
+  });
+}
+
+const dateFilter: FilterDef = {
+  name: 'date',
+  apply: (input, args) => {
+    const d = toDate(input);
+    const fmt = asString(args[0]);
+    return d === undefined || fmt === undefined ? input : formatDate(d, fmt);
+  },
+};
+
+const daysAgo: FilterDef = {
+  name: 'days_ago',
+  apply: (input, _args, ctx) => {
+    const d = toDate(input);
+    return d === undefined || ctx === undefined
+      ? input
+      : Math.floor((ctx.now - d.getTime()) / MS_PER_DAY);
+  },
+};
+
+const daysUntil: FilterDef = {
+  name: 'days_until',
+  apply: (input, _args, ctx) => {
+    const d = toDate(input);
+    return d === undefined || ctx === undefined
+      ? input
+      : Math.floor((d.getTime() - ctx.now) / MS_PER_DAY);
+  },
+};
+
+const isPast: FilterDef = {
+  name: 'is_past',
+  apply: (input, _args, ctx) => {
+    const d = toDate(input);
+    return d === undefined || ctx === undefined ? input : d.getTime() < ctx.now;
+  },
+};
+
+const isFuture: FilterDef = {
+  name: 'is_future',
+  apply: (input, _args, ctx) => {
+    const d = toDate(input);
+    return d === undefined || ctx === undefined ? input : d.getTime() > ctx.now;
+  },
+};
+
 /** Built-in filters seeded into the registry. Datetime + currency: next slice. */
 export const BUILTIN_FILTERS: FilterDef[] = [
   defaultFilter,
@@ -249,4 +327,9 @@ export const BUILTIN_FILTERS: FilterDef[] = [
   sum,
   max,
   min,
+  dateFilter,
+  daysAgo,
+  daysUntil,
+  isPast,
+  isFuture,
 ];

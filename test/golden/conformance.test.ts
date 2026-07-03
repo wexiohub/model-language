@@ -8,6 +8,7 @@ interface ConformanceCase {
   template: string;
   schema: FieldSchema;
   data?: Record<string, unknown>;
+  now?: number;
   expect: { output?: string; warnings?: string[]; diagnostics?: string[] };
 }
 
@@ -24,7 +25,8 @@ describe('conformance suite (language-neutral fixtures)', () => {
   for (const c of cases) {
     it(c.name, () => {
       if (c.expect.output !== undefined) {
-        const result = render(parse(c.template).ast, c.data ?? {}, c.schema);
+        const opts = c.now === undefined ? undefined : { now: c.now };
+        const result = render(parse(c.template).ast, c.data ?? {}, c.schema, opts);
         expect(result.text).toBe(c.expect.output);
         expect(result.warnings.map((w) => w.code)).toEqual(c.expect.warnings ?? []);
       }

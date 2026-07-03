@@ -10,6 +10,7 @@ import type {
   ForNode,
   IfNode,
   InterpolationNode,
+  RenderOptions,
   RenderResult,
   TemplateNode,
 } from '../types';
@@ -21,6 +22,7 @@ interface RenderCtx {
   snapshot: DataSnapshot;
   warnings: Diagnostic[];
   resolvedBranches: Branch[];
+  now: number;
 }
 
 /**
@@ -32,8 +34,14 @@ export function render(
   ast: TemplateNode,
   snapshot: DataSnapshot,
   _schema: FieldSchema,
+  options?: RenderOptions,
 ): RenderResult {
-  const ctx: RenderCtx = { snapshot, warnings: [], resolvedBranches: [] };
+  const ctx: RenderCtx = {
+    snapshot,
+    warnings: [],
+    resolvedBranches: [],
+    now: options?.now ?? Date.now(),
+  };
   const text = tidyWhitespace(renderNodes(ast, ctx));
   return {
     text,
@@ -63,7 +71,7 @@ function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
 function renderFor(node: ForNode, ctx: RenderCtx): string {
   let source = evalExpr(node.source, ctx.snapshot);
   for (const filter of node.pipeline ?? []) {
-    source = applyFilter(filter, source, ctx.snapshot);
+    source = applyFilter(filter, source, ctx);
   }
   const items = Array.isArray(source) ? source : [];
   if (items.length === 0) {
@@ -92,17 +100,17 @@ function renderIf(node: IfNode, ctx: RenderCtx): string {
   return '';
 }
 
-function applyFilter(filter: Filter, input: unknown, snapshot: DataSnapshot): unknown {
+function applyFilter(filter: Filter, input: unknown, ctx: RenderCtx): unknown {
   const def = getFilter(filter.name);
   if (!def) return input; // unknown filter → pass-through (ML102 is an edit-time lint).
-  const args = filter.args.map((arg) => evalExpr(arg, snapshot));
-  return def.apply(input, args);
+  const args = filter.args.map((arg) => evalExpr(arg, ctx.snapshot));
+  return def.apply(input, args, { now: ctx.now });
 }
 
 function renderInterpolation(node: InterpolationNode, ctx: RenderCtx): string {
   let value = evalExpr(node.value, ctx.snapshot);
   for (const filter of node.pipeline) {
-    value = applyFilter(filter, value, ctx.snapshot);
+    value = applyFilter(filter, value, ctx);
   }
   const { text, wasEmpty } = stringifyValue(value);
   if (wasEmpty) {

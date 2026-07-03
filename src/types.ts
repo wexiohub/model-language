@@ -220,10 +220,20 @@ export interface RenderResult {
   tokenEstimate: number;
 }
 
+export interface RenderOptions {
+  /** Reference "now" (epoch ms) for datetime filters. Defaults to the wall clock. */
+  now?: number;
+}
+
+/** Runtime context passed to a filter's `apply` (e.g. the reference `now`). */
+export interface FilterContext {
+  now: number;
+}
+
 export interface FilterDef {
   name: string;
-  /** Elaborated with typed signatures in milestones 0.1/0.2. Must never throw. */
-  apply: (input: unknown, args: unknown[]) => unknown;
+  /** Total — the wrong input type passes through unchanged; must never throw. */
+  apply: (input: unknown, args: unknown[], ctx?: FilterContext) => unknown;
 }
 
 export interface LintRule {

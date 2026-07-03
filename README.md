@@ -144,7 +144,9 @@ The language ships in milestones, each a publishable minor release:
 - **0.2b** ✅ — string/number/array filters + loop-source pipelines.
 - **0.2c** ✅ — `multiEnum` operators (`contains_any`/`contains_all`/`is_empty`).
 - **0.2d** ✅ — arithmetic (`+ - * /`, parens, unary minus).
-- **0.2** — datetime filters + `currency`, array `where`/`sort`/`sum`, benchmarks.
+- **0.2e** ✅ — array `where`/`sort`/`sum`/`max`/`min`.
+- **0.2f** ✅ — datetime filters (`days_ago`/`days_until`/`is_past`/`is_future`/`date`) + render `now` option.
+- **0.2** — `currency` filter, benchmarks.
 - **0.3** — `include` (with cycle detection), directives (`#priority`, `#mode`,
   `#block`), comments.
 

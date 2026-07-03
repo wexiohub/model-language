@@ -9,6 +9,12 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.2f — datetime filters.** `days_ago`, `days_until`, `is_past`, `is_future`
+  (relative to a reference `now`), and `date: fmt` (UTC, tokens `YYYY`/`MMM`/`MM`/
+  `DD`/`D`/`M`). `render` gained an optional `{ now }` option (defaults to the wall
+  clock; deterministic when pinned). Filters may now receive a `FilterContext`.
+  Conformance fixture T12 added.
+
 - **0.2e — array aggregation filters.** `where: "field", op, value`,
   `sort: "field", "asc"|"desc"`, `sum`, `max`, `min` (each with an optional
   field, operating on object items or primitives). Chainable and usable as a loop

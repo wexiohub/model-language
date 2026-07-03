@@ -1,0 +1,8 @@
+{
+  "name": "T12: days_ago via a datetime filter",
+  "template": "{{if user.last_active | days_ago > 30}}dormant{{/if}}",
+  "schema": [{ "path": "user.last_active", "type": "datetime" }],
+  "data": { "user": { "last_active": "2026-06-01" } },
+  "now": 1783036800000,
+  "expect": { "output": "dormant", "warnings": [] }
+}

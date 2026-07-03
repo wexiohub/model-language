@@ -40,6 +40,14 @@ describe('render — interpolation', () => {
     );
     expect(out('{{ (a + b) * 2 }}', { a: 3, b: 4 }).text).toBe('14');
   });
+
+  it('uses the render `now` option for datetime filters', () => {
+    const src = '{{if user.last | days_ago > 20}}dormant{{/if}}';
+    const r = render(parse(src).ast, { user: { last: '2026-06-01' } }, [], {
+      now: Date.UTC(2026, 6, 3),
+    });
+    expect(r.text).toBe('dormant');
+  });
 });
 
 describe('render — conditionals', () => {
