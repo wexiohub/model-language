@@ -1,0 +1,1 @@
+{{if user.plan == "pro"}}⭐ Pro member — priority support.{{elseif user.plan == "team"}}👥 Team plan.{{else}}Free plan — mention the upgrade only if they ask.{{/if}}
