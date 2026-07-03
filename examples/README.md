@@ -4,17 +4,38 @@ Real-world templates, simplest → most complex. Each `.mlt` file is a Model
 Language template; below, each has the **schema** and **data snapshot** it renders
 against, plus the **expected output**.
 
-> These double as future golden fixtures: once the engine lands (milestones
-> 0.1 → 0.3), each example becomes an executable test asserting the output below —
-> so the examples can never drift from behavior.
+> These double as golden fixtures: as the engine lands (milestones 0.1 → 0.3),
+> each example becomes an executable test asserting the output below — so the
+> examples can never drift from behavior.
 
-Render any of them with:
+## Run it — input → engine → output
+
+Two runnable demos ship today (0.1a renders interpolation + the `default`
+filter):
+
+```bash
+pnpm example                       # inline demo (examples/basic.ts)
+pnpm example:run examples/welcome.mlt   # render any .mlt file
+```
+
+`pnpm example` prints:
+
+```
+--- input ---
+Hi {{user.name | default: "there"}}! You have {{user.tags}} tags.
+--- output ---
+Hi there! You have beta, vip tags.
+```
+
+[`welcome.mlt`](./welcome.mlt) (interpolation-only) renders fully now;
+[`greeting.mlt`](./greeting.mlt) and the others below use conditionals/loops and
+render fully from milestone 0.1b. In code:
 
 ```ts
 import { readFileSync } from 'node:fs';
 import { parse, render } from '@wexio/model-language';
 
-const source = readFileSync('examples/greeting.mlt', 'utf8');
+const source = readFileSync('examples/welcome.mlt', 'utf8');
 const { text } = render(parse(source).ast, snapshot, schema);
 ```
 
