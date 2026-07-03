@@ -9,6 +9,13 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **0.1c — editor lint rules.** `validate()` now typechecks against the schema
+  and returns diagnostics: `ML101` unknown-field (with nearest-path suggestion),
+  `ML102` unknown-filter, `ML201` type-mismatch, `ML202` unknown-enum-value,
+  `ML214` raw-date-comparison, `ML220` `==`-on-multi-select (with a `contains`
+  quickfix). Conformance fixtures gained an `expect.diagnostics` form so ports
+  verify lint behavior too.
+
 - **0.1b — conditionals.** `{{if …}}{{elseif …}}{{else}}{{/if}}` render for real:
   a recursive-descent condition parser (comparison + logical operators, `exists`,
   `in`, `contains`, `startsWith`/`endsWith`/`matches`, precedence, parentheses),

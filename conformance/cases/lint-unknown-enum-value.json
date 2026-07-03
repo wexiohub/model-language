@@ -1,0 +1,6 @@
+{
+  "name": "T15: unknown enum value → ML202",
+  "template": "{{if user.plan == \"premium\"}}x{{/if}}",
+  "schema": [{ "path": "user.plan", "type": "enum", "values": ["free", "pro", "team"] }],
+  "expect": { "diagnostics": ["ML202"] }
+}

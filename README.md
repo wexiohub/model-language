@@ -5,11 +5,12 @@
 > engine renders them into clean prompts against live data. **Never crashes,
 > never leaks syntax.**
 
-> ⚠️ **Status: 0.1b — interpolation + conditionals shipped.** The public API
-> below is stable and final; the language lands milestone-by-milestone. Today
-> `{{ path | default: "…" }}` interpolation and `{{if …}}{{elseif …}}{{else}}{{/if}}`
-> conditionals (all operators, truthiness, whitespace hygiene) render for real.
-> Loops, filters, and arithmetic land in 0.2.
+> ⚠️ **Status: 0.1c — interpolation, conditionals, and editor lint rules shipped.**
+> The public API below is stable and final. Today `{{ path | default: "…" }}`
+> interpolation and `{{if …}}{{elseif …}}{{else}}{{/if}}` conditionals render for
+> real, and `validate()` returns typed diagnostics (unknown field/filter, type
+> mismatch, enum typos, `==`-on-multi-select, raw dates). Loops, more filters, and
+> arithmetic land in 0.2.
 
 ---
 
@@ -136,7 +137,9 @@ The language ships in milestones, each a publishable minor release:
 - **0.1b** ✅ — `if/elseif/else`, comparison/logical operators, `and/or/not`,
   `exists`/`in`/`contains`/`startsWith`/`endsWith`/`matches`, truthiness,
   whitespace hygiene.
-- **0.1c** — typecheck lint rules (ML001, ML101, ML201, ML202, ML220, ML214).
+- **0.1c** ✅ — typecheck lint rules (ML101 unknown-field + suggestions, ML102
+  unknown-filter, ML201 type-mismatch, ML202 unknown-enum-value, ML214 raw-date,
+  ML220 `==`→`contains`).
 - **0.2** — `for` loops + loop locals, array/string/number/datetime filters,
   arithmetic + `calculate()`.
 - **0.3** — `include` (with cycle detection), directives (`#priority`, `#mode`,

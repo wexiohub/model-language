@@ -1,0 +1,6 @@
+{
+  "name": "unknown field → ML101",
+  "template": "{{user.plann}}",
+  "schema": [{ "path": "user.plan", "type": "string" }],
+  "expect": { "diagnostics": ["ML101"] }
+}

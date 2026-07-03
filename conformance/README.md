@@ -23,9 +23,14 @@ fixtures — not any one implementation — are the contract.
 - `template` — Model Language source.
 - `schema` — a `FieldSchema` (array of `FieldDef`).
 - `data` — the typed data snapshot to render against.
-- `expect.output` — the exact rendered string.
+- `expect.output` — the exact rendered string (omit for a validate-only case).
 - `expect.warnings` — the ordered list of render diagnostic **codes** (e.g.
   `["ML301"]`), empty when the render is clean.
+- `expect.diagnostics` — the set of **validate** (typecheck) codes the template
+  should produce (e.g. `["ML220"]`), for lint-rule cases. Order-independent.
+
+A fixture may assert render (`output` + `warnings`), validate (`diagnostics`),
+or both. `data` is optional for validate-only cases.
 
 ## Running (this package)
 

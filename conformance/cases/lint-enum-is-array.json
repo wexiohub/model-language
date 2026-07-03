@@ -1,0 +1,6 @@
+{
+  "name": "W1: == on a multi-select field → ML220",
+  "template": "{{if user.lead_status == \"new\"}}x{{/if}}",
+  "schema": [{ "path": "user.lead_status", "type": "multiEnum", "values": ["new", "qualified"] }],
+  "expect": { "diagnostics": ["ML220"] }
+}
