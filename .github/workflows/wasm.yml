@@ -112,3 +112,15 @@ jobs:
           g++ -std=c++17 conformance.cpp -I"$capi/include" \
             "$capi/lib/libwasmtime.a" -lpthread -ldl -lm -o conformance
           ./conformance
+
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.17'
+
+      - name: Run Elixir host conformance tests (parity with TypeScript)
+        working-directory: hosts/elixir
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: elixir conformance.exs
