@@ -41,11 +41,11 @@ passes `options.now` (epoch ms) for datetime filters.
 
 ## Hosts
 
-- **Python** — see [`../python`](../python). Ships today, CI-verified against the
-  conformance suite (hosted via `wasmtime`, stdin/stdout).
-- **Others** — the `.wasm` is language-neutral. Any runtime that can run a WASI
-  command (`wasmtime`, `wasmer`, Node's WASI, browsers via a shim) hosts it:
-  write the JSON request to stdin, read the response from stdout.
+Five hosts are built and run against the full conformance suite on every CI run:
+**Python, Go, Rust, Ruby, and C#** — see [`../hosts`](../hosts), which also has a
+guide for any other WASI language (write the JSON request to stdin, read the
+response from stdout). The `.wasm` is language-neutral: any runtime that can run
+a WASI command (`wasmtime`, `wasmer`, Node's WASI, browsers via a shim) hosts it.
 
 ## Why a module (not a service)
 

@@ -96,3 +96,19 @@ jobs:
         env:
           MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
         run: dotnet run -c Release
+
+      - name: Build & run C++ host conformance tests (parity with TypeScript)
+        working-directory: hosts/cpp
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: |
+          sudo apt-get update && sudo apt-get install -y nlohmann-json3-dev
+          url=$(curl -s https://api.github.com/repos/bytecodealliance/wasmtime/releases/latest \
+            | grep browser_download_url | grep 'x86_64-linux-c-api.tar.xz' | cut -d '"' -f4 | head -1)
+          echo "Downloading $url"
+          curl -L "$url" | tar xJ
+          capi=$(find . -maxdepth 1 -type d -name 'wasmtime-*-c-api')
+          echo "C API at $capi"
+          g++ -std=c++17 conformance.cpp -I"$capi/include" \
+            "$capi/lib/libwasmtime.a" -lpthread -ldl -lm -o conformance
+          ./conformance

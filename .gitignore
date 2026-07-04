@@ -29,3 +29,7 @@ hosts/ruby/vendor/
 # C# host
 hosts/csharp/bin/
 hosts/csharp/obj/
+
+# C++ host
+hosts/cpp/conformance
+hosts/cpp/wasmtime-*-c-api/
