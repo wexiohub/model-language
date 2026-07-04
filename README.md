@@ -12,7 +12,6 @@
 <br>
 [![CI](https://github.com/wexiohub/model-language/actions/workflows/ci.yml/badge.svg)](https://github.com/wexiohub/model-language/actions/workflows/ci.yml)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/model-language?label=bundle%20size)](https://bundlephobia.com/package/model-language)
-[![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/model-language?activeTab=dependencies)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![powered by wexio.io](https://img.shields.io/badge/powered%20by-wexio.io-0b0b0b)](https://wexio.io)
 
