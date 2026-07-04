@@ -1,0 +1,7 @@
+{
+  "name": "edge: empty loop source takes the else branch",
+  "template": "{{for x in xs}}{{x}}{{else}}(none){{/for}}",
+  "schema": [],
+  "data": { "xs": [] },
+  "expect": { "output": "(none)", "warnings": [] }
+}

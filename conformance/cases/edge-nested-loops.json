@@ -1,0 +1,7 @@
+{
+  "name": "edge: nested loops render row by row",
+  "template": "{{for row in matrix}}{{for c in row}}{{c}}{{/for}};{{/for}}",
+  "schema": [],
+  "data": { "matrix": [[1, 2], [3, 4]] },
+  "expect": { "output": "12;34;", "warnings": [] }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "edge: deeply nested conditionals",
+  "template": "{{if a}}{{if b}}{{if c}}deep{{/if}}{{/if}}{{/if}}",
+  "schema": [],
+  "data": { "a": true, "b": true, "c": true },
+  "expect": { "output": "deep", "warnings": [] }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "edge: loop item drives a nested condition",
+  "template": "{{for n in nums}}{{if n > 2}}[{{n}}]{{/if}}{{/for}}",
+  "schema": [],
+  "data": { "nums": [1, 2, 3, 4] },
+  "expect": { "output": "[3][4]", "warnings": [] }
+}

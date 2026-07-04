@@ -1,0 +1,7 @@
+{
+  "name": "edge: a filter on the wrong type passes the value through unchanged",
+  "template": "{{ user.name | round }}",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "data": { "user": { "name": "abc" } },
+  "expect": { "output": "abc", "warnings": [] }
+}
