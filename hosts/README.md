@@ -43,59 +43,11 @@ Loading is cold and cacheable; the per-call cost is the instantiation + run.
 | **Ruby** | [`wasmtime`](https://rubygems.org/gems/wasmtime) gem | ✅ CI-verified — [`./ruby`](./ruby) |
 | **Java** | [`wasmtime-java`](https://github.com/kawamuray/wasmtime-java) / [Chicory](https://github.com/dylibso/chicory) | pattern above |
 | **Elixir** | [`wasmex`](https://hex.pm/packages/wasmex) | pattern above |
-| **C#** | [`Wasmtime`](https://www.nuget.org/packages/Wasmtime) (NuGet) | pattern above |
+| **C#** | [`Wasmtime`](https://www.nuget.org/packages/Wasmtime) (NuGet) | ✅ CI-verified — [`./csharp`](./csharp) |
 | **C++** | [Wasmtime C API](https://docs.wasmtime.dev/c-api/) | pattern above |
 
-Go and Python are built and run against the full conformance suite on every CI
-run. The snippets below follow the same universal pattern; open an issue (or a PR)
-to promote any of them to a CI-verified host.
-
-### Rust
-
-```rust
-use wasmtime::*;
-use wasmtime_wasi::{WasiCtxBuilder, pipe::{MemoryInputPipe, MemoryOutputPipe}};
-
-// Load once; instantiate per call with stdin=request, stdout=buffer, run `_start`.
-fn invoke(engine: &Engine, module: &Module, request: &str) -> anyhow::Result<String> {
-    let stdout = MemoryOutputPipe::new(1 << 20);
-    let wasi = WasiCtxBuilder::new()
-        .stdin(MemoryInputPipe::new(request.as_bytes().to_vec()))
-        .stdout(stdout.clone())
-        .build_p1();
-    let mut store = Store::new(engine, wasi);
-    let mut linker = Linker::new(engine);
-    wasmtime_wasi::preview1::add_to_linker_sync(&mut linker, |c| c)?;
-    let instance = linker.instantiate(&mut store, module)?;
-    let start = instance.get_typed_func::<(), ()>(&mut store, "_start")?;
-    let _ = start.call(&mut store, ()); // a clean WASI exit is fine
-    Ok(String::from_utf8(stdout.contents().to_vec())?)
-}
-```
-
-### Ruby
-
-```ruby
-require "wasmtime"
-require "json"
-require "tempfile"
-
-engine = Wasmtime::Engine.new
-mod = Wasmtime::Module.from_file(engine, "wasm/dist/model_language.wasm")
-
-def invoke(engine, mod, request)
-  Dir.mktmpdir do |dir|
-    File.write("#{dir}/in", JSON.dump(request))
-    wasi = Wasmtime::WasiCtxBuilder.new.set_stdin_file("#{dir}/in").set_stdout_file("#{dir}/out").build
-    store = Wasmtime::Store.new(engine, wasi_ctx: wasi)
-    linker = Wasmtime::Linker.new(engine, wasi: true)
-    linker.instantiate(store, mod).invoke("_start") rescue nil # clean WASI exit is fine
-    JSON.parse(File.read("#{dir}/out"))
-  end
-end
-
-invoke(engine, mod, { op: "render", template: "Hi {{n}}", data: { n: "x" } })
-```
-
-For Java, Elixir, C#, and C++, apply the universal pattern with that runtime's
-WASI stdin/stdout API (linked above).
+Python, Go, Rust, Ruby, and C# are each built and run against the full
+conformance suite on every CI run — see their folders above for the full host +
+parity test. For Java, Elixir, and C++, apply the same universal pattern with
+that runtime's WASI stdin/stdout API (linked above); open an issue or a PR to
+promote them to CI-verified hosts.
