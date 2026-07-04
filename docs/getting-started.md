@@ -3,8 +3,8 @@
 ## Install
 
 ```bash
-pnpm add @wexio/model-language
-# or: npm i @wexio/model-language / yarn add @wexio/model-language
+pnpm add model-language
+# or: npm i model-language / yarn add model-language
 ```
 
 Zero runtime dependencies. Ships ESM + CJS + type declarations.
@@ -36,7 +36,7 @@ produces the best possible output, with problems collected as warnings.
 ## First template
 
 ```ts
-import { parse, render, validate, type FieldSchema } from '@wexio/model-language';
+import { parse, render, validate, type FieldSchema } from 'model-language';
 
 const schema: FieldSchema = [
   { path: 'user.name', type: 'string', nullable: true },

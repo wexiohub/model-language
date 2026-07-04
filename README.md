@@ -1,4 +1,4 @@
-# @wexio/model-language
+# model-language
 
 > A typed, safe, compile-time-resolved **template language for AI-agent prompts**.
 > Non-technical users write templates with variables, conditions, and loops; the
@@ -35,13 +35,13 @@ does the rest.
 ## Install
 
 ```bash
-pnpm add @wexio/model-language
+pnpm add model-language
 ```
 
 ## Quickstart
 
 ```ts
-import { validate, parse, render, type FieldSchema } from '@wexio/model-language';
+import { validate, parse, render, type FieldSchema } from 'model-language';
 
 const schema: FieldSchema = [
   { path: 'user.name', type: 'string', nullable: true },

@@ -1,4 +1,4 @@
-# CLAUDE.md — working in `@wexio/model-language`
+# CLAUDE.md — working in `model-language`
 
 Instructions for any AI agent (or human) editing this repo. Read before changing code.
 

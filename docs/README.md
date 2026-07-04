@@ -1,6 +1,6 @@
 # Model Language — Documentation
 
-The complete reference for `@wexio/model-language`: a typed, safe,
+The complete reference for `model-language`: a typed, safe,
 compile-time-resolved template language for AI-agent prompts.
 
 > **Implementation status.** The language is documented here in full; the engine

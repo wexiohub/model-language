@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "wexio-model-language"
+name = "model-language"
 version = "1.0.0"
-description = "Python bindings for @wexio/model-language — a typed, safe template language for AI-agent prompts. Runs the exact same engine as the TypeScript package via a WebAssembly component."
+description = "Python bindings for model-language — a typed, safe template language for AI-agent prompts. Runs the exact same engine as the TypeScript package via a WebAssembly (WASI) module."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
@@ -18,7 +18,4 @@ Homepage = "https://github.com/wexiohub/model-language"
 Issues = "https://github.com/wexiohub/model-language/issues"
 
 [tool.setuptools]
-packages = ["wexio_model_language"]
-
-[tool.setuptools.package-data]
-wexio_model_language = ["_bindings/*"]
+packages = ["model_language"]

@@ -1,5 +1,5 @@
 /**
- * `@wexio/model-language` — public entry point.
+ * `model-language` — public entry point.
  *
  * A typed, safe, compile-time-resolved template language for AI-agent prompts.
  * The engine is a pipeline of focused modules; this barrel exposes the stable

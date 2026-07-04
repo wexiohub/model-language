@@ -1,9 +1,9 @@
 ---
 name: model-language
-description: Use when editing the @wexio/model-language engine — adding or changing a filter, lint rule, operator, AST node, or any parse/typecheck/render behavior. Encodes the architecture, the never-throw prime directive, the TDD + golden-suite workflow, and the release/semver discipline for this package.
+description: Use when editing the model-language engine — adding or changing a filter, lint rule, operator, AST node, or any parse/typecheck/render behavior. Encodes the architecture, the never-throw prime directive, the TDD + golden-suite workflow, and the release/semver discipline for this package.
 ---
 
-# Editing `@wexio/model-language`
+# Editing `model-language`
 
 A standalone, zero-dependency, host-agnostic template-language engine
 (parse → typecheck → render) for AI-agent prompts. This skill is the playbook for

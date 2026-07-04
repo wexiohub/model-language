@@ -1,5 +1,5 @@
 /**
- * Public type contract for `@wexio/model-language`.
+ * Public type contract for `model-language`.
  *
  * The host (e.g. a backend) fills in {@link FieldSchema} + {@link DataSnapshot};
  * this package imports nothing framework- or app-specific. Everything below is

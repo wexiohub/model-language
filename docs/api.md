@@ -6,11 +6,11 @@ Everything the package exports. The full type contract lives in
 ```ts
 import {
   parse, serialize, validate, render, registerFilter, registerRule,
-} from '@wexio/model-language';
+} from 'model-language';
 import type {
   FieldSchema, FieldDef, MLType, DataSnapshot,
   Diagnostic, RenderResult, ValidateResult, TemplateNode,
-} from '@wexio/model-language';
+} from 'model-language';
 ```
 
 ---

@@ -1,6 +1,6 @@
-# wexio-model-language (Python)
+# model-language (Python)
 
-Python bindings for [`@wexio/model-language`](https://github.com/wexiohub/model-language).
+Python bindings for [`model-language`](https://github.com/wexiohub/model-language).
 The engine is **not** reimplemented — this package runs the exact same
 TypeScript engine, compiled to a WebAssembly component, so templates render
 byte-for-byte identically to JavaScript. Verified against the shared
@@ -9,7 +9,7 @@ byte-for-byte identically to JavaScript. Verified against the shared
 ## Usage
 
 ```python
-from wexio_model_language import render, validate, parse
+from model_language import render, validate, parse
 
 out = render(
     "Hi {{ user.name | default: 'there' }}!",

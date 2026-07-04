@@ -1,11 +1,11 @@
-"""Python bindings for ``@wexio/model-language``.
+"""Python bindings for ``model-language``.
 
 The engine is not reimplemented here — this package runs the *exact same*
 TypeScript engine, compiled to a self-contained WASI module (Javy), through a
 stable JSON contract (identical to the ``conformance/`` fixtures). A template
 therefore renders byte-for-byte the same in Python as it does in JavaScript.
 
-    from wexio_model_language import render, validate, parse
+    from model_language import render, validate, parse
 
     out = render(
         "Hi {{ user.name | default: 'there' }}!",

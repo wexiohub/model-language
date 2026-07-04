@@ -44,7 +44,7 @@ Rendering a template in code:
 
 ```ts
 import { readFileSync } from 'node:fs';
-import { parse, render } from '@wexio/model-language';
+import { parse, render } from 'model-language';
 
 const source = readFileSync('examples/welcome/welcome.mlt', 'utf8');
 const { text } = render(parse(source).ast, snapshot, schema);
