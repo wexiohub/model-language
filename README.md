@@ -198,6 +198,13 @@ change. Every doc example runs as a test (docs can't drift), fuzzing asserts the
 prime directive (`render()` never throws, `parse()` always recovers), and the
 round-trip invariant holds: `parse(serialize(ast)) ≡ ast`.
 
+## Contributing
+
+Contributions welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md). The engine is
+one canonical TypeScript implementation; the [conformance suite](./conformance/)
+is the contract, and coverage is a hard 100% gate. Security issues:
+[`SECURITY.md`](./SECURITY.md).
+
 ## License
 
 MIT © Wexio
