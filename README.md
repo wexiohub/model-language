@@ -191,17 +191,6 @@ case is a breaking change. Every doc example runs as a test (docs can't drift).
 Fuzzing asserts the prime directive: `render()` never throws, `parse()` always
 recovers. Round-trip invariant: `parse(serialize(ast)) ≡ ast`.
 
-## What's next
-
-The language is feature-complete; remaining work is integrations and tooling:
-
-- **Tiptap package** — edit the language in a rich-text editor (syntax nodes,
-  docJson ↔ text) for non-technical authors.
-- **More language hosts** — thin Go / Ruby / Rust / Java wrappers over the same
-  `.wasm`.
-- **Flow-analysis lint** — `ML211` unreachable-branch / `ML212` contradiction
-  (branch-domain analysis; codes reserved).
-
 ## License
 
 MIT © Wexio
