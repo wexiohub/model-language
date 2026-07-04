@@ -1,13 +1,25 @@
 # model-language
 
-model-language is a typed, safe template language for **AI-agent prompts**.
-Non-technical users write prompts with variables, conditions, loops, and filters;
-the engine type-checks them against your data schema and renders them into clean
-prompts against live data — it **never crashes and never leaks template syntax**.
-It runs in TypeScript natively and in Python via a WebAssembly module.
+> A typed, safe template language for **AI-agent prompts** — write once, run in
+> eight languages.
 
-To learn more about how to use model-language, check out the
-[documentation](./docs/) and the [runnable examples](./examples/).
+[![npm](https://img.shields.io/npm/v/model-language?label=npm&color=cb3837&logo=npm)](https://www.npmjs.com/package/model-language)
+[![PyPI](https://img.shields.io/pypi/v/model-language?label=PyPI&color=3775a9&logo=pypi&logoColor=white)](https://pypi.org/project/model-language/)
+[![crates.io](https://img.shields.io/crates/v/model-language?label=crates.io&color=e6b34c&logo=rust&logoColor=white)](https://crates.io/crates/model-language)
+[![RubyGems](https://img.shields.io/gem/v/model-language?label=gem&color=cc342d&logo=rubygems&logoColor=white)](https://rubygems.org/gems/model-language)
+[![NuGet](https://img.shields.io/nuget/v/ModelLanguage?label=NuGet&color=004880&logo=nuget&logoColor=white)](https://www.nuget.org/packages/ModelLanguage)
+[![Hex](https://img.shields.io/hexpm/v/model_language?label=hex&color=6e4a7e&logo=elixir&logoColor=white)](https://hex.pm/packages/model_language)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+model-language lets non-technical users write prompts with variables, conditions,
+loops, and filters. The engine type-checks them against your data schema and
+renders them into clean prompts against live data — it **never crashes and never
+leaks template syntax**. One canonical TypeScript engine, compiled to WebAssembly,
+runs **byte-for-byte identically** in JavaScript, Python, Rust, Ruby, C#, C++, Go,
+and Elixir — verified by a shared conformance suite in CI.
+
+**Learn more:** [documentation](./docs/) · [runnable examples](./examples/) ·
+[language hosts](./hosts/) · [contributing](./CONTRIBUTING.md)
 
 ## Installation
 
@@ -152,16 +164,16 @@ called over a stable JSON contract, so hosts don't reimplement the language — 
 same `.wasm` produces byte-for-byte identical output everywhere, verified against
 the shared [conformance suite](./conformance/) in CI.
 
-| Language | Install | Host |
-|---|---|---|
-| JavaScript | `npm i model-language` | this package |
-| Python | `pip install model-language` | [`hosts/python`](./hosts/python) |
-| Rust | `cargo add model-language` | [`hosts/rust`](./hosts/rust) |
-| Ruby | `gem install model-language` | [`hosts/ruby`](./hosts/ruby) |
-| C# | `dotnet add package ModelLanguage` | [`hosts/csharp`](./hosts/csharp) |
-| Elixir | `{:model_language, "~> 1.0"}` | [`hosts/elixir`](./hosts/elixir) |
-| Go | `go get …/hosts/go` | [`hosts/go`](./hosts/go) |
-| C++ | vendor + the C API | [`hosts/cpp`](./hosts/cpp) |
+| Language | Install | Package | Host |
+|---|---|---|---|
+| JavaScript | `npm i model-language` | [npm](https://www.npmjs.com/package/model-language) | this package |
+| Python | `pip install model-language` | [PyPI](https://pypi.org/project/model-language/) | [`hosts/python`](./hosts/python) |
+| Rust | `cargo add model-language` | [crates.io](https://crates.io/crates/model-language) | [`hosts/rust`](./hosts/rust) |
+| Ruby | `gem install model-language` | [RubyGems](https://rubygems.org/gems/model-language) | [`hosts/ruby`](./hosts/ruby) |
+| C# | `dotnet add package ModelLanguage` | [NuGet](https://www.nuget.org/packages/ModelLanguage) | [`hosts/csharp`](./hosts/csharp) |
+| Elixir | `{:model_language, "~> 1.0"}` | [Hex](https://hex.pm/packages/model_language) | [`hosts/elixir`](./hosts/elixir) |
+| Go | `go get …/hosts/go` | — (git) | [`hosts/go`](./hosts/go) |
+| C++ | vendor + the C API | — (vendor) | [`hosts/cpp`](./hosts/cpp) |
 
 Each package embeds the module — nothing else to install. See
 [`hosts/`](./hosts/) for a guide to hosting in any other WASI language, and
