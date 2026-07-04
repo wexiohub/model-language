@@ -9,6 +9,11 @@
 [![RubyGems](https://img.shields.io/gem/v/model-language?label=gem&color=cc342d&logo=rubygems&logoColor=white)](https://rubygems.org/gems/model-language)
 [![NuGet](https://img.shields.io/nuget/v/ModelLanguage?label=NuGet&color=004880&logo=nuget&logoColor=white)](https://www.nuget.org/packages/ModelLanguage)
 [![Hex](https://img.shields.io/hexpm/v/model_language?label=hex&color=6e4a7e&logo=elixir&logoColor=white)](https://hex.pm/packages/model_language)
+<br>
+[![CI](https://github.com/wexiohub/model-language/actions/workflows/ci.yml/badge.svg)](https://github.com/wexiohub/model-language/actions/workflows/ci.yml)
+[![coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen)](#development)
+[![types](https://img.shields.io/npm/types/model-language?logo=typescript&logoColor=white)](https://www.npmjs.com/package/model-language)
+[![npm downloads](https://img.shields.io/npm/dm/model-language?label=downloads&color=cb3837)](https://www.npmjs.com/package/model-language)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 model-language lets non-technical users write prompts with variables, conditions,
@@ -29,11 +34,8 @@ You will need Node.js 18+ and npm (or another package manager).
 npm install model-language
 ```
 
-For Python (3.9+), the same engine ships via a WebAssembly module:
-
-```bash
-pip install model-language
-```
+Using another language? See [Other languages](#other-languages) — the same engine
+ships to Python, Rust, Ruby, C#, Go, C++, and Elixir.
 
 ## Rendering a prompt
 
@@ -114,21 +116,6 @@ field, `ML213` prompt-over-budget, `ML214` raw-date-comparison, `ML220`
 **Types** — `string · number · boolean · datetime · array · enum · multiEnum ·
 object · dynamic`, plus `null` (present-but-empty) vs `undefined` (missing).
 Dates are compared through filters (`| days_ago > 30`), never raw.
-
-## Python
-
-The same engine — the TypeScript build compiled to a WebAssembly module and
-hosted with `wasmtime` — produces byte-for-byte identical output.
-
-```python
-from model_language import render, validate
-
-out = render(
-    "Hi {{ user.name | default: 'there' }}!",
-    data={"user": {"name": "Vasyl"}},
-)
-print(out["text"])  # -> "Hi Vasyl!"
-```
 
 ## Public API
 
