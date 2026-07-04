@@ -1,6 +1,6 @@
 {
   "name": "model-language",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A typed, safe, compile-time-resolved template language for AI-agent prompts. Non-technical users write templates with variables, conditions, and loops; the engine renders them into clean prompts against live data. Never crashes, never leaks syntax.",
   "license": "MIT",
   "type": "module",
@@ -20,6 +20,7 @@
   "packageManager": "pnpm@10.13.1",
   "scripts": {
     "build": "tsup",
+    "prepublishOnly": "pnpm build",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

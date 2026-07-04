@@ -19,3 +19,6 @@ Issues = "https://github.com/wexiohub/model-language/issues"
 
 [tool.setuptools]
 packages = ["model_language"]
+
+[tool.setuptools.package-data]
+model_language = ["model_language.wasm"]

@@ -33,9 +33,13 @@ __all__ = ["render", "validate", "parse"]
 
 
 def _wasm_path() -> Path:
+    # 1) explicit override, 2) module bundled into the wheel, 3) repo dev layout.
     override = os.environ.get("MODEL_LANGUAGE_WASM")
     if override:
         return Path(override)
+    bundled = Path(__file__).resolve().parent / "model_language.wasm"
+    if bundled.exists():
+        return bundled
     return Path(__file__).resolve().parents[2] / "wasm" / "dist" / "model_language.wasm"
 
 

@@ -5,7 +5,11 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). A change
 that breaks any golden test case is a breaking change.
 
-## [Unreleased]
+## [1.0.0]
+
+First stable release. The language is feature-complete, the public API is final,
+and the engine holds a 100% test-coverage gate. Ships for JavaScript (npm) and
+Python (PyPI, via a WebAssembly module).
 
 ### Added
 
