@@ -41,7 +41,7 @@ Loading is cold and cacheable; the per-call cost is the instantiation + run.
 | **Go** | [`wasmtime-go`](https://github.com/bytecodealliance/wasmtime-go) | ✅ CI-verified — [`./go`](./go) |
 | **Rust** | [`wasmtime`](https://crates.io/crates/wasmtime) crate | ✅ CI-verified — [`./rust`](./rust) |
 | **Ruby** | [`wasmtime`](https://rubygems.org/gems/wasmtime) gem | ✅ CI-verified — [`./ruby`](./ruby) |
-| **Java** | [Chicory](https://github.com/dylibso/chicory) / [`wasmtime-java`](https://github.com/kawamuray/wasmtime-java) | host written — [`./java`](./java) (blocked on Chicory SIMD; use a native binding today) |
+| **Java** | [GraalWasm](https://www.graalvm.org/webassembly/) / [Chicory](https://github.com/dylibso/chicory) | host written — [`./java`](./java) (not yet CI-verified: Chicory lacks SIMD; GraalWasm WASI stdio wiring unresolved) |
 | **Elixir** | [`wasmex`](https://hex.pm/packages/wasmex) | pattern above |
 | **C#** | [`Wasmtime`](https://www.nuget.org/packages/Wasmtime) (NuGet) | ✅ CI-verified — [`./csharp`](./csharp) |
 | **C++** | [Wasmtime C API](https://docs.wasmtime.dev/c-api/) | pattern above |
