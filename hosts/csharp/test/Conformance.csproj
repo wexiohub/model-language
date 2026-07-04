@@ -5,11 +5,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>model-language-conformance</AssemblyName>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Wasmtime" Version="44.0.0" />
+    <ProjectReference Include="../src/ModelLanguage.csproj" />
   </ItemGroup>
 
 </Project>

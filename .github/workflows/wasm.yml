@@ -102,11 +102,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Run C# host conformance tests (parity with TypeScript)
+      - name: Run C# host conformance tests + NuGet pack (parity with TypeScript)
         working-directory: hosts/csharp
         env:
-          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
-        run: dotnet run -c Release
+          MODEL_LANGUAGE_CASES: ${{ github.workspace }}/conformance/cases
+        run: |
+          cp "${{ github.workspace }}/wasm/dist/model_language.wasm" src/model_language.wasm
+          dotnet pack src/ModelLanguage.csproj -c Release   # verify NuGet packaging
+          dotnet run -c Release --project test/Conformance.csproj
 
       - name: Build & run C++ host conformance tests (parity with TypeScript)
         working-directory: hosts/cpp

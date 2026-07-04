@@ -30,8 +30,10 @@ hosts/ruby/lib/model_language.wasm
 hosts/ruby/*.gem
 
 # C# host
-hosts/csharp/bin/
-hosts/csharp/obj/
+hosts/csharp/**/bin/
+hosts/csharp/**/obj/
+hosts/csharp/src/model_language.wasm
+hosts/csharp/**/*.nupkg
 
 # C++ host
 hosts/cpp/conformance

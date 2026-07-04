@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ModelLanguage</RootNamespace>
+    <AssemblyName>ModelLanguage</AssemblyName>
+
+    <PackageId>ModelLanguage</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Wexio</Authors>
+    <Description>A typed, safe template language for AI-agent prompts. Runs the exact same engine as the JavaScript/TypeScript package via an embedded WebAssembly module.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/wexiohub/model-language</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/wexiohub/model-language</RepositoryUrl>
+    <PackageTags>template;prompt;ai;llm;wasm</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Wasmtime" Version="44.0.0" />
+    <EmbeddedResource Include="model_language.wasm" />
+    <None Include="../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
