@@ -143,3 +143,15 @@ jobs:
           mix deps.get
           mix test
           mix hex.build   # verify the Hex package
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Run Java host conformance tests (GraalWasm, parity with TypeScript)
+        working-directory: hosts/java
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: mvn -q -B compile exec:java

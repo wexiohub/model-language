@@ -1,33 +1,34 @@
-// Java host for the model-language WebAssembly module (Chicory, pure-JVM). Runs
-// the exact same engine as the TypeScript package: one JSON request in on the
-// module's stdin, one JSON response out on its stdout. This program runs the
-// shared conformance fixtures through the host and exits non-zero on any
-// mismatch (parity with TypeScript).
+// Java host for the model-language WebAssembly module (GraalWasm — SIMD-capable,
+// distributed as Maven artifacts so it runs on a stock JDK 21+). Runs the exact
+// same engine as the TypeScript package: one JSON request in on the module's
+// stdin, one JSON response out on its stdout. This program runs the shared
+// conformance fixtures through the host and exits non-zero on any mismatch.
 
-import com.dylibso.chicory.runtime.Store;
-import com.dylibso.chicory.wasi.WasiOptions;
-import com.dylibso.chicory.wasi.WasiPreview1;
-import com.dylibso.chicory.wasm.Parser;
-import com.dylibso.chicory.wasm.WasmModule;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.io.ByteSequence;
+import org.graalvm.polyglot.io.IOAccess;
 
 public class Conformance {
     static final ObjectMapper M = new ObjectMapper();
-    static WasmModule module;
+    static byte[] wasm;
 
     public static void main(String[] args) throws Exception {
         String wasmPath = System.getenv().getOrDefault(
                 "MODEL_LANGUAGE_WASM", "../../wasm/dist/model_language.wasm");
-        module = Parser.parse(new File(wasmPath));
+        wasm = Files.readAllBytes(new File(wasmPath).toPath());
 
         File[] files = new File("../../conformance/cases").listFiles((d, n) -> n.endsWith(".json"));
         Arrays.sort(files);
@@ -85,19 +86,19 @@ public class Conformance {
     static JsonNode invoke(ObjectNode request) throws Exception {
         byte[] body = M.writeValueAsBytes(request);
         var stdout = new ByteArrayOutputStream();
-        var opts = WasiOptions.builder()
-                .withStdin(new ByteArrayInputStream(body))
-                .withStdout(stdout)
-                .build();
-        var wasi = WasiPreview1.builder().withOptions(opts).build();
-        var store = new Store().addFunction(wasi.toHostFunctions());
-        var instance = store.instantiate("model_language", module);
-        try {
-            // WASI commands export `_start`; call it explicitly (it is not the wasm
-            // start-section). The response is written to stdout.
-            instance.export("_start").apply();
-        } catch (RuntimeException e) {
-            // a clean WASI exit surfaces as an exception; the response is already written
+        try (Context context = Context.newBuilder("wasm")
+                .option("wasm.Builtins", "wasi_snapshot_preview1")
+                .allowIO(IOAccess.ALL)
+                .in(new ByteArrayInputStream(body))
+                .out(stdout)
+                .build()) {
+            Source source = Source.newBuilder("wasm", ByteSequence.create(wasm), "model_language").build();
+            context.eval(source);
+            try {
+                context.getBindings("wasm").getMember("model_language").getMember("_start").execute();
+            } catch (PolyglotException e) {
+                // a clean WASI exit surfaces as an exit exception; the response is written
+            }
         }
         return M.readTree(stdout.toByteArray());
     }
