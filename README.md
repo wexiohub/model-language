@@ -1,47 +1,35 @@
 # model-language
 
-> A typed, safe, compile-time-resolved **template language for AI-agent prompts**.
-> Non-technical users write prompts with variables, conditions, loops, and
-> filters; the engine type-checks them against your data schema and renders them
-> into clean prompts against live data. **Never crashes, never leaks syntax.**
+model-language is a typed, safe template language for **AI-agent prompts**.
+Non-technical users write prompts with variables, conditions, loops, and filters;
+the engine type-checks them against your data schema and renders them into clean
+prompts against live data — it **never crashes and never leaks template syntax**.
+It runs in TypeScript natively and in Python via a WebAssembly module.
 
-**Status: feature-complete.** Variables, conditionals, loops, the full filter
-set, arithmetic + `calculate()`, directives, includes, comments, and the editor
-lint set all ship. The engine is pure TypeScript with a **100% test-coverage
-gate**, and runs in **JavaScript natively** and **Python via a WebAssembly
-module** (any WASI host can run the same binary).
+To learn more about how to use model-language, check out the
+[documentation](./docs/) and the [runnable examples](./examples/).
 
----
+## Installation
 
-## Why
-
-AI agents need prompts that adapt to who they're talking to — *"if this is a
-qualified lead with high interest, do X; if a past-due subscription exists, do
-Y."* Writing that as code doesn't scale to non-technical operators, and stuffing
-raw data into a prompt is unsafe. Model Language lets a support manager express
-that logic in plain, readable templates. The engine:
-
-1. **Parses** the template into an AST (with error recovery).
-2. **Type-checks** it against a field schema — typos, wrong types, raw-date
-   comparisons, and budget overruns are caught at edit time, not in production.
-3. **Renders** it against a live data snapshot — a pure function that **never
-   throws** and produces a prompt with zero template syntax left in it.
-
-The language is host-agnostic: it knows nothing about any product's data. The
-host supplies a `FieldSchema` and a typed `DataSnapshot`; the engine does the
-rest.
-
-## Install
+You will need Node.js 18+ and npm (or another package manager).
 
 ```bash
-npm add model-language      # or pnpm / yarn
-pip install model-language  # Python bindings (same engine, via WASM)
+npm install model-language
 ```
 
-## Quickstart (JavaScript / TypeScript)
+For Python (3.9+), the same engine ships via a WebAssembly module:
+
+```bash
+pip install model-language
+```
+
+## Rendering a prompt
+
+Parse once, render many. `render()` is a pure function — it never throws, and the
+output has zero template syntax left in it.
 
 ```ts
-import { validate, parse, render, type FieldSchema } from 'model-language';
+import { parse, render, type FieldSchema } from 'model-language';
 
 const schema: FieldSchema = [
   { path: 'user.name', type: 'string', nullable: true },
@@ -51,33 +39,32 @@ const schema: FieldSchema = [
 const source = `Hi {{user.name | default: "there"}}!
 {{if user.plan == "pro"}}Priority support is on.{{/if}}`;
 
-// Editor path — diagnostics for squiggles + quickfixes, and a token estimate.
-const { diagnostics, maxTokenEstimate } = validate(source, schema);
-
-// Runtime path — parse once, render many. render() never throws.
 const { ast } = parse(source);
-const { text, warnings, resolvedBranches } = render(
-  ast,
-  { user: { name: 'vasyl', plan: 'pro' } },
-  schema,
-);
+const { text } = render(ast, { user: { name: 'vasyl', plan: 'pro' } }, schema);
 // text → "Hi vasyl!\nPriority support is on."
 ```
 
-## Quickstart (Python)
+## Validating in the editor
 
-Same engine, same output — the TS engine compiled to a WASI module and hosted
-with `wasmtime`:
+`validate()` type-checks a template against the schema and returns stable
+`ML###` diagnostics for live squiggles, quickfixes, and a worst-case token
+estimate — so authoring mistakes are caught at edit time, not in production.
 
-```python
-from model_language import render, validate
+```ts
+import { validate } from 'model-language';
 
-out = render(
-    "Hi {{ user.name | default: 'there' }}!",
-    data={"user": {"name": "Vasyl"}},
-)
-print(out["text"])  # -> "Hi Vasyl!"
+const { diagnostics, maxTokenEstimate } = validate(
+  '{{if user.plan == "premium"}}...{{/if}}',
+  [{ path: 'user.plan', type: 'enum', values: ['free', 'pro'] }],
+);
+// diagnostics → [{ code: 'ML202', message: "'premium' is not a valid value…", … }]
 ```
+
+Examples: `ML101` unknown-field (with a "did you mean" suggestion), `ML102`
+unknown-filter, `ML201` type-mismatch, `ML210` missing-`default` on a nullable
+field, `ML213` prompt-over-budget, `ML214` raw-date-comparison, `ML220`
+`==`-on-multi-select (quickfix to `contains`). Full list:
+[diagnostics catalog](./docs/diagnostics.md).
 
 ## The language
 
@@ -101,29 +88,35 @@ print(out["text"])  # -> "Hi Vasyl!"
 {{# a comment, never rendered #}}
 ```
 
-**Operators.** `== != < > <= >=`, `and / or / not`, `in`, `contains`,
+**Operators** — `== != < > <= >=`, `and / or / not`, `in`, `contains`,
 `contains_any`, `contains_all`, `is_empty`, `exists`, `startsWith`, `endsWith`,
 `matches`.
 
-**Filters (total — wrong input passes through, never throws):**
+**Filters** (total — the wrong input type passes through, never throws):
 - text: `upper` `lower` `trim` `capitalize` `truncate` `replace` `default`
 - number: `round` `floor` `ceil` `abs` `percent` `currency`
 - array: `count` `join` `first` `last` `limit` `pluck` `where` `sort` `sum`
   `max` `min`
 - datetime: `days_ago` `days_until` `is_past` `is_future` `date`
 
-**Types.** `string · number · boolean · datetime · array · enum · multiEnum ·
+**Types** — `string · number · boolean · datetime · array · enum · multiEnum ·
 object · dynamic`, plus `null` (present-but-empty) vs `undefined` (missing).
 Dates are compared through filters (`| days_ago > 30`), never raw.
 
-## Editor diagnostics
+## Python
 
-`validate()` returns typed, stable `ML###` diagnostics for live squiggles and
-quickfixes — e.g. `ML101` unknown-field (with a "did you mean" suggestion),
-`ML102` unknown-filter, `ML201` type-mismatch, `ML202` unknown-enum-value,
-`ML210` missing-`default` on a nullable field, `ML213` prompt-over-budget,
-`ML214` raw-date-comparison, `ML220` `==`-on-multi-select (quickfix to
-`contains`), `ML001` unclosed block. Full list: [diagnostics catalog](./docs/diagnostics.md).
+The same engine — the TypeScript build compiled to a WebAssembly module and
+hosted with `wasmtime` — produces byte-for-byte identical output.
+
+```python
+from model_language import render, validate
+
+out = render(
+    "Hi {{ user.name | default: 'there' }}!",
+    data={"user": {"name": "Vasyl"}},
+)
+print(out["text"])  # -> "Hi Vasyl!"
+```
 
 ## Public API
 
@@ -148,19 +141,19 @@ is the per-message cost; caching it is the whole game.
 | typical prompt (tens–hundreds of lines) | **13–75 µs** |
 | pathological 3,500-line, 500-rule prompt | **~1 ms** |
 
-Cost scales **linearly** with template size — logical rules never blow up
-(each condition is short-circuit-evaluated once). Full numbers and methodology:
+Cost scales **linearly** with template size — logical rules never blow up (each
+condition is short-circuit-evaluated once). Numbers and methodology:
 [`bench/RESULTS.md`](./bench/RESULTS.md).
 
-## Other languages (WASM bridge)
+## Other languages
 
-The engine is compiled **once** to a self-contained WASI module and called over a
-stable JSON contract, so hosts don't reimplement the language. Python ships today
-(CI-verified against the shared conformance suite); the same `.wasm` runs in any
-WASI host (Go, Ruby, Rust, Java, Node). See [`wasm/`](./wasm/) and
-[`python/`](./python/).
+The engine is compiled **once** to a self-contained WebAssembly (WASI) module and
+called over a stable JSON contract, so hosts don't reimplement the language.
+Python ships today (CI-verified against the shared conformance suite); the same
+`.wasm` runs in any WASI host — Go, Ruby, Rust, Java, Node. See [`wasm/`](./wasm/)
+and [`python/`](./python/).
 
-## Documentation & examples
+## Documentation
 
 Complete reference in [`docs/`](./docs/):
 
@@ -170,8 +163,8 @@ Complete reference in [`docs/`](./docs/):
 - [Math & functions](./docs/functions.md) · [Filters](./docs/filters/README.md) ·
   [Directives & includes](./docs/directives.md) · [Diagnostics](./docs/diagnostics.md)
 
-Runnable templates with data + expected output: [`examples/`](./examples/).
-Language-neutral golden fixtures (the cross-host contract):
+Runnable templates with data + expected output live in [`examples/`](./examples/);
+language-neutral golden fixtures (the cross-host contract) in
 [`conformance/`](./conformance/).
 
 ## Development
@@ -186,10 +179,10 @@ pnpm build         # tsup → dist (ESM + CJS + .d.ts)
 pnpm wasm:build    # esbuild bundle → Javy → wasm/dist/model_language.wasm
 ```
 
-**Testing philosophy.** The golden/conformance suite is the contract — breaking a
-case is a breaking change. Every doc example runs as a test (docs can't drift).
-Fuzzing asserts the prime directive: `render()` never throws, `parse()` always
-recovers. Round-trip invariant: `parse(serialize(ast)) ≡ ast`.
+The golden/conformance suite is the contract — breaking a case is a breaking
+change. Every doc example runs as a test (docs can't drift), fuzzing asserts the
+prime directive (`render()` never throws, `parse()` always recovers), and the
+round-trip invariant holds: `parse(serialize(ast)) ≡ ast`.
 
 ## License
 
