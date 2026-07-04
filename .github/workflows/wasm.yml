@@ -66,3 +66,9 @@ jobs:
         run: |
           go mod tidy
           go test ./...
+
+      - name: Run Rust host conformance tests (parity with TypeScript)
+        working-directory: hosts/rust
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: cargo test

@@ -1,0 +1,16 @@
+[package]
+name = "model-language"
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+description = "Rust host for the model-language WebAssembly module — same engine, same output as the TypeScript package."
+
+[lib]
+name = "model_language"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1"
+serde_json = "1"
+wasmtime = "27"
+wasmtime-wasi = "27"
