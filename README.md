@@ -21,6 +21,7 @@
 [![install size](https://packagephobia.com/badge?p=model-language)](https://packagephobia.com/result?p=model-language)
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/model-language?activeTab=dependencies)
 [![languages](https://img.shields.io/badge/languages-8-blue)](#other-languages)
+[![powered by wexio.io](https://img.shields.io/badge/powered%20by-wexio.io-0b0b0b)](https://wexio.io)
 
 model-language lets non-technical users write prompts with variables, conditions,
 loops, and filters. The engine type-checks them against your data schema and
@@ -212,4 +213,8 @@ is the contract, and coverage is a hard 100% gate. Security issues:
 
 ## License
 
-MIT © Wexio
+MIT © [Wexio](https://wexio.io)
+
+---
+
+<p align="center">Built and maintained by <a href="https://wexio.io"><b>Wexio</b></a> — <a href="https://wexio.io">wexio.io</a></p>
