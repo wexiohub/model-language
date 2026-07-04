@@ -93,9 +93,9 @@ public class Conformance {
                 .out(stdout)
                 .build()) {
             Source source = Source.newBuilder("wasm", ByteSequence.create(wasm), "model_language").build();
-            context.eval(source);
+            var instance = context.eval(source); // the module instance; exports are its members
             try {
-                context.getBindings("wasm").getMember("model_language").getMember("_start").execute();
+                instance.getMember("_start").execute();
             } catch (PolyglotException e) {
                 // a clean WASI exit surfaces as an exit exception; the response is written
             }
