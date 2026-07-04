@@ -1,10 +1,13 @@
 # model-language (Python)
 
-Python bindings for [`model-language`](https://github.com/wexiohub/model-language).
-The engine is **not** reimplemented — this package runs the exact same
-TypeScript engine, compiled to a WebAssembly component, so templates render
-byte-for-byte identically to JavaScript. Verified against the shared
-[`conformance/`](../conformance) fixtures in CI.
+Python bindings for [`model-language`](https://github.com/wexiohub/model-language) —
+a typed, safe template language for AI-agent prompts.
+
+Powered by the production model-language engine compiled to a WebAssembly module:
+templates render **byte-for-byte identically** in Python and JavaScript, a
+guarantee enforced by a shared [`conformance/`](../conformance) suite run in CI.
+Fast (parse once, render many), sandboxed, and it never crashes — template
+problems degrade to empty output plus a warning.
 
 ## Usage
 

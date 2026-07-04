@@ -1,9 +1,11 @@
-"""Python bindings for ``model-language``.
+"""Python bindings for ``model-language`` — a typed, safe template language for
+AI-agent prompts.
 
-The engine is not reimplemented here — this package runs the *exact same*
-TypeScript engine, compiled to a self-contained WASI module (Javy), through a
-stable JSON contract (identical to the ``conformance/`` fixtures). A template
-therefore renders byte-for-byte the same in Python as it does in JavaScript.
+Powered by the production model-language engine (compiled to a self-contained
+WebAssembly module), so every template renders **byte-for-byte identically** in
+Python and JavaScript — a guarantee enforced by a shared conformance suite in CI.
+It's fast (parse once, render many), sandboxed, and never crashes: template
+problems degrade to empty output plus a warning, never an exception.
 
     from model_language import render, validate, parse
 

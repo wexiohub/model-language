@@ -53,3 +53,16 @@ jobs:
       - name: Run Python conformance tests (parity with TypeScript)
         working-directory: python
         run: python -m pytest -q
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Run Go host conformance tests (parity with TypeScript)
+        working-directory: hosts/go
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: |
+          go mod tidy
+          go test ./...
