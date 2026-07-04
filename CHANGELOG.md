@@ -5,10 +5,17 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). A change
 that breaks any golden test case is a breaking change.
 
+## [1.0.2]
+
+Version-sync release — all six registries publish in lockstep at `1.0.2` (the
+engine is unchanged since `1.0.0`). Establishes **tag-driven releases**: a
+`vX.Y.Z` tag stamps its version into every package manifest and publishes them
+together, so registries never drift apart again.
+
 ## [1.0.1]
 
-Packaging & docs only (the engine is unchanged). npm-focused release; the other
-registries stay on `1.0.0`.
+Packaging & docs only (the engine is unchanged). npm-only release (the other
+registries stayed on `1.0.0` — reconciled in `1.0.2`).
 
 - **Leaner npm package** — source maps are no longer published (install size
   drops ~3×; zero impact on the ~7.4 KB min+gzip bundle).
