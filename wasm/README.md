@@ -3,14 +3,14 @@
 The canonical engine is TypeScript. Rather than reimplement the language in
 every host language, we compile the **one** engine to a self-contained
 **WebAssembly (WASI) module** and let any host call it over a stable JSON
-contract. Python, Go, Ruby, Rust, and Java all get byte-for-byte identical
-output — verified against the same [`conformance/`](../conformance) fixtures as
-the TS engine.
+contract. Python, Go, Rust, Ruby, C#, C++, and Elixir all get byte-for-byte
+identical output — verified against the same [`conformance/`](../conformance)
+fixtures as the TS engine.
 
 ```
 src/ (TS engine)  ─esbuild→  dist/engine.js  ─javy build→  dist/model_language.wasm
                                                                    │
-                       any WASM/WASI host (Python, Go, Ruby, Rust, Java …)
+                    any WASM/WASI host (Python, Go, Rust, Ruby, C#, C++, Elixir …)
 ```
 
 ## The contract

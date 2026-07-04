@@ -93,10 +93,28 @@ cd -
 git tag v1.0.0 && git push origin v1.0.0
 ```
 
-## Automating later (optional)
+## Automated: one tag publishes everything
 
-A tag-triggered `release.yml` can run all of the above on `v*` tags once each
-registry's token is in repo secrets (`NPM_TOKEN`, `PYPI_API_TOKEN`,
-`CARGO_REGISTRY_TOKEN`, `RUBYGEMS_API_KEY`, `NUGET_API_KEY`, `HEX_API_KEY`). The
-build steps are exactly what the `WASM bridge` workflow already runs per host;
-add the publish command after each.
+[`.github/workflows/release.yml`](.github/workflows/release.yml) does all of the
+above on a `v*` tag. Each registry publishes only when its token is present, so
+you can add them incrementally under **Settings → Secrets and variables →
+Actions**:
+
+| Secret | Registry |
+|---|---|
+| `NPM_TOKEN` | npm |
+| `PYPI_API_TOKEN` | PyPI |
+| `CARGO_REGISTRY_TOKEN` | crates.io |
+| `RUBYGEMS_API_KEY` | RubyGems |
+| `NUGET_API_KEY` | NuGet |
+| `HEX_API_KEY` | Hex |
+
+Then:
+
+```sh
+git tag v1.0.0 && git push origin v1.0.0   # -> builds the .wasm, publishes each registry with a token
+```
+
+To claim the names one registry at a time, add just that one secret and push a
+tag (bump the patch version for re-runs). The manual commands above remain the
+fallback.

@@ -41,14 +41,16 @@ Loading is cold and cacheable; the per-call cost is the instantiation + run.
 | **Go** | [`wasmtime-go`](https://github.com/bytecodealliance/wasmtime-go) | ✅ CI-verified — [`./go`](./go) |
 | **Rust** | [`wasmtime`](https://crates.io/crates/wasmtime) crate | ✅ CI-verified — [`./rust`](./rust) |
 | **Ruby** | [`wasmtime`](https://rubygems.org/gems/wasmtime) gem | ✅ CI-verified — [`./ruby`](./ruby) |
-| **Java** | [GraalWasm](https://www.graalvm.org/webassembly/) / [Chicory](https://github.com/dylibso/chicory) | host written — [`./java`](./java) (not yet CI-verified: Chicory lacks SIMD; GraalWasm WASI stdio wiring unresolved) |
-| **Elixir** | [`wasmex`](https://hex.pm/packages/wasmex) | pattern above |
+| **Elixir** | [`wasmex`](https://hex.pm/packages/wasmex) | ✅ CI-verified — [`./elixir`](./elixir) |
 | **C#** | [`Wasmtime`](https://www.nuget.org/packages/Wasmtime) (NuGet) | ✅ CI-verified — [`./csharp`](./csharp) |
-| **C++** | [Wasmtime C API](https://docs.wasmtime.dev/c-api/) | pattern above |
+| **C++** | [Wasmtime C API](https://docs.wasmtime.dev/c-api/) | ✅ CI-verified — [`./cpp`](./cpp) |
 
 **Seven hosts — Python, Go, Rust, Ruby, C#, C++, and Elixir — are each built and
 run against the full conformance suite on every CI run.** See their folders above
-for the host + parity test. A Java host is written too ([`./java`](./java)) but is
-blocked on Chicory's SIMD support (the Javy module uses `v128`); use a
-native-backed JVM binding today. For any other WASI language, apply the universal
+for the host + parity test. For any other WASI language, apply the universal
 pattern above.
+
+> **Java:** pure-JVM runtimes can't host the module yet — Chicory lacks SIMD (the
+> Javy module uses `v128`), and GraalWasm runs it but its WASI stdin/stdout wiring
+> to in-memory streams is unresolved. Use a native wasmtime JVM binding with the
+> universal pattern.
