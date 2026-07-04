@@ -148,10 +148,24 @@ condition is short-circuit-evaluated once). Numbers and methodology:
 ## Other languages
 
 The engine is compiled **once** to a self-contained WebAssembly (WASI) module and
-called over a stable JSON contract, so hosts don't reimplement the language.
-Python ships today (CI-verified against the shared conformance suite); the same
-`.wasm` runs in any WASI host — Go, Ruby, Rust, Java, Node. See [`wasm/`](./wasm/)
-and [`hosts/`](./hosts/) (Python + Go, plus a guide for any language).
+called over a stable JSON contract, so hosts don't reimplement the language — the
+same `.wasm` produces byte-for-byte identical output everywhere, verified against
+the shared [conformance suite](./conformance/) in CI.
+
+| Language | Install | Host |
+|---|---|---|
+| JavaScript | `npm i model-language` | this package |
+| Python | `pip install model-language` | [`hosts/python`](./hosts/python) |
+| Rust | `cargo add model-language` | [`hosts/rust`](./hosts/rust) |
+| Ruby | `gem install model-language` | [`hosts/ruby`](./hosts/ruby) |
+| C# | `dotnet add package ModelLanguage` | [`hosts/csharp`](./hosts/csharp) |
+| Elixir | `{:model_language, "~> 1.0"}` | [`hosts/elixir`](./hosts/elixir) |
+| Go | `go get …/hosts/go` | [`hosts/go`](./hosts/go) |
+| C++ | vendor + the C API | [`hosts/cpp`](./hosts/cpp) |
+
+Each package embeds the module — nothing else to install. See
+[`hosts/`](./hosts/) for a guide to hosting in any other WASI language, and
+[`RELEASING.md`](./RELEASING.md) for the publish flow.
 
 ## Documentation
 
