@@ -85,3 +85,14 @@ jobs:
         run: |
           bundle install
           bundle exec ruby test/conformance_test.rb
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run C# host conformance tests (parity with TypeScript)
+        working-directory: hosts/csharp
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: dotnet run -c Release

@@ -25,3 +25,7 @@ hosts/rust/Cargo.lock
 hosts/ruby/Gemfile.lock
 hosts/ruby/.bundle/
 hosts/ruby/vendor/
+
+# C# host
+hosts/csharp/bin/
+hosts/csharp/obj/
