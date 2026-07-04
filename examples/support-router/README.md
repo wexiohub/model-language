@@ -1,6 +1,6 @@
 # support-router — input → output
 
-> **Renders today (0.1b)** — nested `if/elseif/else`, `and`/`or`, `==`,
+> **Renders** — nested `if/elseif/else`, `and`/`or`, `==`,
 > `contains` (arrays), the `default` filter, and whitespace hygiene. A realistic
 > "assemble the system prompt from context" template.
 

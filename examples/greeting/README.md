@@ -1,7 +1,6 @@
 # greeting — input → output
 
-> Interpolation lines render **today (0.1a)**; the `{{if …}}` block renders from
-> **0.1b** and the `days_ago` filter from **0.2**.
+> Interpolation, the `{{if …}}` block, and the `days_ago` filter.
 
 ## Input — [`greeting.mlt`](./greeting.mlt)
 

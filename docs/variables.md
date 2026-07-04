@@ -1,7 +1,7 @@
 # Variables & interpolation
 
-**Shipped in 0.1a** — interpolation, safe navigation, stringification, and the
-`default` filter render today. (Arithmetic and other filters land in 0.2.)
+**Shipped** — interpolation, safe navigation, stringification, the `default`
+filter, arithmetic, and the full filter set.
 
 An interpolation inserts a value into the output:
 
@@ -42,7 +42,7 @@ typing):
 | `null` / `undefined` | `` (empty) + `ML301` unless `\| default` |
 | object | `` (empty) + `ML302` warning |
 
-## Arithmetic & math (shipped 0.2d)
+## Arithmetic & math
 
 Arithmetic (`+ - * /`, parentheses, unary minus) works inside interpolation and
 comparisons, and is strictly numbers-only — a non-number operand yields empty

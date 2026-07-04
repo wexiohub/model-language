@@ -3,11 +3,9 @@
 The complete reference for `model-language`: a typed, safe,
 compile-time-resolved template language for AI-agent prompts.
 
-> **Implementation status.** The language is documented here in full; the engine
-> ships it across milestones. Each page tags features with the milestone that
-> delivers them: **0.1** (variables, conditions), **0.2** (loops, filters,
-> arithmetic), **0.3** (includes, directives, comments). See the
-> [roadmap](../README.md#roadmap).
+> The language is feature-complete — everything documented here ships in v1.0.0.
+> The engine runs in JavaScript natively and in Python (and any WASI host) via a
+> WebAssembly module. See the [main README](../README.md).
 
 ## Start here
 

@@ -1,7 +1,7 @@
 # Math & functions
 
-**Arithmetic (`+ - * /`, parentheses, unary minus) shipped in 0.2d; `calculate()`
-shipped in 0.3.** `calculate(expr, decimals?)` evaluates an expression and rounds
+**Arithmetic (`+ - * /`, parentheses, unary minus) shipped; `calculate()`
+shipped.** `calculate(expr, decimals?)` evaluates an expression and rounds
 it (`{{ calculate(user.mrr / user.seats, 2) }}` → `33.33`; equivalent to
 `{{ (…) | round: 2 }}`). A general host function registry + async functions come
 later (Phase 4).

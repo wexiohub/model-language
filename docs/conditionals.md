@@ -2,8 +2,8 @@
 
 **Shipped** — `if/elseif/else`, all comparison + logical operators, `exists`,
 `in`, `contains`, `startsWith`/`endsWith`/`matches`, truthiness, and whitespace
-hygiene (0.1b); the `multiEnum` operators `contains_any` / `contains_all` /
-`is_empty` (0.2c). Arithmetic lands in 0.2.
+hygiene; the `multiEnum` operators `contains_any` / `contains_all` /
+`is_empty`; and arithmetic in conditions.
 
 Include text only when a condition holds.
 

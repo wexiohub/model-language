@@ -1,6 +1,6 @@
 # role-scoping — input → output
 
-> **Renders today (0.1b)** — `==` on a role, `elseif` chain, `exists`, the
+> **Renders** — `==` on a role, `elseif` chain, `exists`, the
 > `default` filter, array stringification. Role-based access scoping for a data
 > platform.
 

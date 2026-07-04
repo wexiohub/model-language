@@ -1,6 +1,6 @@
 # support-triage — input → output
 
-> **Renders today (0.1b)** — three independent `if` blocks composing a prompt
+> **Renders** — three independent `if` blocks composing a prompt
 > from `contains` (multi-select) + `==` (category), with whitespace hygiene.
 
 ## Input — [`support-triage.mlt`](./support-triage.mlt)

@@ -1,6 +1,6 @@
 # appointment-reminder — input → output
 
-> **Renders today (0.1b)** — namespace `exists`, `not`, boolean fields, nested
+> **Renders** — namespace `exists`, `not`, boolean fields, nested
 > `if`, the `default` filter, `if/else`.
 
 ## Input — [`appointment-reminder.mlt`](./appointment-reminder.mlt)

@@ -1,6 +1,6 @@
 # verified-note — input → output
 
-> **Renders today (0.1b)** — `contains` on an array. (Note: this branches
+> **Renders** — `contains` on an array. (Note: this branches
 > *messaging* only; actual data-disclosure gating is enforced by the host, not
 > the prompt.)
 

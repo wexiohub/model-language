@@ -1,6 +1,6 @@
 # plan-badge — input → output
 
-> **Renders today (0.1b)** — `if/elseif/else` + `==`.
+> **Renders** — `if/elseif/else` + `==`.
 
 ## Input — [`plan-badge.mlt`](./plan-badge.mlt)
 

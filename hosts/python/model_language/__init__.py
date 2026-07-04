@@ -42,7 +42,7 @@ def _wasm_path() -> Path:
     bundled = Path(__file__).resolve().parent / "model_language.wasm"
     if bundled.exists():
         return bundled
-    return Path(__file__).resolve().parents[2] / "wasm" / "dist" / "model_language.wasm"
+    return Path(__file__).resolve().parents[3] / "wasm" / "dist" / "model_language.wasm"
 
 
 _engine = Engine()

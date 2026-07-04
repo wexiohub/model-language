@@ -33,9 +33,9 @@ package:
 
 ```sh
 pnpm install && pnpm wasm:build                                  # needs the `javy` CLI on PATH
-cp wasm/dist/model_language.wasm python/model_language/model_language.wasm
+cp wasm/dist/model_language.wasm hosts/python/model_language/model_language.wasm
 
-cd python
+cd hosts/python
 python -m pip install build twine
 python -m build                                                  # dist/*.whl + *.tar.gz
 

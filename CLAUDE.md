@@ -118,17 +118,21 @@ exercise every small and every complex path, not just every line.
    guarantee: thousands of random + malformed inputs — never throws, always recovers.
 6. **Round-trip invariant:** `parse(serialize(ast)) ≡ ast`.
 
-## Milestone scope (don't build ahead)
+## Language surface (feature-complete)
 
-- **0.1** — variables, `if/elseif/else`, operators, `and/or/not`, safe nav,
-  `default` filter, whitespace hygiene, parse/serialize, core lint rules
-  (ML001, ML101, ML201, ML202, ML220, ML214).
-- **0.2** — `for` loops + locals, array/string/number/datetime filters, arithmetic.
-- **0.3** — `include` (+cycle detection), directives (`#priority`/`#mode`/`#block`),
-  comments.
+The language is complete and published as v1.0.0: variables + filter pipelines,
+`if/elseif/else` with the full operator set, `for` + loop locals, arithmetic +
+`calculate()`, the complete filter set (text/number/array/datetime/currency),
+`include` (+cycle detection), directives (`#priority`/`#mode`/`#block`), comments,
+and the editor lint set (ML001/101/102/201/202/210/213/214/220; ML211/212
+flow-analysis reserved). New work is integrations and tooling, not new syntax.
 
-Each milestone is a publishable minor. Don't pull later-milestone features forward
-without updating the plan.
+## Repository map
+
+- `src/` — the canonical TypeScript engine (published to npm).
+- `wasm/` — the engine compiled to a WASI module (esbuild + Javy).
+- `hosts/` — language hosts over the WASI module: `python/` (PyPI), `go/`, + a guide for any WASI language.
+- `conformance/cases/*.json` — the golden suite every host runs (the cross-host contract).
 
 ## Commits / releases
 

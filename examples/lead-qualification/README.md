@@ -1,7 +1,7 @@
 # lead-qualification — input → output
 
-> Renders fully from **0.2** — needs conditionals (0.1b) and the `multiEnum`
-> operators `contains` / `is_empty` (0.2).
+> Renders — needs conditionals and the `multiEnum`
+> operators `contains` / `is_empty`.
 
 ## Input — [`lead-qualification.mlt`](./lead-qualification.mlt)
 

@@ -51,7 +51,7 @@ jobs:
         run: pip install wasmtime pytest
 
       - name: Run Python conformance tests (parity with TypeScript)
-        working-directory: python
+        working-directory: hosts/python
         run: python -m pytest -q
 
       - name: Setup Go

@@ -1,6 +1,6 @@
 # saas-churn — input → output
 
-> **Renders today (0.1b)** — `and`, `in`, `==`, `>`, nested `if`, the `default`
+> **Renders** — `and`, `in`, `==`, `>`, nested `if`, the `default`
 > filter, whitespace hygiene. (`last_active_days` here is plain data; a real
 > template would derive it with `| days_ago` in 0.2.)
 

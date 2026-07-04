@@ -72,14 +72,22 @@ this skill adds the step-by-step recipes.
 4. Serializer: round-trip it — `parse(serialize(ast)) ≡ ast` must still hold.
 5. Golden case covering it.
 
-## Milestone scope (don't build ahead)
+## Language surface (feature-complete)
 
-- **0.1** vars, `if/elseif/else`, operators, `and/or/not`, safe nav, `default`
-  filter, whitespace hygiene, parse/serialize, rules ML001/101/201/202/220/214.
-- **0.2** `for` + loop locals, array/string/number/datetime filters, arithmetic.
-- **0.3** `include` (+cycle detect), directives `#priority/#mode/#block`, comments.
+Everything ships: variables + filter pipelines, `if/elseif/else` with the full
+operator set, `for` + loop locals, arithmetic + `calculate()`, the complete
+filter set (text/number/array/datetime/currency), `include` (+cycle detection),
+directives (`#priority`/`#mode`/`#block`), comments, and the editor lint set
+(ML001/101/102/201/202/210/213/214/220; ML211/212 flow-analysis reserved). Change
+behavior only through the pipeline order above (parse → typecheck → render →
+serialize + a golden case).
 
-Pulling a later-milestone feature forward needs a plan update first.
+## Architecture map
+
+- Engine (canonical): `src/` — the TypeScript library published to npm.
+- WASM bridge: `wasm/` — the engine compiled to a WASI module (esbuild + Javy).
+- Language hosts over that module: `hosts/python/` (PyPI) and `hosts/go/` (+ a guide for any WASI language).
+- Cross-host contract: `conformance/cases/*.json` — the golden suite every host runs.
 
 ## Reference (this package only)
 

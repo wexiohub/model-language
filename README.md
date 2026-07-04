@@ -151,7 +151,7 @@ The engine is compiled **once** to a self-contained WebAssembly (WASI) module an
 called over a stable JSON contract, so hosts don't reimplement the language.
 Python ships today (CI-verified against the shared conformance suite); the same
 `.wasm` runs in any WASI host — Go, Ruby, Rust, Java, Node. See [`wasm/`](./wasm/)
-and [`python/`](./python/).
+and [`hosts/`](./hosts/) (Python + Go, plus a guide for any language).
 
 ## Documentation
 

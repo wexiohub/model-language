@@ -1,7 +1,7 @@
 # billing-escalation — input → output
 
-> Renders fully from **0.2** — needs conditionals (0.1b), the `#priority`
-> directive, and arithmetic `14 - …` (0.2). Output below is the target result.
+> Renders — needs conditionals, the `#priority`
+> directive, and arithmetic `14 - …`. Output below is the target result.
 
 ## Input — [`billing-escalation.mlt`](./billing-escalation.mlt)
 

@@ -1,8 +1,7 @@
 # Loops
 
-**Shipped in 0.2a** — `for`, loop locals (`loop.index/first/last/count`), and the
-empty-state `else` render today. Array-filter sources (`| where`, `| sort`,
-`| limit`) land in 0.2b.
+**Shipped** — `for`, loop locals (`loop.index/first/last/count`), the empty-state
+`else`, and array-filter sources (`| where`, `| sort`, `| limit`).
 
 Repeat text once per array item.
 

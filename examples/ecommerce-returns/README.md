@@ -1,6 +1,6 @@
 # ecommerce-returns — input → output
 
-> **Renders today (0.1b)** — `>`, `or`, `>=`, `<`, `and`, `elseif` chain, the
+> **Renders** — `>`, `or`, `>=`, `<`, `and`, `elseif` chain, the
 > `default` filter. A four-way segmentation from a single set of signals.
 
 ## Input — [`ecommerce-returns.mlt`](./ecommerce-returns.mlt)

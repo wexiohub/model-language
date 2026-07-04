@@ -37,7 +37,7 @@ Loading is cold and cacheable; the per-call cost is the instantiation + run.
 
 | Language | Runtime binding | Status |
 |---|---|---|
-| **Python** | [`wasmtime`](https://pypi.org/project/wasmtime/) (PyPI) | ✅ CI-verified — [`../python`](../python) |
+| **Python** | [`wasmtime`](https://pypi.org/project/wasmtime/) (PyPI) | ✅ CI-verified — [`./python`](./python) |
 | **Go** | [`wasmtime-go`](https://github.com/bytecodealliance/wasmtime-go) | ✅ CI-verified — [`./go`](./go) |
 | **Rust** | [`wasmtime`](https://crates.io/crates/wasmtime) crate | reference snippet below |
 | **Ruby** | [`wasmtime`](https://rubygems.org/gems/wasmtime) gem | reference snippet below |

@@ -1,7 +1,7 @@
 # order-status — input → output
 
-> Renders fully from **0.2** — needs conditionals + namespace existence (0.1b),
-> the `for` loop, and the `date` filter (0.2).
+> Renders — needs conditionals + namespace existence,
+> the `for` loop, and the `date` filter.
 
 ## Input — [`order-status.mlt`](./order-status.mlt)
 

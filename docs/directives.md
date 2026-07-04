@@ -1,6 +1,6 @@
 # Directives, includes & comments
 
-**Shipped in 0.3.** Comments `{# … #}` are stripped at parse time. `#priority` /
+**Shipped.** Comments `{# … #}` are stripped at parse time. `#priority` /
 `#mode` wrap a body and `#block` is self-closing — each firing directive is
 collected into `RenderResult.directives` for the host. `{{include "name"}}`
 renders a host snippet (`render(…, { snippets })`) with cycle + depth guards.

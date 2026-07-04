@@ -18,7 +18,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
 from model_language import render, validate  # noqa: E402
 
-CASES_DIR = pathlib.Path(__file__).resolve().parents[2] / "conformance" / "cases"
+CASES_DIR = pathlib.Path(__file__).resolve().parents[3] / "conformance" / "cases"
 CASES = [json.loads(p.read_text()) for p in sorted(CASES_DIR.glob("*.json"))]
 
 

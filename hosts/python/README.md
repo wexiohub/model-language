@@ -5,7 +5,7 @@ a typed, safe template language for AI-agent prompts.
 
 Powered by the production model-language engine compiled to a WebAssembly module:
 templates render **byte-for-byte identically** in Python and JavaScript, a
-guarantee enforced by a shared [`conformance/`](../conformance) suite run in CI.
+guarantee enforced by a shared [`conformance/`](../../conformance) suite run in CI.
 Fast (parse once, render many), sandboxed, and it never crashes — template
 problems degrade to empty output plus a warning.
 
@@ -50,7 +50,7 @@ pnpm install && pnpm wasm:build
 
 # 2. Run the conformance parity tests
 pip install wasmtime pytest
-cd python && python -m pytest -q
+cd hosts/python && python -m pytest -q
 ```
 
 The loader finds the module at `../wasm/dist/model_language.wasm` by default;

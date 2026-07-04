@@ -1,6 +1,6 @@
 # welcome — input → output
 
-> **Renders today (0.1a)** — interpolation + the `default` filter. This output is
+> **Renders** — interpolation + the `default` filter. This output is
 > asserted by a golden test (`test/golden/examples.golden.test.ts`).
 
 ## Input — [`welcome.mlt`](./welcome.mlt)
