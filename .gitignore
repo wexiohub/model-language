@@ -26,6 +26,8 @@ hosts/rust/model_language.wasm
 hosts/ruby/Gemfile.lock
 hosts/ruby/.bundle/
 hosts/ruby/vendor/
+hosts/ruby/lib/model_language.wasm
+hosts/ruby/*.gem
 
 # C# host
 hosts/csharp/bin/

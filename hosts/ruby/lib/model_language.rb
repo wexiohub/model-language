@@ -11,7 +11,7 @@ require "tempfile"
 module ModelLanguage
   class Engine
     def initialize(wasm_path = nil)
-      wasm_path ||= ENV["MODEL_LANGUAGE_WASM"] ||
+      wasm_path ||= ENV["MODEL_LANGUAGE_WASM"] || bundled_wasm ||
                     File.expand_path("../../../wasm/dist/model_language.wasm", __dir__)
       @engine = Wasmtime::Engine.new
       @module = Wasmtime::Module.from_file(@engine, wasm_path)
@@ -54,6 +54,11 @@ module ModelLanguage
 
         JSON.parse(content)
       end
+    end
+
+    def bundled_wasm
+      path = File.expand_path("model_language.wasm", __dir__)
+      File.exist?(path) ? path : nil
     end
   end
 end

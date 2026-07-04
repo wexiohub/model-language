@@ -54,6 +54,14 @@ jobs:
         working-directory: hosts/python
         run: python -m pytest -q
 
+      - name: Build Python wheel (PyPI packaging verify)
+        working-directory: hosts/python
+        run: |
+          cp "${{ github.workspace }}/wasm/dist/model_language.wasm" model_language/model_language.wasm
+          python -m pip install build
+          python -m build
+          ls -la dist/
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -84,8 +92,10 @@ jobs:
         env:
           MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
         run: |
+          cp "$MODEL_LANGUAGE_WASM" lib/model_language.wasm
           bundle install
           bundle exec ruby test/conformance_test.rb
+          gem build model-language.gemspec   # verify the gem packages for RubyGems
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
