@@ -33,3 +33,6 @@ hosts/csharp/obj/
 # C++ host
 hosts/cpp/conformance
 hosts/cpp/wasmtime-*-c-api/
+
+# Java host
+hosts/java/target/
