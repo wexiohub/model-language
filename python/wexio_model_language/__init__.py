@@ -1,9 +1,9 @@
 """Python bindings for ``@wexio/model-language``.
 
 The engine is not reimplemented here — this package runs the *exact same*
-TypeScript engine, compiled to a WebAssembly component, through a stable JSON
-contract (identical to the ``conformance/`` fixtures). So a template renders
-byte-for-byte the same in Python as it does in JavaScript.
+TypeScript engine, compiled to a self-contained WASI module (Javy), through a
+stable JSON contract (identical to the ``conformance/`` fixtures). A template
+therefore renders byte-for-byte the same in Python as it does in JavaScript.
 
     from wexio_model_language import render, validate, parse
 
@@ -13,26 +13,61 @@ byte-for-byte the same in Python as it does in JavaScript.
     )
     print(out["text"])  # -> "Hi Vasyl!"
 
-The ``_bindings`` package is generated from ``model_language.wasm`` with
-``python -m wasmtime.bindgen`` (see the repo's ``python/`` README / CI). It is a
-build artifact and is not committed.
+The module is hosted with ``wasmtime``: each call runs the WASI module with the
+JSON request on stdin and reads the JSON response from stdout. Build the ``.wasm``
+with ``pnpm wasm:build`` (see the repo's ``python/`` README), or point
+``MODEL_LANGUAGE_WASM`` at a prebuilt module.
 """
 
 from __future__ import annotations
 
 import json
+import os
+import tempfile
+from pathlib import Path
 from typing import Any
 
-from wasmtime import Store
-
-from ._bindings import Root
+from wasmtime import Engine, Linker, Module, Store, Trap, WasiConfig
 
 __all__ = ["render", "validate", "parse"]
 
-# One long-lived component instance (a persistent JS realm). Reused across calls
-# — this is the "parse cold, render hot" property carried across the boundary.
-_store = Store()
-_root = Root(_store)
+
+def _wasm_path() -> Path:
+    override = os.environ.get("MODEL_LANGUAGE_WASM")
+    if override:
+        return Path(override)
+    return Path(__file__).resolve().parents[2] / "wasm" / "dist" / "model_language.wasm"
+
+
+_engine = Engine()
+_module = Module.from_file(_engine, str(_wasm_path()))
+_linker = Linker(_engine)
+_linker.define_wasi()
+
+
+def _invoke(request: dict[str, Any]) -> dict[str, Any]:
+    """Run one request through the WASI module (stdin -> stdout) and parse it."""
+    store = Store(_engine)
+    with tempfile.TemporaryDirectory() as tmp:
+        in_path = Path(tmp) / "in.json"
+        out_path = Path(tmp) / "out.json"
+        in_path.write_text(json.dumps(request))
+        out_path.write_bytes(b"")
+
+        config = WasiConfig()
+        config.stdin_file = str(in_path)
+        config.stdout_file = str(out_path)
+        store.set_wasi(config)
+
+        instance = _linker.instantiate(store, _module)
+        start = instance.exports(store)["_start"]
+        try:
+            start(store)
+        except Trap as trap:  # a WASI `proc_exit(0)` surfaces as a trap; 0 is success
+            if getattr(trap, "code", None) != 0:
+                raise
+
+        return json.loads(out_path.read_text())
 
 
 def render(
@@ -46,17 +81,18 @@ def render(
     Returns ``{"text", "warnings", "resolvedBranches", "directives",
     "tokenEstimate"}``. Never raises for template problems — they degrade to
     empty output plus a ``warnings`` entry. Pass ``options={"now": <epoch_ms>}``
-    for datetime filters (the sandbox has no ambient clock; it defaults to 0).
+    for datetime filters (the sandbox has no ambient clock; it defaults to 0) and
+    ``options={"snippets": {...}}`` for ``{{include}}``.
     """
-    request = json.dumps(
+    return _invoke(
         {
+            "op": "render",
             "template": template,
             "data": data or {},
             "schema": schema or [],
             "options": options or {},
         }
     )
-    return json.loads(_root.render(_store, request))
 
 
 def validate(
@@ -69,12 +105,11 @@ def validate(
     Returns ``{"diagnostics", "maxTokenEstimate"}``. Pass
     ``options={"maxTokenEstimate": N}`` to raise ``ML213`` over a token budget.
     """
-    request = json.dumps(
-        {"template": template, "schema": schema or [], "options": options or {}}
+    return _invoke(
+        {"op": "validate", "template": template, "schema": schema or [], "options": options or {}}
     )
-    return json.loads(_root.validate(_store, request))
 
 
 def parse(template: str) -> dict[str, Any]:
     """Parse ``template`` to its AST. Returns ``{"ast", "diagnostics"}``."""
-    return json.loads(_root.parse(_store, json.dumps({"template": template})))
+    return _invoke({"op": "parse", "template": template})

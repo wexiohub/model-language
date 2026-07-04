@@ -39,20 +39,16 @@ Nothing raises for template problems — they degrade to empty output plus a
 
 ## Build (from source)
 
-The bindings load `model_language.wasm`, generated from the TypeScript engine:
+The bindings host `model_language.wasm`, built from the TypeScript engine:
 
 ```sh
-# 1. Build the component (from the repo root, needs Node + pnpm)
+# 1. Build the WASI module (from the repo root, needs Node + pnpm + the javy CLI)
 pnpm install && pnpm wasm:build
 
-# 2. Generate the Python bindings from the component
+# 2. Run the conformance parity tests
 pip install wasmtime pytest
-python -m wasmtime.bindgen wasm/dist/model_language.wasm \
-    --out-dir python/wexio_model_language/_bindings
-
-# 3. Run the conformance parity tests
 cd python && python -m pytest -q
 ```
 
-`_bindings/` is a generated build artifact (git-ignored). Requires
-`wasmtime>=25`.
+The loader finds the module at `../wasm/dist/model_language.wasm` by default;
+set `MODEL_LANGUAGE_WASM` to point at a prebuilt one. Requires `wasmtime>=25`.

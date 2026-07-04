@@ -1,10 +1,12 @@
-// WebAssembly-component entry: the three engine operations, each as a
-// JSON-string → JSON-string function matching `wit/world.wit`. This module is
-// bundled (esbuild) and componentized (jco) into `model_language.wasm`.
+// Javy stdio entry: read ONE JSON request from stdin, dispatch to the engine,
+// write ONE JSON response to stdout. Bundled with esbuild, then compiled to a
+// self-contained WASI module with Javy (`javy build`). The prime directive holds
+// across the boundary: never trap — any bad input becomes `{ "error": string }`.
 //
-// The prime directive holds across the boundary too: never trap. Any bad input
-// or internal error becomes an `{ "error": string }` response, so a host in any
-// language gets a value back rather than a crashed instance.
+// Protocol (stdin → stdout):
+//   { "op": "render",   template, data?, schema?, options? } -> RenderResult
+//   { "op": "validate", template, schema?, options? }        -> ValidateResult
+//   { "op": "parse",    template }                            -> ParseResult
 
 import {
   parse as parseTemplate,
@@ -13,57 +15,66 @@ import {
 } from '../src/index';
 import type { DataSnapshot, FieldSchema, RenderOptions, ValidateOptions } from '../src/types';
 
-interface RenderRequest {
+declare const Javy: {
+  IO: {
+    readSync(fd: number, buffer: Uint8Array): number;
+    writeSync(fd: number, buffer: Uint8Array): number;
+  };
+};
+
+interface EngineRequest {
+  op?: string;
   template?: string;
   data?: DataSnapshot;
   schema?: FieldSchema;
-  options?: RenderOptions;
+  options?: RenderOptions & ValidateOptions;
 }
 
-interface ValidateRequest {
-  template?: string;
-  schema?: FieldSchema;
-  options?: ValidateOptions;
+function readInput(): unknown {
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  let bytesRead = 0;
+  do {
+    const buffer = new Uint8Array(1024);
+    bytesRead = Javy.IO.readSync(0, buffer);
+    if (bytesRead > 0) {
+      chunks.push(buffer.subarray(0, bytesRead));
+      total += bytesRead;
+    }
+  } while (bytesRead > 0);
+
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
 }
 
-interface ParseRequest {
-  template?: string;
+function writeOutput(value: unknown): void {
+  Javy.IO.writeSync(1, new TextEncoder().encode(JSON.stringify(value)));
 }
 
-function fail(error: unknown): string {
-  return JSON.stringify({ error: error instanceof Error ? error.message : String(error) });
-}
-
-export function render(request: string): string {
-  try {
-    const req = JSON.parse(request) as RenderRequest;
-    const { ast } = parseTemplate(req.template ?? '');
-    // The component has no ambient clock (clocks disabled), so pin `now` to a
-    // deterministic default when the host omits it — the engine must never call
-    // `Date.now()` inside the sandbox. Hosts pass `options.now` for datetime.
-    const options: RenderOptions = { now: 0, ...(req.options ?? {}) };
-    return JSON.stringify(renderTemplate(ast, req.data ?? {}, req.schema ?? [], options));
-  } catch (error) {
-    return fail(error);
+function handle(req: EngineRequest): unknown {
+  switch (req.op) {
+    case 'render': {
+      const { ast } = parseTemplate(req.template ?? '');
+      // The sandbox has no ambient clock; pin `now` unless the host passes one.
+      const options: RenderOptions = { now: 0, ...(req.options ?? {}) };
+      return renderTemplate(ast, req.data ?? {}, req.schema ?? [], options);
+    }
+    case 'validate':
+      return validateTemplate(req.template ?? '', req.schema ?? [], req.options ?? {});
+    case 'parse':
+      return parseTemplate(req.template ?? '');
+    default:
+      return { error: `unknown op: ${String(req.op)}` };
   }
 }
 
-export function validate(request: string): string {
-  try {
-    const req = JSON.parse(request) as ValidateRequest;
-    return JSON.stringify(
-      validateTemplate(req.template ?? '', req.schema ?? [], req.options ?? {}),
-    );
-  } catch (error) {
-    return fail(error);
-  }
-}
-
-export function parse(request: string): string {
-  try {
-    const req = JSON.parse(request) as ParseRequest;
-    return JSON.stringify(parseTemplate(req.template ?? ''));
-  } catch (error) {
-    return fail(error);
-  }
+try {
+  writeOutput(handle(readInput() as EngineRequest));
+} catch (error) {
+  writeOutput({ error: error instanceof Error ? error.message : String(error) });
 }

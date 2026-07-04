@@ -1,13 +1,11 @@
-// Build `wasm/dist/model_language.wasm`: bundle the entry + engine into one ESM
-// module (esbuild), then compile that to a WebAssembly component (jco /
-// componentize-js) against `wit/world.wit`. Run with `pnpm wasm:build`.
-//
-// All ambient capabilities are disabled — the engine is pure, so the component
-// has no WASI imports and any host can instantiate it with zero wiring.
+// Build `wasm/dist/model_language.wasm`: bundle the entry + engine into one
+// self-running script (esbuild), then compile that to a self-contained WASI
+// module with Javy (`javy build`). Run with `pnpm wasm:build` (needs `javy` on
+// PATH — see `.github/workflows/wasm.yml` for the install step).
 
-import { mkdir, writeFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { componentize } from '@bytecodealliance/componentize-js';
 import { build } from 'esbuild';
 
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
@@ -17,18 +15,17 @@ await mkdir(here('./dist/'), { recursive: true });
 await build({
   entryPoints: [here('./entry.ts')],
   bundle: true,
-  format: 'esm',
+  format: 'iife',
   platform: 'neutral',
-  target: 'es2022',
+  target: 'es2020',
   outfile: here('./dist/engine.js'),
 });
 
-const { component } = await componentize({
-  sourcePath: here('./dist/engine.js'),
-  witPath: here('./wit/world.wit'),
-  worldName: 'engine',
-  disableFeatures: ['random', 'stdio', 'clocks', 'http', 'fetch-event'],
-});
-
-await writeFile(here('./dist/model_language.wasm'), component);
-console.log(`wrote wasm/dist/model_language.wasm (${component.length} bytes)`);
+execFileSync(
+  'javy',
+  ['build', here('./dist/engine.js'), '-o', here('./dist/model_language.wasm')],
+  {
+    stdio: 'inherit',
+  },
+);
+console.log('wrote wasm/dist/model_language.wasm');
