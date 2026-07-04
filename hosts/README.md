@@ -39,7 +39,7 @@ Loading is cold and cacheable; the per-call cost is the instantiation + run.
 |---|---|---|
 | **Python** | [`wasmtime`](https://pypi.org/project/wasmtime/) (PyPI) | ✅ CI-verified — [`./python`](./python) |
 | **Go** | [`wasmtime-go`](https://github.com/bytecodealliance/wasmtime-go) | ✅ CI-verified — [`./go`](./go) |
-| **Rust** | [`wasmtime`](https://crates.io/crates/wasmtime) crate | reference snippet below |
+| **Rust** | [`wasmtime`](https://crates.io/crates/wasmtime) crate | ✅ CI-verified — [`./rust`](./rust) |
 | **Ruby** | [`wasmtime`](https://rubygems.org/gems/wasmtime) gem | reference snippet below |
 | **Java** | [`wasmtime-java`](https://github.com/kawamuray/wasmtime-java) / [Chicory](https://github.com/dylibso/chicory) | pattern above |
 | **Elixir** | [`wasmex`](https://hex.pm/packages/wasmex) | pattern above |

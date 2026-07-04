@@ -72,3 +72,16 @@ jobs:
         env:
           MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
         run: cargo test
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Run Ruby host conformance tests (parity with TypeScript)
+        working-directory: hosts/ruby
+        env:
+          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
+        run: |
+          bundle install
+          bundle exec ruby test/conformance_test.rb
