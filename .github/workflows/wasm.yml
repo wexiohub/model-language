@@ -69,9 +69,10 @@ jobs:
 
       - name: Run Rust host conformance tests (parity with TypeScript)
         working-directory: hosts/rust
-        env:
-          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
-        run: cargo test
+        run: |
+          cp "${{ github.workspace }}/wasm/dist/model_language.wasm" model_language.wasm
+          cargo test
+          cargo package --allow-dirty --no-verify   # verify the crate packages for crates.io
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

@@ -11,6 +11,10 @@ use wasmtime_wasi::pipe::{MemoryInputPipe, MemoryOutputPipe};
 use wasmtime_wasi::preview1::{self, WasiP1Ctx};
 use wasmtime_wasi::WasiCtx;
 
+/// The model-language WebAssembly module, embedded at build time so the crate is
+/// self-contained (no files to ship alongside it).
+static WASM: &[u8] = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/model_language.wasm"));
+
 /// A compiled module. Safe for concurrent use; calls are serialized so each runs
 /// in its own fresh WASI store.
 pub struct EngineHost {
@@ -20,10 +24,10 @@ pub struct EngineHost {
 }
 
 impl EngineHost {
-    /// Compile the module at `wasm_path` (e.g. `wasm/dist/model_language.wasm`).
-    pub fn new(wasm_path: &str) -> Result<Self> {
+    /// Load the embedded model-language module.
+    pub fn new() -> Result<Self> {
         let engine = Engine::default();
-        let module = Module::from_file(&engine, wasm_path)?;
+        let module = Module::new(&engine, WASM)?;
         Ok(Self {
             engine,
             module,

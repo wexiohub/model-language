@@ -20,6 +20,7 @@ hosts/python/model_language/model_language.wasm
 # Rust host
 hosts/rust/target/
 hosts/rust/Cargo.lock
+hosts/rust/model_language.wasm
 
 # Ruby host
 hosts/ruby/Gemfile.lock

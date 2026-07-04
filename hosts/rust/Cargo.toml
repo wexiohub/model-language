@@ -3,7 +3,13 @@ name = "model-language"
 version = "1.0.0"
 edition = "2021"
 license = "MIT"
-description = "Rust host for the model-language WebAssembly module — same engine, same output as the TypeScript package."
+description = "A typed, safe template language for AI-agent prompts. Runs the exact same engine as the JavaScript/TypeScript package via an embedded WebAssembly module."
+repository = "https://github.com/wexiohub/model-language"
+homepage = "https://github.com/wexiohub/model-language"
+readme = "README.md"
+keywords = ["template", "prompt", "ai", "llm", "wasm"]
+categories = ["template-engine", "wasm"]
+include = ["src/**/*.rs", "model_language.wasm", "Cargo.toml", "README.md"]
 
 [lib]
 name = "model_language"

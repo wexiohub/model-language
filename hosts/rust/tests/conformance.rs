@@ -9,9 +9,7 @@ use model_language::EngineHost;
 use serde_json::Value;
 
 fn host() -> EngineHost {
-    let wasm = std::env::var("MODEL_LANGUAGE_WASM")
-        .unwrap_or_else(|_| "../../wasm/dist/model_language.wasm".to_string());
-    EngineHost::new(&wasm).expect("load module")
+    EngineHost::new().expect("load module")
 }
 
 fn codes(v: &Value) -> Vec<String> {
