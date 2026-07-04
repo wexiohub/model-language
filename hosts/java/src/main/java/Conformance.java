@@ -91,9 +91,11 @@ public class Conformance {
                 .build();
         var wasi = WasiPreview1.builder().withOptions(opts).build();
         var store = new Store().addFunction(wasi.toHostFunctions());
+        var instance = store.instantiate("model_language", module);
         try {
-            // Instantiation runs `_start` (WASI spec); the response is written to stdout.
-            store.instantiate("model_language", module);
+            // WASI commands export `_start`; call it explicitly (it is not the wasm
+            // start-section). The response is written to stdout.
+            instance.export("_start").apply();
         } catch (RuntimeException e) {
             // a clean WASI exit surfaces as an exception; the response is already written
         }
