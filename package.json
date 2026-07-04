@@ -1,6 +1,6 @@
 {
   "name": "model-language",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A typed, safe template language for AI-agent prompts. Variables, conditions, loops and filters that render to clean text against live data, type-checked at edit time — never crashes, never leaks syntax. One WebAssembly engine, eight languages.",
   "license": "MIT",
   "type": "module",

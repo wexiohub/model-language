@@ -5,6 +5,16 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). A change
 that breaks any golden test case is a breaking change.
 
+## [1.0.1]
+
+Packaging & docs only (the engine is unchanged). npm-focused release; the other
+registries stay on `1.0.0`.
+
+- **Leaner npm package** — source maps are no longer published (install size
+  drops ~3×; zero impact on the ~7.4 KB min+gzip bundle).
+- **README** rewritten JS-first with registry badges, per-package links, and a
+  cleaner description; sharpened npm keywords.
+
 ## [1.0.0]
 
 First stable release. The language is feature-complete, the public API is final,
