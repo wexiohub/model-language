@@ -11,16 +11,9 @@
 [![Hex](https://img.shields.io/hexpm/v/model_language?label=hex&color=6e4a7e&logo=elixir&logoColor=white)](https://hex.pm/packages/model_language)
 <br>
 [![CI](https://github.com/wexiohub/model-language/actions/workflows/ci.yml/badge.svg)](https://github.com/wexiohub/model-language/actions/workflows/ci.yml)
-[![coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen)](#development)
-[![types](https://img.shields.io/npm/types/model-language?logo=typescript&logoColor=white)](https://www.npmjs.com/package/model-language)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-<br>
-[![npm downloads](https://img.shields.io/npm/dm/model-language?label=downloads&color=cb3837)](https://www.npmjs.com/package/model-language)
-[![jsDelivr hits](https://img.shields.io/jsdelivr/npm/hm/model-language?logo=jsdelivr&label=jsDelivr)](https://www.jsdelivr.com/package/npm/model-language)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/model-language?label=bundle%20size)](https://bundlephobia.com/package/model-language)
-[![install size](https://packagephobia.com/badge?p=model-language)](https://packagephobia.com/result?p=model-language)
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/model-language?activeTab=dependencies)
-[![languages](https://img.shields.io/badge/languages-8-blue)](#other-languages)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![powered by wexio.io](https://img.shields.io/badge/powered%20by-wexio.io-0b0b0b)](https://wexio.io)
 
 model-language lets non-technical users write prompts with variables, conditions,
