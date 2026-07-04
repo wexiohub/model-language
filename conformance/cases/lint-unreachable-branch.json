@@ -1,0 +1,6 @@
+{
+  "name": "ML211: a nested branch an enclosing condition rules out",
+  "template": "{{if user.plan == \"pro\"}}{{if user.plan == \"free\"}}x{{/if}}{{/if}}",
+  "schema": [{ "path": "user.plan", "type": "enum", "values": ["free", "pro"] }],
+  "expect": { "diagnostics": ["ML211"] }
+}

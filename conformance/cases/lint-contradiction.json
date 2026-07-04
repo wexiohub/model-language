@@ -1,0 +1,6 @@
+{
+  "name": "ML212: a self-contradictory condition",
+  "template": "{{if user.plan == \"pro\" and user.plan == \"free\"}}x{{/if}}",
+  "schema": [{ "path": "user.plan", "type": "enum", "values": ["free", "pro"] }],
+  "expect": { "diagnostics": ["ML212"] }
+}

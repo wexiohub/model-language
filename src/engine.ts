@@ -2,6 +2,7 @@ import { makeDiagnostic, rangeAt } from './diagnostics';
 import { parse } from './parser';
 import { typecheck } from './typecheck';
 import { estimateMaxTokens } from './typecheck/budget';
+import { flowDiagnostics } from './typecheck/flow';
 import type { Diagnostic, FieldSchema, ValidateOptions, ValidateResult } from './types';
 
 /**
@@ -18,6 +19,7 @@ export function validate(
 ): ValidateResult {
   const { ast, diagnostics } = parse(source);
   const typeDiagnostics = typecheck(ast, schema, opts);
+  const flow = flowDiagnostics(ast);
   const maxTokenEstimate = estimateMaxTokens(ast);
 
   const budgetDiagnostics: Diagnostic[] = [];
@@ -34,7 +36,7 @@ export function validate(
 
   return {
     ast,
-    diagnostics: [...diagnostics, ...typeDiagnostics, ...budgetDiagnostics],
+    diagnostics: [...diagnostics, ...typeDiagnostics, ...flow, ...budgetDiagnostics],
     maxTokenEstimate,
   };
 }

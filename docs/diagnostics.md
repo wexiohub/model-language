@@ -43,9 +43,11 @@ from the catalog in [`src/diagnostics/codes.ts`](../src/diagnostics/codes.ts).
 
 `ML210` (add `| default` to a nullable interpolation) and `ML213` (pass
 `maxTokenEstimate` to `validate` — `validate` also returns the worst-case
-`maxTokenEstimate`) are emitted today. `ML211`/`ML212` require branch-domain
-flow analysis and are **not yet emitted**; the codes are reserved so tooling can
-adopt them without a breaking change.
+`maxTokenEstimate`) are emitted today. `ML211` (unreachable branch) and `ML212`
+(self-contradictory condition) are emitted by a **conservative** flow analysis:
+facts are derived only from a pure conjunction (`and`) of `field == "x"` / bare
+path / `not path` atoms, so the rules never fire a false positive — anything with
+`or` or a more complex shape is left alone.
 
 ## Render — `ML3xx` (warnings only; never throws)
 

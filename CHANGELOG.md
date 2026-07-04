@@ -13,6 +13,19 @@ Python (PyPI, via a WebAssembly module).
 
 ### Added
 
+- **`ML211` unreachable-branch + `ML212` contradiction** — the flow-analysis lint
+  rules. A conservative constraint pass derives facts (`field == "x"`, truthy,
+  falsy) from conjunctive conditions: a self-contradictory condition raises
+  `ML212`; a branch an enclosing condition or an earlier chain entry already
+  rules out raises `ML211`. `or`/complex conditions yield no facts, so there are
+  no false positives. **Editor lint set now fully implemented.** Conformance
+  fixtures `lint-unreachable-branch` + `lint-contradiction` added.
+
+- **Language hosts.** Seven CI-verified hosts run the shared conformance suite —
+  Python, Go, Rust, Ruby, C#, C++, Elixir — all over the same WASM module and
+  JSON contract (a Java/Chicory host is written, pending SIMD support). See
+  [`hosts/`](./hosts).
+
 - **WASM bridge + Python bindings.** The canonical TS engine is compiled to a
   self-contained WASI module (esbuild + Javy) exposing `render`/`validate`/`parse`
   over a stable JSON contract; the `model-language` PyPI package hosts it via
