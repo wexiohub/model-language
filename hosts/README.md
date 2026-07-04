@@ -41,13 +41,14 @@ Loading is cold and cacheable; the per-call cost is the instantiation + run.
 | **Go** | [`wasmtime-go`](https://github.com/bytecodealliance/wasmtime-go) | ✅ CI-verified — [`./go`](./go) |
 | **Rust** | [`wasmtime`](https://crates.io/crates/wasmtime) crate | ✅ CI-verified — [`./rust`](./rust) |
 | **Ruby** | [`wasmtime`](https://rubygems.org/gems/wasmtime) gem | ✅ CI-verified — [`./ruby`](./ruby) |
-| **Java** | [`wasmtime-java`](https://github.com/kawamuray/wasmtime-java) / [Chicory](https://github.com/dylibso/chicory) | pattern above |
+| **Java** | [Chicory](https://github.com/dylibso/chicory) / [`wasmtime-java`](https://github.com/kawamuray/wasmtime-java) | host written — [`./java`](./java) (blocked on Chicory SIMD; use a native binding today) |
 | **Elixir** | [`wasmex`](https://hex.pm/packages/wasmex) | pattern above |
 | **C#** | [`Wasmtime`](https://www.nuget.org/packages/Wasmtime) (NuGet) | ✅ CI-verified — [`./csharp`](./csharp) |
 | **C++** | [Wasmtime C API](https://docs.wasmtime.dev/c-api/) | pattern above |
 
-Python, Go, Rust, Ruby, and C# are each built and run against the full
-conformance suite on every CI run — see their folders above for the full host +
-parity test. For Java, Elixir, and C++, apply the same universal pattern with
-that runtime's WASI stdin/stdout API (linked above); open an issue or a PR to
-promote them to CI-verified hosts.
+**Seven hosts — Python, Go, Rust, Ruby, C#, C++, and Elixir — are each built and
+run against the full conformance suite on every CI run.** See their folders above
+for the host + parity test. A Java host is written too ([`./java`](./java)) but is
+blocked on Chicory's SIMD support (the Javy module uses `v128`); use a
+native-backed JVM binding today. For any other WASI language, apply the universal
+pattern above.

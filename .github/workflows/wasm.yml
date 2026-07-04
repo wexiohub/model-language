@@ -124,15 +124,3 @@ jobs:
         env:
           MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
         run: elixir conformance.exs
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Run Java host conformance tests (parity with TypeScript)
-        working-directory: hosts/java
-        env:
-          MODEL_LANGUAGE_WASM: ${{ github.workspace }}/wasm/dist/model_language.wasm
-        run: mvn -q -B compile exec:java
