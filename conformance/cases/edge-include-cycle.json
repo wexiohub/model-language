@@ -1,0 +1,7 @@
+{
+  "name": "edge: self-referential include breaks the cycle (ML002)",
+  "template": "{{include \"loop\"}}",
+  "schema": [],
+  "snippets": { "loop": "A{{include \"loop\"}}" },
+  "expect": { "output": "A", "warnings": ["ML002"] }
+}

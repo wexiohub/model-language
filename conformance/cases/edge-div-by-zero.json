@@ -1,0 +1,6 @@
+{
+  "name": "edge: division by zero degrades to empty (ML301), never NaN",
+  "template": "{{ 10 / 0 }}",
+  "schema": [],
+  "expect": { "output": "", "warnings": ["ML301"] }
+}

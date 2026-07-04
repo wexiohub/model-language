@@ -1,0 +1,7 @@
+{
+  "name": "edge: unknown filter passes the value through (no render warning)",
+  "template": "{{ user.name | bogus }}",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "data": { "user": { "name": "X" } },
+  "expect": { "output": "X", "warnings": [] }
+}

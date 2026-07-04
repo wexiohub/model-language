@@ -1,0 +1,6 @@
+{
+  "name": "lint: unclosed if block reports ML001",
+  "template": "{{if user.plan == \"pro\"}}hi",
+  "schema": [{ "path": "user.plan", "type": "enum", "values": ["free", "pro"] }],
+  "expect": { "diagnostics": ["ML001"] }
+}

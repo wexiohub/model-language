@@ -1,0 +1,7 @@
+{
+  "name": "edge: arithmetic on a non-number degrades to empty (ML301)",
+  "template": "{{ user.name * 2 }}",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "data": { "user": { "name": "x" } },
+  "expect": { "output": "", "warnings": ["ML301"] }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lint: unknown field + unknown filter report ML101 and ML102",
+  "template": "{{ user.zzz | bogus }}",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "expect": { "diagnostics": ["ML101", "ML102"] }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "edge: missing field interpolates empty (ML301)",
+  "template": "Hi {{user.name}}!",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "data": {},
+  "expect": { "output": "Hi !", "warnings": ["ML301"] }
+}

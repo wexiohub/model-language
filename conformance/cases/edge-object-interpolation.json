@@ -1,0 +1,7 @@
+{
+  "name": "edge: interpolating an object yields empty (ML301)",
+  "template": "{{user}}",
+  "schema": [{ "path": "user", "type": "object" }],
+  "data": { "user": { "a": 1 } },
+  "expect": { "output": "", "warnings": ["ML301"] }
+}

@@ -9,6 +9,18 @@ that breaks any golden test case is a breaking change.
 
 ### Added
 
+- **WASM bridge + Python bindings.** The canonical TS engine is compiled to a
+  self-contained WASI module (esbuild + Javy) exposing `render`/`validate`/`parse`
+  over a stable JSON contract; the `model-language` PyPI package hosts it via
+  `wasmtime`. A CI job builds the module and runs the conformance suite through
+  the Python bindings, proving byte-for-byte parity with the TS engine.
+
+- **Conformance fail/edge fixtures.** 10 cases covering empty templates, missing
+  fields, object interpolation, unknown-filter pass-through, division-by-zero and
+  non-number arithmetic (degrade to empty + `ML301`, never `NaN`), include
+  cycles (`ML002`), unicode/emoji, unclosed blocks (`ML001`), and multi-diagnostic
+  templates — so every host is checked on failure paths too.
+
 - **`ML210` missing-default + `ML213` prompt-too-long** — the two static budget
   lint rules. `ML210` warns when a `nullable` field is interpolated without a
   `| default` filter. `validate` now computes a worst-case `maxTokenEstimate`

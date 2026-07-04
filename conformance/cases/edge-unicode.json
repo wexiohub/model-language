@@ -1,0 +1,7 @@
+{
+  "name": "edge: unicode text and emoji pass through intact",
+  "template": "Привет {{user.name}} 🎉",
+  "schema": [{ "path": "user.name", "type": "string" }],
+  "data": { "user": { "name": "Мир" } },
+  "expect": { "output": "Привет Мир 🎉", "warnings": [] }
+}

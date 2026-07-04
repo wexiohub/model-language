@@ -1,0 +1,6 @@
+{
+  "name": "edge: empty template renders empty",
+  "template": "",
+  "schema": [],
+  "expect": { "output": "", "warnings": [] }
+}
