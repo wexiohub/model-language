@@ -19,7 +19,6 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.io.ByteSequence;
-import org.graalvm.polyglot.io.IOAccess;
 
 public class Conformance {
     static final ObjectMapper M = new ObjectMapper();
@@ -88,7 +87,6 @@ public class Conformance {
         var stdout = new ByteArrayOutputStream();
         try (Context context = Context.newBuilder("wasm")
                 .option("wasm.Builtins", "wasi_snapshot_preview1")
-                .allowIO(IOAccess.ALL)
                 .in(new ByteArrayInputStream(body))
                 .out(stdout)
                 .build()) {
