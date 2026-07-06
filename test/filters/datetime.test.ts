@@ -47,6 +47,11 @@ describe('date filter', () => {
     expect(apply('date', t, ['h:mm A', 'America/New_York'])).toBe('10:37 AM');
   });
 
+  it('falls back to UTC on an invalid timezone', () => {
+    const t = Date.UTC(2026, 6, 5, 14, 37);
+    expect(apply('date', t, ['HH:mm', 'Not/AZone'])).toBe('14:37');
+  });
+
   it('passes through invalid input / missing format', () => {
     expect(apply('date', 'not-a-date', ['YYYY'])).toBe('not-a-date');
     expect(apply('date', true, ['YYYY'])).toBe(true);
@@ -62,7 +67,9 @@ describe('relative datetime filters', () => {
     expect(apply('time_ago', NOW - 86400_000, [], ctx)).toBe('1 day ago');
     expect(apply('time_ago', NOW + 2 * 3600_000, [], ctx)).toBe('in 2 hours');
     expect(apply('time_ago', NOW, [], ctx)).toBe('just now');
+    expect(apply('time_ago', NOW - 45 * 1000, [], ctx)).toBe('45 seconds ago');
     expect(apply('time_ago', 'nope', [], ctx)).toBe('nope');
+    expect(apply('time_ago', NOW, [])).toBe(NOW); // no context → passthrough
   });
 
   it('days_ago / days_until', () => {

@@ -420,24 +420,19 @@ const timeAgo: FilterDef = {
     if (d === undefined || ctx === undefined) return input;
     const diff = Math.round((d.getTime() - ctx.now) / 1000); // signed seconds
     const abs = Math.abs(diff);
-    const units: Array<[string, number]> = [
+    const units: ReadonlyArray<readonly [string, number]> = [
       ['year', 31536000],
       ['month', 2592000],
       ['week', 604800],
       ['day', 86400],
       ['hour', 3600],
       ['minute', 60],
-      ['second', 1],
     ];
-    for (const [unit, sec] of units) {
-      if (abs >= sec || unit === 'second') {
-        const n = Math.round(diff / sec);
-        if (n === 0) return 'just now';
-        const label = Math.abs(n) === 1 ? unit : `${unit}s`;
-        return n < 0 ? `${-n} ${label} ago` : `in ${n} ${label}`;
-      }
-    }
-    return input;
+    const [unit, sec] = units.find(([, s]) => abs >= s) ?? (['second', 1] as [string, number]);
+    const n = Math.round(diff / sec);
+    if (n === 0) return 'just now';
+    const label = Math.abs(n) === 1 ? unit : `${unit}s`;
+    return n < 0 ? `${-n} ${label} ago` : `in ${n} ${label}`;
   },
 };
 
