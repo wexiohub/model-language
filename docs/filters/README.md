@@ -34,19 +34,48 @@ is prefixed; a host can `registerFilter` a locale-aware override).
 
 ## Datetime — **shipped**
 
-Relative filters (`days_ago`, `days_until`, `is_past`, `is_future`) resolve
-against a reference **`now`** — pass it via `render(ast, data, schema, { now })`
-(defaults to the wall clock; golden tests pin it). `date: fmt` formats in **UTC**
-(tokens `YYYY`, `MMM`, `MM`, `DD`, `D`, `M`). Inputs may be an ISO string, epoch
-ms, or a `Date`.
-
+Relative filters (`time_ago`, `days_ago`, `days_until`, `is_past`, `is_future`)
+resolve against a reference **`now`** — pass it via
+`render(ast, data, schema, { now })` (defaults to the wall clock; golden tests
+pin it). Inputs may be an ISO string, epoch ms, or a `Date`.
 
 | Filter | Returns | Example |
 |---|---|---|
-| `date: fmt` | string | `{{user.created_at \| date: "MMM D, YYYY"}}` |
+| `date: fmt[, tz]` | string | `{{ user.created_at \| date: "MMM D, YYYY" }}` → `Jul 5, 2026` |
+| `time_ago` | string | `{{ user.last_active \| time_ago }}` → `3 days ago` |
 | `days_ago` | number | `{{if user.last_active \| days_ago > 30}}` |
 | `days_until` | number | `{{if subscription.renews_at \| days_until <= 7}}` |
 | `is_past` / `is_future` | boolean | `{{if trial.ends_at \| is_past}}` |
+
+### `date` — formatting
+
+`arg0` is EITHER a **named preset** or a **token format string**; `arg1` is an
+optional IANA timezone.
+
+```
+{{ system.now | date: "date" }}                    07/05/2026   (preset)
+{{ system.now | date: "time" }}                    14:37
+{{ system.now | date: "long" }}                    July 5, 2026
+{{ system.now | date: "iso" }}                     2026-07-05T14:37:09.000Z
+{{ system.now | date: "MMM D, YYYY" }}             Jul 5, 2026
+{{ system.now | date: "h:mm A" }}                  2:37 PM
+{{ system.now | date: "yyyy-MM-dd HH:mm" }}        2026-07-05 14:37
+{{ system.now | date: "EEEE" }}                    Sunday
+{{ system.now | date: "h:mm A", "Europe/Kyiv" }}   5:37 PM      (timezone)
+{{ system.now | date: "[at] h:mm A" }}             at 2:37 PM   ([literal])
+```
+
+**Presets:** `date` · `time` · `datetime` · `long` · `weekday` · `month` · `iso`.
+
+**Tokens** (both moment/Day.js and Unicode casing): year `YYYY`/`yyyy`
+`YY`/`yy` · month `MMMM MMM MM M` · day `DD`/`dd` `D`/`d` · weekday
+`dddd`/`EEEE` `ddd`/`EEE` · 24-hour `HH H` · 12-hour `hh h` · minute `mm m` ·
+second `ss s` · `A`/`a` (AM/PM). Wrap literal letters in `[...]`.
+
+**Timezone:** the IANA `arg1` applies when the host runtime has `Intl`
+(Node/browsers); portable hosts without it (WASM) render **UTC**. Month/weekday
+names are always English (never taken from ICU), so output is deterministic
+across hosts — only the timezone *shift* depends on `Intl`.
 
 Datetime comparisons always go through a filter that returns a number/boolean —
 authors never learn raw date-comparison semantics, and raw `>` on a date is a

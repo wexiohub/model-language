@@ -5,6 +5,21 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). A change
 that breaks any golden test case is a breaking change.
 
+## [1.0.3]
+
+**`date` filter — full formatting.** `date` now accepts named **presets**
+(`date` `time` `datetime` `long` `weekday` `month` `iso`) or a **token format
+string** in both moment/Day.js and Unicode casing — year `YYYY`/`yyyy`, month
+`MMMM MMM MM M`, day `DD`/`dd` `D`/`d`, weekday `dddd`/`EEEE` `ddd`/`EEE`,
+`HH H`/`hh h`, `mm m`, `ss s`, `A`/`a`, with `[...]` literal escaping. An
+optional IANA **timezone** (`arg1`) applies when the host has `Intl`; portable
+hosts render UTC. Month/weekday names are always English arrays (never ICU), so
+output stays deterministic across hosts — only the timezone shift uses `Intl`.
+Backward compatible: the previous `YYYY/MMM/MM/DD/D/M` UTC tokens are unchanged.
+
+**New `time_ago` filter** — human relative time (`3 days ago`, `in 2 hours`,
+`just now`) against the render-time `now`. Portable (no `Intl`).
+
 ## [1.0.2]
 
 Version-sync release — all six registries publish in lockstep at `1.0.2` (the

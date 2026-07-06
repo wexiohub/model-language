@@ -3,6 +3,30 @@ import type { FilterDef } from '../types';
 
 const MS_PER_DAY = 86_400_000;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_LONG = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAYS_LONG = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
 
 const asString = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
 const asNumber = (v: unknown): number | undefined => (typeof v === 'number' ? v : undefined);
@@ -253,32 +277,167 @@ function toDate(v: unknown): Date | undefined {
   return undefined;
 }
 
-function formatDate(d: Date, fmt: string): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return fmt.replace(/YYYY|MMM|MM|DD|D|M/g, (tok) => {
-    switch (tok) {
-      case 'YYYY':
-        return String(d.getUTCFullYear());
-      case 'MMM':
-        return MONTHS[d.getUTCMonth()] as string;
-      case 'MM':
-        return pad(d.getUTCMonth() + 1);
-      case 'DD':
-        return pad(d.getUTCDate());
-      case 'D':
-        return String(d.getUTCDate());
-      default:
-        return String(d.getUTCMonth() + 1); // 'M'
-    }
-  });
+// Named presets → token patterns, so both the Intl (timezone) and the UTC
+// fallback paths format them uniformly.
+const DATE_PRESETS: Record<string, string> = {
+  date: 'MM/DD/YYYY',
+  time: 'HH:mm',
+  datetime: 'MM/DD/YYYY HH:mm',
+  long: 'MMMM D, YYYY',
+  weekday: 'dddd',
+  month: 'MMMM',
+};
+
+const HAS_INTL = typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function';
+
+interface DateParts {
+  y: number;
+  mo: number; // 1-12
+  d: number;
+  h: number; // 0-23
+  mi: number;
+  s: number;
 }
 
+/**
+ * Wall-clock parts of `ms` in `timeZone`, via Intl (host must have it). Month
+ * and weekday NAMES are never taken from Intl — only the numbers — so output
+ * stays deterministic (English name arrays) regardless of the host's ICU data.
+ */
+function partsInZone(ms: number, timeZone: string): DateParts | undefined {
+  try {
+    const m: Record<string, string> = {};
+    for (const p of new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    }).formatToParts(ms)) {
+      if (p.type !== 'literal') m[p.type] = p.value;
+    }
+    return {
+      y: Number(m.year),
+      mo: Number(m.month),
+      d: Number(m.day),
+      h: Number(m.hour) % 24,
+      mi: Number(m.minute),
+      s: Number(m.second),
+    };
+  } catch {
+    return undefined; // bad timezone → caller falls back to UTC
+  }
+}
+
+function partsUtc(ms: number): DateParts {
+  const dt = new Date(ms);
+  return {
+    y: dt.getUTCFullYear(),
+    mo: dt.getUTCMonth() + 1,
+    d: dt.getUTCDate(),
+    h: dt.getUTCHours(),
+    mi: dt.getUTCMinutes(),
+    s: dt.getUTCSeconds(),
+  };
+}
+
+/**
+ * Format `ms` with a token pattern, in `timeZone` when given (needs host Intl;
+ * falls back to UTC otherwise). Accepts BOTH moment/Day.js and Unicode casing:
+ * year `YYYY`/`yyyy` `YY`/`yy` · month `MMMM MMM MM M` · day `DD`/`dd` `D`/`d` ·
+ * weekday `dddd`/`EEEE` `ddd`/`EEE` · 24h `HH H` · 12h `hh h` · minute `mm m` ·
+ * second `ss s` · `A`/`a` (AM/PM). Wrap literal letters in `[...]`.
+ */
+function formatDate(ms: number, pattern: string, timeZone?: string): string {
+  const p = timeZone && HAS_INTL ? (partsInZone(ms, timeZone) ?? partsUtc(ms)) : partsUtc(ms);
+  // Weekday of the (possibly tz-shifted) calendar date — tz-independent.
+  const wd = new Date(Date.UTC(p.y, p.mo - 1, p.d)).getUTCDay(); // 0=Sun
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const h12 = p.h % 12 === 0 ? 12 : p.h % 12;
+  const ampm = p.h < 12 ? 'AM' : 'PM';
+  const year4 = String(p.y);
+
+  const map: Record<string, string> = {
+    YYYY: year4,
+    yyyy: year4,
+    YY: year4.slice(-2),
+    yy: year4.slice(-2),
+    MMMM: MONTHS_LONG[p.mo - 1] as string,
+    MMM: MONTHS[p.mo - 1] as string,
+    MM: pad(p.mo),
+    M: String(p.mo),
+    dddd: WEEKDAYS_LONG[wd] as string,
+    EEEE: WEEKDAYS_LONG[wd] as string,
+    ddd: WEEKDAYS[wd] as string,
+    EEE: WEEKDAYS[wd] as string,
+    DD: pad(p.d),
+    dd: pad(p.d),
+    D: String(p.d),
+    d: String(p.d),
+    HH: pad(p.h),
+    H: String(p.h),
+    hh: pad(h12),
+    h: String(h12),
+    mm: pad(p.mi),
+    m: String(p.mi),
+    ss: pad(p.s),
+    s: String(p.s),
+    A: ampm,
+    a: ampm.toLowerCase(),
+  };
+
+  const RE =
+    /\[([^\]]*)\]|(YYYY|yyyy|YY|yy|MMMM|MMM|MM|M|dddd|EEEE|ddd|EEE|DD|dd|D|d|HH|H|hh|h|mm|m|ss|s|A|a)/g;
+  return pattern.replace(RE, (_full, lit, tok) => (lit !== undefined ? lit : (map[tok] as string)));
+}
+
+/**
+ * `date: "<preset|pattern>", "<timezone?>"`. `arg0` is a NAMED preset
+ * (`date` `time` `datetime` `long` `weekday` `month` `iso`) or a token format
+ * string (see {@link formatDate}). Timezone (IANA) applies when the host has
+ * `Intl`; otherwise the result is UTC.
+ */
 const dateFilter: FilterDef = {
   name: 'date',
   apply: (input, args) => {
     const d = toDate(input);
-    const fmt = asString(args[0]);
-    return d === undefined || fmt === undefined ? input : formatDate(d, fmt);
+    const spec = asString(args[0]);
+    if (d === undefined || spec === undefined) return input;
+    const ms = d.getTime();
+    if (spec === 'iso') return new Date(ms).toISOString();
+    const timeZone = asString(args[1]);
+    return formatDate(ms, DATE_PRESETS[spec] ?? spec, timeZone);
+  },
+};
+
+const timeAgo: FilterDef = {
+  name: 'time_ago',
+  apply: (input, _args, ctx) => {
+    const d = toDate(input);
+    if (d === undefined || ctx === undefined) return input;
+    const diff = Math.round((d.getTime() - ctx.now) / 1000); // signed seconds
+    const abs = Math.abs(diff);
+    const units: Array<[string, number]> = [
+      ['year', 31536000],
+      ['month', 2592000],
+      ['week', 604800],
+      ['day', 86400],
+      ['hour', 3600],
+      ['minute', 60],
+      ['second', 1],
+    ];
+    for (const [unit, sec] of units) {
+      if (abs >= sec || unit === 'second') {
+        const n = Math.round(diff / sec);
+        if (n === 0) return 'just now';
+        const label = Math.abs(n) === 1 ? unit : `${unit}s`;
+        return n < 0 ? `${-n} ${label} ago` : `in ${n} ${label}`;
+      }
+    }
+    return input;
   },
 };
 
@@ -345,6 +504,7 @@ export const BUILTIN_FILTERS: FilterDef[] = [
   max,
   min,
   dateFilter,
+  timeAgo,
   daysAgo,
   daysUntil,
   isPast,

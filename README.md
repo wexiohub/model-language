@@ -110,7 +110,8 @@ field, `ML213` prompt-over-budget, `ML214` raw-date-comparison, `ML220`
 - number: `round` `floor` `ceil` `abs` `percent` `currency`
 - array: `count` `join` `first` `last` `limit` `pluck` `where` `sort` `sum`
   `max` `min`
-- datetime: `days_ago` `days_until` `is_past` `is_future` `date`
+- datetime: `date` (presets + token formats + timezone) `time_ago` `days_ago`
+  `days_until` `is_past` `is_future`
 
 **Types** — `string · number · boolean · datetime · array · enum · multiEnum ·
 object · dynamic`, plus `null` (present-but-empty) vs `undefined` (missing).
