@@ -9,6 +9,17 @@ guarantee enforced by a shared [`conformance/`](../../conformance) suite run in 
 Fast (parse once, render many), sandboxed, and it never crashes — template
 problems degrade to empty output plus a warning.
 
+**▶ [Live demo](https://ml.wexio.io)** — try the language in a Tiptap editor
+(live validation, autocomplete, real-time render), powered by the same engine.
+
+Filters format values — dates, numbers, text:
+
+```text
+{{ user.created_at | date: "MMM D, YYYY" }}            →  Jul 5, 2026
+{{ user.created_at | date: "h:mm A", "Europe/Kyiv" }}  →  5:37 PM
+{{ user.last_seen  | time_ago }}                       →  3 days ago
+```
+
 ## Usage
 
 ```python

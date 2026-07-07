@@ -15,6 +15,12 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![powered by wexio.io](https://img.shields.io/badge/powered%20by-wexio.io-0b0b0b)](https://wexio.io)
 
+### ▶ [Live demo — model-language in a Tiptap editor](https://ml.wexio.io)
+
+Type a template and watch it validate, autocomplete, and render in real time —
+right in the browser, powered by this package. See
+[`tiptap-model-language`](https://github.com/wexiohub/tiptap-model-language).
+
 model-language lets non-technical users write prompts with variables, conditions,
 loops, and filters. The engine type-checks them against your data schema and
 renders them into clean prompts against live data — it **never crashes and never
