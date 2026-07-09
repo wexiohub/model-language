@@ -200,3 +200,32 @@ describe('render — whitespace & misc', () => {
     expect(estimateTokens('abcde')).toBe(2);
   });
 });
+
+describe('render — inline directives', () => {
+  const run = (src: string, snap = {}) => render(parse(src).ast, snap, []);
+
+  it('strips the directive from text and surfaces it with raw arg', () => {
+    const r = run('Hi{{verify_before: calendar}}!');
+    expect(r.text).toBe('Hi!');
+    expect(r.directives).toContainEqual({ name: 'verify_before', params: { raw: 'calendar' } });
+  });
+
+  it('surfaces the comparison arg raw', () => {
+    const r = run('{{identity: contact.email == payment.email}}X');
+    expect(r.text).toBe('X');
+    expect(r.directives).toContainEqual({
+      name: 'identity',
+      params: { raw: 'contact.email == payment.email' },
+    });
+  });
+
+  it('fires only when the {{if}} branch renders', () => {
+    const src = '{{if contact.plan == "pro"}}{{verify_before: payments}}{{/if}}Ask.';
+    const on = render(parse(src).ast, { contact: { plan: 'pro' } }, []);
+    expect(on.directives).toContainEqual({ name: 'verify_before', params: { raw: 'payments' } });
+    expect(on.text).toBe('Ask.');
+    const off = render(parse(src).ast, { contact: { plan: 'free' } }, []);
+    expect(off.directives).toEqual([]);
+    expect(off.text).toBe('Ask.');
+  });
+});

@@ -13,6 +13,7 @@ import type {
   ForNode,
   IfNode,
   IncludeNode,
+  InlineDirectiveNode,
   InterpolationNode,
   RenderOptions,
   RenderResult,
@@ -77,6 +78,8 @@ function renderNodes(nodes: TemplateNode, ctx: RenderCtx): string {
       text += renderFor(node, ctx);
     } else if (node.kind === 'directive') {
       text += renderDirective(node, ctx);
+    } else if (node.kind === 'inlineDirective') {
+      text += renderInlineDirective(node, ctx);
     } else if (node.kind === 'include') {
       text += renderInclude(node, ctx);
     }
@@ -101,6 +104,11 @@ function renderInclude(node: IncludeNode, ctx: RenderCtx): string {
   const text = renderNodes(parse(src).ast, ctx);
   ctx.includeStack.pop();
   return text;
+}
+
+function renderInlineDirective(node: InlineDirectiveNode, ctx: RenderCtx): string {
+  ctx.directives.push({ name: node.name, params: { raw: node.argRaw } });
+  return '';
 }
 
 function renderDirective(node: DirectiveNode, ctx: RenderCtx): string {
