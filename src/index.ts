@@ -26,3 +26,4 @@ export { render } from './render';
 export { validate } from './engine';
 export { registerFilter } from './filters';
 export { registerRule } from './rules';
+export { parseDirectiveArg } from './directives/spec';

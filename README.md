@@ -85,6 +85,44 @@ field, `ML213` prompt-over-budget, `ML214` raw-date-comparison, `ML220`
 `==`-on-multi-select (quickfix to `contains`). Full list:
 [diagnostics catalog](./docs/diagnostics.md).
 
+## Directives
+
+Inline directives embed machine-readable instructions directly in a prompt
+template. They are stripped from `render().text` and returned as structured data
+in `render().directives`, where the host (e.g. the backend) consumes them as
+runtime constraints — routing decisions, tool gates, assignment rules.
+
+```ts
+import { parse, render, validate } from 'model-language';
+import type { DirectiveSpec, FieldSchema } from 'model-language';
+
+const DIRECTIVES: DirectiveSpec[] = [
+  { name: 'verify_before',      hasBody: false, arg: { kind: 'scalar',     type: 'enum',   values: ['payments', 'calendar'] } },
+  { name: 'identity',           hasBody: false, arg: { kind: 'comparison', type: 'field',  comparison: { operators: ['=='], operandType: 'field' } } },
+  { name: 'assignedTo',         hasBody: false, arg: { kind: 'list',       type: 'id' } },
+  { name: 'assignedToFallback', hasBody: false, arg: { kind: 'list',       type: 'id' } },
+  { name: 'assignedToRoles',    hasBody: false, arg: { kind: 'list',       type: 'enum',   values: ['OWNER', 'ADMIN', 'EDITOR', 'AGENT'] } },
+  { name: 'assignedToMaxCount', hasBody: false, arg: { kind: 'scalar',     type: 'number' } },
+];
+
+const src = `Help with billing.
+{{verify_before: payments}}
+{{identity: contact.email == payment.email}}
+Greet {{contact.first_name | default: "there"}}.`;
+
+const { diagnostics } = validate(src, schema, { directives: DIRECTIVES });
+// diagnostics → []  (zero errors)
+
+const r = render(parse(src).ast, { contact: { first_name: 'Vasyl' } }, schema);
+// r.text       → 'Help with billing.\n\nGreet Vasyl.'
+// r.directives → [{ name: 'verify_before', params: { raw: 'payments' } },
+//                 { name: 'identity',      params: { raw: 'contact.email == payment.email' } }]
+```
+
+A directive inside a `{{if}}` branch fires only when that branch renders —
+giving conditional gates for free (e.g. "require payment verification only on
+the pro plan"). Full reference: [`docs/directives/README.md`](./docs/directives/README.md).
+
 ## The language
 
 ```

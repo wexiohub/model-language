@@ -29,6 +29,33 @@ ModelLanguage.render(
 # => "Hi Vasyl!"
 ```
 
+Directives embed machine-readable constraints in a prompt. They are stripped from
+the rendered text and returned in `directives`:
+
+```elixir
+src = """
+Help with billing.
+{{verify_before: payments}}
+{{identity: contact.email == payment.email}}
+Greet {{contact.first_name | default: "there"}}.
+"""
+
+out = ModelLanguage.render(
+  src,
+  data: %{"contact" => %{"first_name" => "Vasyl"}},
+  schema: [
+    %{"path" => "contact.email",      "type" => "string"},
+    %{"path" => "contact.first_name", "type" => "string"},
+  ]
+)
+
+out["text"]
+# => "Help with billing.\n\nGreet Vasyl."
+
+Enum.map(out["directives"], & &1["name"])
+# => ["verify_before", "identity"]
+```
+
 - `render(template, data:, schema:, options:)` → `%{"text", "warnings", "resolvedBranches", "directives", "tokenEstimate"}`
 - `validate(template, schema:, options:)` → `%{"diagnostics", "maxTokenEstimate"}`
 - `parse(template)` → `%{"ast", "diagnostics"}`

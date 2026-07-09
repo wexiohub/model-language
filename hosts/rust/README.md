@@ -31,6 +31,27 @@ let out = engine.render(
 assert_eq!(out["text"], "Hi Vasyl!");
 ```
 
+Directives embed machine-readable constraints in a prompt. They are stripped from
+the rendered text and returned in `directives`:
+
+```rust
+let src = "Help with billing.\n\
+           {{verify_before: payments}}\n\
+           {{identity: contact.email == payment.email}}\n\
+           Greet {{contact.first_name | default: \"there\"}}.";
+let out = engine.render(
+    src,
+    json!({ "contact": { "first_name": "Vasyl" } }),
+    json!([
+        { "path": "contact.email",      "type": "string" },
+        { "path": "contact.first_name", "type": "string" },
+    ]),
+    json!({}),
+)?;
+assert_eq!(out["text"], "Help with billing.\n\nGreet Vasyl.");
+// out["directives"] → [{"name":"verify_before",…}, {"name":"identity",…}]
+```
+
 - `render(template, data, schema, options)` → `{ text, warnings, resolvedBranches, directives, tokenEstimate }`
 - `validate(template, schema, options)` → `{ diagnostics, maxTokenEstimate }`
 - `parse(template)` → `{ ast, diagnostics }`

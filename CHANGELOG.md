@@ -5,6 +5,11 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). A change
 that breaks any golden test case is a breaking change.
 
+## [1.1.0]
+
+Inline directives (`{{name: arg}}`), `DirectiveSpec`, `parseDirectiveArg`,
+`validate(..., { directives })`, ML240–244. Additive; no breaking changes.
+
 ## [1.0.3]
 
 **`date` filter — full formatting.** `date` now accepts named **presets**

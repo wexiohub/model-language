@@ -26,6 +26,31 @@ var res = engine.Render("Hi {{ user.name | default: \"there\" }}!", data);
 Console.WriteLine(res["text"]); // Hi Vasyl!
 ```
 
+Directives embed machine-readable constraints in a prompt. They are stripped from
+the rendered text and returned in `directives`:
+
+```csharp
+var src = """
+    Help with billing.
+    {{verify_before: payments}}
+    {{identity: contact.email == payment.email}}
+    Greet {{contact.first_name | default: "there"}}.
+    """;
+
+var data = JsonNode.Parse("""{ "contact": { "first_name": "Vasyl" } }""");
+var schema = JsonNode.Parse("""[
+    { "path": "contact.email",      "type": "string" },
+    { "path": "contact.first_name", "type": "string" }
+]""");
+
+var res = engine.Render(src, data, schema);
+Console.WriteLine(res["text"]);
+// Help with billing.
+//
+// Greet Vasyl.
+// res["directives"] → [{"name":"verify_before",…}, {"name":"identity",…}]
+```
+
 - `Render(template, data?, schema?, options?)` → `{ text, warnings, resolvedBranches, directives, tokenEstimate }`
 - `Validate(template, schema?, options?)` → `{ diagnostics, maxTokenEstimate }`
 - `Parse(template)` → `{ ast, diagnostics }`

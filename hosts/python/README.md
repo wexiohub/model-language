@@ -20,6 +20,34 @@ Filters format values — dates, numbers, text:
 {{ user.last_seen  | time_ago }}                       →  3 days ago
 ```
 
+Directives embed machine-readable constraints in a prompt. They are stripped from
+the rendered text and returned in `directives`:
+
+```python
+from model_language import render, validate, parse
+
+src = (
+    "Help with billing.\n"
+    "{{verify_before: payments}}\n"
+    "{{identity: contact.email == payment.email}}\n"
+    'Greet {{contact.first_name | default: "there"}}.'
+)
+
+directives = [
+    {"name": "verify_before", "hasBody": False, "arg": {"kind": "scalar", "type": "enum", "values": ["payments", "calendar"]}},
+    {"name": "identity",      "hasBody": False, "arg": {"kind": "comparison", "type": "field", "comparison": {"operators": ["=="], "operandType": "field"}}},
+]
+schema = [{"path": "contact.email", "type": "string"}, {"path": "contact.first_name", "type": "string"}]
+
+out = render(
+    src,
+    data={"contact": {"first_name": "Vasyl"}},
+    schema=schema,
+)
+print(out["text"])        # -> "Help with billing.\n\nGreet Vasyl."
+print([d["name"] for d in out["directives"]])  # -> ["verify_before", "identity"]
+```
+
 ## Usage
 
 ```python
