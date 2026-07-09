@@ -30,6 +30,17 @@ const IDENTITY: DirectiveSpec = {
     comparison: { operators: ['=='], operandType: 'field' },
   },
 };
+const NOARG: DirectiveSpec = {
+  name: 'x',
+  hasBody: false,
+  arg: null,
+};
+// comparison spec with no explicit operators — falls back to the ['=='] default
+const COMPARE_DEFAULT: DirectiveSpec = {
+  name: 'compare_default',
+  hasBody: false,
+  arg: { kind: 'comparison', type: 'field' },
+};
 
 describe('parseDirectiveArg', () => {
   it('scalar enum ok', () =>
@@ -42,6 +53,8 @@ describe('parseDirectiveArg', () => {
     expect(parseDirectiveArg('a, b', VERIFY)).toEqual({ ok: false, code: 'ML242' }));
   it('empty scalar → ML241', () =>
     expect(parseDirectiveArg('', VERIFY)).toEqual({ ok: false, code: 'ML241' }));
+  it('scalar with bare = → ML244', () =>
+    expect(parseDirectiveArg('a = b', VERIFY)).toEqual({ ok: false, code: 'ML244' }));
 
   it('number ok', () => expect(parseDirectiveArg('10', MAXCOUNT)).toEqual({ ok: true, value: 10 }));
   it('non-number → ML242', () =>
@@ -55,6 +68,8 @@ describe('parseDirectiveArg', () => {
     expect(parseDirectiveArg('[]', ASSIGN)).toEqual({ ok: false, code: 'ML241' }));
   it('list with comparison → ML244', () =>
     expect(parseDirectiveArg('id == x', ASSIGN)).toEqual({ ok: false, code: 'ML244' }));
+  it('list with bare = → ML244', () =>
+    expect(parseDirectiveArg('a = b', ASSIGN)).toEqual({ ok: false, code: 'ML244' }));
   it('role not in values → ML243', () =>
     expect(parseDirectiveArg('[GUEST]', ROLES)).toEqual({ ok: false, code: 'ML243' }));
 
@@ -74,5 +89,35 @@ describe('parseDirectiveArg', () => {
     expect(parseDirectiveArg('contact.email == a or contact.phone == b', IDENTITY)).toEqual({
       ok: false,
       code: 'ML244',
+    }));
+  it('comparison empty string → ML241', () =>
+    expect(parseDirectiveArg('', IDENTITY)).toEqual({ ok: false, code: 'ML241' }));
+  it('disallowed non-= operator → ML242', () =>
+    expect(parseDirectiveArg('contact.a != contact.b', IDENTITY)).toEqual({
+      ok: false,
+      code: 'ML242',
+    }));
+  it('comparison with literal RHS → ok', () =>
+    expect(parseDirectiveArg('contact.email == "v@x.io"', IDENTITY)).toEqual({
+      ok: true,
+      value: { left: 'contact.email', op: '==', right: 'v@x.io' },
+    }));
+  it('non-path/non-literal operand → ML244', () =>
+    expect(parseDirectiveArg('contact.a + 1 == contact.b', IDENTITY)).toEqual({
+      ok: false,
+      code: 'ML244',
+    }));
+
+  // arg: null branch
+  it('null arg: empty string → ok', () =>
+    expect(parseDirectiveArg('', NOARG)).toEqual({ ok: true, value: '' }));
+  it('null arg: non-empty → ML244', () =>
+    expect(parseDirectiveArg('something', NOARG)).toEqual({ ok: false, code: 'ML244' }));
+
+  // comparison spec with no explicit operators (hits the ?? ['=='] default branch)
+  it('comparison default operators (no comparison field) → ok with ==', () =>
+    expect(parseDirectiveArg('contact.email == payment.email', COMPARE_DEFAULT)).toEqual({
+      ok: true,
+      value: { left: 'contact.email', op: '==', right: 'payment.email' },
     }));
 });

@@ -25,6 +25,7 @@ export function parseDirectiveArg(argRaw: string, spec: DirectiveSpec): Directiv
   if (arg.kind === 'scalar') {
     if (raw === '') return { ok: false, code: 'ML241' };
     if (looksComparison) return { ok: false, code: 'ML244' };
+    if (/(^|[^=!<>])=([^=]|$)/.test(raw)) return { ok: false, code: 'ML244' };
     if (hasList) return { ok: false, code: 'ML242' };
     if (arg.type === 'number') {
       const n = Number(raw);
@@ -37,6 +38,7 @@ export function parseDirectiveArg(argRaw: string, spec: DirectiveSpec): Directiv
 
   if (arg.kind === 'list') {
     if (looksComparison) return { ok: false, code: 'ML244' };
+    if (/(^|[^=!<>])=([^=]|$)/.test(raw)) return { ok: false, code: 'ML244' };
     const inner = raw.replace(/^\[/, '').replace(/\]$/, '');
     const items = splitTopLevel(inner, ',')
       .map((s) => s.trim())
