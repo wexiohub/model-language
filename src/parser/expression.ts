@@ -5,7 +5,7 @@ import { parseCondition } from './condition';
  * Split `s` on `sep`, ignoring `sep` inside single/double quotes. Always returns
  * at least one element.
  */
-function splitTopLevel(s: string, sep: string): [string, ...string[]] {
+export function splitTopLevel(s: string, sep: string): [string, ...string[]] {
   const out: string[] = [];
   let buf = '';
   let quote: string | null = null;
@@ -25,6 +25,12 @@ function splitTopLevel(s: string, sep: string): [string, ...string[]] {
   }
   out.push(buf);
   return out as [string, ...string[]];
+}
+
+/** First index of `delim` at bracket/quote depth 0, or -1. */
+export function indexOfTopLevel(src: string, delim: string): number {
+  const parts = splitTopLevel(src, delim);
+  return parts.length > 1 ? parts[0].length : -1;
 }
 
 /**

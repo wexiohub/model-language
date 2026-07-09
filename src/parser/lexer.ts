@@ -65,12 +65,23 @@ export function tagInner(raw: string): string {
   return raw.slice(OPEN.length, raw.length - CLOSE.length).trim();
 }
 
+import { indexOfTopLevel, splitTopLevel } from './expression';
+
 /** Classify a tag: `#`-directives and `/`-closers are blocks, as are the block
- *  keyword openers; everything else is an interpolation. */
-export function classifyTag(raw: string): 'interpolation' | 'block' {
+ *  keyword openers; everything else is an interpolation or an inline directive. */
+export function classifyTag(raw: string): 'interpolation' | 'block' | 'directive' {
   const inner = tagInner(raw);
   if (inner.startsWith('#') || inner.startsWith('/')) return 'block';
   const boundary = inner.search(/[\s(]/);
   const head = boundary === -1 ? inner : inner.slice(0, boundary);
-  return BLOCK_KEYWORDS.includes(head) ? 'block' : 'interpolation';
+  if (BLOCK_KEYWORDS.includes(head)) return 'block';
+  // Inline directive: `name : rest`, where the colon is BEFORE any `|` filter
+  // and the left side is a bare identifier. `contact.name | default: 'x'` is not
+  // a directive because its colon is inside the filter (after the pipe).
+  const valuePart = splitTopLevel(inner, '|')[0];
+  const colon = indexOfTopLevel(valuePart, ':');
+  if (colon !== -1 && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(valuePart.slice(0, colon).trim())) {
+    return 'directive';
+  }
+  return 'interpolation';
 }

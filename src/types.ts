@@ -95,6 +95,7 @@ export interface Branch {
 export type Node =
   | TextNode
   | InterpolationNode
+  | InlineDirectiveNode
   | IfNode
   | ForNode
   | IncludeNode
@@ -112,6 +113,16 @@ export interface InterpolationNode {
   kind: 'interpolation';
   value: Expr;
   pipeline: Filter[];
+}
+
+export interface InlineDirectiveNode {
+  kind: 'inlineDirective';
+  /** The directive keyword, e.g. "verify_before" | "identity" | "assignedTo". */
+  name: string;
+  /** Everything after the top-level colon, verbatim and untrimmed-of-inner-spaces
+   *  beyond a single trim. The host / validate() interpret it per DirectiveSpec. */
+  argRaw: string;
+  range: Range;
 }
 
 export interface IfBranch {

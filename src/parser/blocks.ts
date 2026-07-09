@@ -11,6 +11,7 @@ import type {
 } from '../types';
 import { parseCondition } from './condition';
 import { parseInterpolation } from './expression';
+import { parseInlineDirective } from './inline-directive';
 import { type Segment, classifyTag, tagInner } from './lexer';
 
 type OpenBlock =
@@ -85,7 +86,19 @@ export function foldBlocks(
       asText(seg.raw);
       continue;
     }
-    if (classifyTag(seg.raw) === 'interpolation') {
+    const cls = classifyTag(seg.raw);
+    if (cls === 'directive') {
+      const startPos = posAt(source, seg.start);
+      const endPos = posAt(source, seg.end);
+      currentBody().push(
+        parseInlineDirective(
+          tagInner(seg.raw),
+          rangeAt(startPos.line, startPos.col, endPos.line, endPos.col),
+        ),
+      );
+      continue;
+    }
+    if (cls === 'interpolation') {
       const { value, pipeline } = parseInterpolation(tagInner(seg.raw));
       currentBody().push({ kind: 'interpolation', value, pipeline });
       continue;

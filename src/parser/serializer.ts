@@ -84,6 +84,8 @@ function nodeToText(node: Node): string {
     }
     case 'include':
       return `{{include "${node.name}"}}`;
+    case 'inlineDirective':
+      return `{{${node.name}: ${node.argRaw}}}`;
     default:
       return ''; // comment
   }
