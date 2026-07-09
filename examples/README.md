@@ -39,6 +39,7 @@ Hi there! You have beta, vip tags.
 | [billing-escalation](./billing-escalation/) | conditions + `#priority` + arithmetic |
 | [order-status](./order-status/) | existence + `for` loop + `date` |
 | [lead-qualification](./lead-qualification/) | `multiEnum` `contains`/`is_empty` + `elseif` |
+| [verified-booking](./verified-booking/) | inline directives — `verify_before`, `identity` `==`, `assignedToRoles`, conditional `assignedToMaxCount` |
 
 Rendering a template in code:
 

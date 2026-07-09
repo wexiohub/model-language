@@ -94,4 +94,32 @@ describe('golden — examples render as documented', () => {
     expect(text).toContain('Mon–Fri 9–5');
     expect(text).not.toContain('{{');
   });
+
+  it('verified-booking.mlt: inline directives stripped from text, surfaced in directives', () => {
+    const result = render(
+      parse(read('verified-booking/verified-booking.mlt')).ast,
+      { contact: { first_name: 'Vasyl', plan: 'enterprise' } },
+      [],
+    );
+    // Prose lines render; directive lines do not
+    expect(result.text).toBe(
+      'Help Vasyl book a demo.\n\nEnterprise customer — keep the queue short.\n',
+    );
+    expect(result.text).not.toContain('{{');
+    expect(result.text).not.toContain('verify_before');
+    // All four directives (including the conditionally-fired assignedToMaxCount) are surfaced
+    expect(result.directives).toContainEqual({
+      name: 'verify_before',
+      params: { raw: 'payments' },
+    });
+    expect(result.directives).toContainEqual({
+      name: 'identity',
+      params: { raw: 'contact.email == payments.email' },
+    });
+    expect(result.directives).toContainEqual({
+      name: 'assignedToRoles',
+      params: { raw: '[AGENT, EDITOR]' },
+    });
+    expect(result.directives).toContainEqual({ name: 'assignedToMaxCount', params: { raw: '3' } });
+  });
 });

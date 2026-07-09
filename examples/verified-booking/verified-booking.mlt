@@ -1,0 +1,10 @@
+Help {{contact.first_name | default: "there"}} book a demo.
+
+{{verify_before: payments}}
+{{identity: contact.email == payments.email}}
+{{assignedToRoles: [AGENT, EDITOR]}}
+
+{{if contact.plan == "enterprise"}}
+{{assignedToMaxCount: 3}}
+Enterprise customer — keep the queue short.
+{{/if}}
