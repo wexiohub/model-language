@@ -223,6 +223,26 @@ export interface ArithExpr {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Directive specs
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface DirectiveArgSpec {
+  kind: 'scalar' | 'list' | 'comparison';
+  type: 'number' | 'text' | 'id' | 'enum' | 'field';
+  /** enum: allowed values. field: cross-checked vs the fields passed to validate(). */
+  values?: string[];
+  /** kind: 'comparison' only. */
+  comparison?: { operators: string[]; operandType: 'field' | 'text' };
+}
+
+export interface DirectiveSpec {
+  name: string;
+  arg: DirectiveArgSpec | null;
+  hasBody: false;
+  description?: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Results & extensibility
 // ─────────────────────────────────────────────────────────────────────────────
 
