@@ -10,6 +10,13 @@ that breaks any golden test case is a breaking change.
 Inline directives (`{{name: arg}}`), `DirectiveSpec`, `parseDirectiveArg`,
 `validate(..., { directives })`, ML240–244. Additive; no breaking changes.
 
+## [1.0.4]
+
+Docs only (the engine is unchanged). A **live demo** link (`ml.wexio.io`) added
+to all six package READMEs, and filter-output examples added to the host guides.
+Coverage kept at 100% (`time_ago` reworked find-based to drop an unreachable
+return; invalid-timezone UTC fallback and no-context passthrough covered).
+
 ## [1.0.3]
 
 **`date` filter — full formatting.** `date` now accepts named **presets**
