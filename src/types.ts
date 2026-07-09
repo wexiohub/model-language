@@ -305,4 +305,8 @@ export interface ValidateOptions {
   rules?: LintRule[];
   /** Host-registered extra filters (e.g. locale-aware currency). */
   filters?: FilterDef[];
+  /** Host directive vocabulary. When supplied, inline `{{name: arg}}` directives
+   *  are validated against it (ML240–244). Omitted → directives are surfaced but
+   *  not name/argument-validated (back-compat). */
+  directives?: DirectiveSpec[];
 }

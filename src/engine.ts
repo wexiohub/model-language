@@ -1,4 +1,5 @@
 import { makeDiagnostic, rangeAt } from './diagnostics';
+import { validateDirectives } from './directives/validate-directives';
 import { parse } from './parser';
 import { typecheck } from './typecheck';
 import { estimateMaxTokens } from './typecheck/budget';
@@ -34,9 +35,19 @@ export function validate(
     );
   }
 
+  const directiveDiagnostics = opts?.directives
+    ? validateDirectives(ast, opts.directives, schema)
+    : [];
+
   return {
     ast,
-    diagnostics: [...diagnostics, ...typeDiagnostics, ...flow, ...budgetDiagnostics],
+    diagnostics: [
+      ...diagnostics,
+      ...typeDiagnostics,
+      ...flow,
+      ...budgetDiagnostics,
+      ...directiveDiagnostics,
+    ],
     maxTokenEstimate,
   };
 }

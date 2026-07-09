@@ -25,6 +25,12 @@ export const DIAGNOSTIC_CODES = {
   ML214: 'error', // date-raw-comparison
   ML220: 'error', // enum-is-array (== on multiEnum)
   ML221: 'warning', // loop-var-shadowing
+  // Directives (ML24x)
+  ML240: 'error', // unknown-directive
+  ML241: 'error', // missing-required-argument
+  ML242: 'error', // argument-shape/type-mismatch
+  ML243: 'error', // enum-value-not-in-values
+  ML244: 'error', // unexpected/extra-argument
   // Render (ML3xx) — warnings only, never block
   ML301: 'warning', // empty-interpolation
   ML302: 'warning', // object-interpolation
